@@ -1,6 +1,7 @@
 import 'package:alarm/alarm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:morening_2/config/permission.dart';
 import 'package:morening_2/features/main/presention/main_view.dart';
 import 'package:morening_2/theme/theme.dart';
 import '../features/alarm/data/repository/alarm_store_repo.dart';
@@ -57,6 +58,7 @@ class _AppViewState extends State<AppView> {
   void initState() {
     super.initState();
 
+    AppPermission().requestPermission();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Alarm.ringStream.stream.listen((alarmSettings) {
         context.read<MainCubit>().onAlarmRing(alarmSettings);
