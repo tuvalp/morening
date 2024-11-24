@@ -18,12 +18,25 @@ class AddEditAlarmAppBar extends StatelessWidget
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.transparent,
-      foregroundColor: Colors.white,
       shadowColor: Colors.transparent,
-      title: Text(title),
+      title: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 28,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
       centerTitle: true,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back),
+      leadingWidth: 60,
+      leading: TextButton(
+        child: Text(
+          "Back",
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+            fontWeight: FontWeight.w400,
+            fontSize: 16,
+          ),
+        ),
         onPressed: () {
           Navigator.pop(context);
         },
@@ -31,11 +44,11 @@ class AddEditAlarmAppBar extends StatelessWidget
       actions: [
         TextButton(
           onPressed: onSave,
-          child: const Text(
+          child: Text(
             "Done",
             style: TextStyle(
-              color: Colors.blue,
-              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.w400,
               fontSize: 16,
             ),
           ),

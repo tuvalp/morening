@@ -6,10 +6,10 @@ class TimePicker extends StatefulWidget {
   final Function(DateTime) onTimeChanged;
 
   const TimePicker({
-    Key? key,
+    super.key,
     required this.selectedTime,
     required this.onTimeChanged,
-  }) : super(key: key);
+  });
 
   @override
   TimePickerState createState() => TimePickerState();
@@ -74,27 +74,30 @@ class TimePickerState extends State<TimePicker> {
                   child: Text(
                     index.toString().padLeft(2, '0'),
                     style: index == selectedHour
-                        ? const TextStyle(
+                        ? TextStyle(
                             fontSize: 82,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w200)
-                        : const TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.w400,
+                          )
+                        : TextStyle(
                             fontSize: 24,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w400),
+                            color: Theme.of(context).colorScheme.onSurface,
+                            fontWeight: FontWeight.w600,
+                          ),
                   ),
                 );
               }),
             ),
           ),
-          const SizedBox(
+          SizedBox(
             width: 10,
             child: Text(
               ":",
               style: TextStyle(
-                  fontSize: 82,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w200),
+                fontSize: 82,
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.w400,
+              ),
             ),
           ),
           // Minute Picker
@@ -112,14 +115,16 @@ class TimePickerState extends State<TimePicker> {
                   child: Text(
                     index.toString().padLeft(2, '0'),
                     style: index == selectedMinute
-                        ? const TextStyle(
+                        ? TextStyle(
                             fontSize: 82,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w200)
-                        : const TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.w400,
+                          )
+                        : TextStyle(
                             fontSize: 24,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w400),
+                            color: Theme.of(context).colorScheme.onSurface,
+                            fontWeight: FontWeight.w600,
+                          ),
                   ),
                 );
               }),

@@ -34,8 +34,8 @@ class PlansSheet extends StatelessWidget {
                 'Select Wakeup Plan',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              const Divider(),
-              const SizedBox(height: 10),
+              Divider(color: Theme.of(context).colorScheme.onSecondary),
+              const SizedBox(height: 20),
               for (Plan plan in plans)
                 ListTile(
                   leading: IconButton(
@@ -45,12 +45,15 @@ class PlansSheet extends StatelessWidget {
                           ? Icons.radio_button_checked
                           : Icons.radio_button_unchecked,
                       color: selectedPlan == plan.label
-                          ? Colors.blue
-                          : Colors.grey,
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).colorScheme.onSecondary,
                     ),
                   ),
                   trailing: IconButton(
-                    icon: const Icon(Icons.info),
+                    icon: Icon(
+                      Icons.info,
+                      color: Theme.of(context).colorScheme.tertiary,
+                    ),
                     onPressed: () {
                       showDialog(
                         context: context,
@@ -91,9 +94,9 @@ class PlansPicker extends StatelessWidget {
             selectedPlan: planId,
             onPlanChanged: onPlanChanged,
           ),
-          backgroundColor: Theme.of(context).colorScheme.primary,
+          backgroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
           shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
           ),
         );
       },

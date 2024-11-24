@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:alarm/alarm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -58,12 +60,10 @@ class _AppViewState extends State<AppView> {
   void initState() {
     super.initState();
 
-    AppPermission().requestPermission();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Alarm.ringStream.stream.listen((alarmSettings) {
-        context.read<MainCubit>().onAlarmRing(alarmSettings);
-      });
-    });
+    AlarmPermissions.checkNotificationPermission();
+    if (Alarm.android) {
+      AlarmPermissions.checkAndroidScheduleExactAlarmPermission();
+    }
   }
 
   @override

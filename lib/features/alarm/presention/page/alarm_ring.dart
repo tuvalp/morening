@@ -6,7 +6,6 @@ import 'package:morening_2/utils/format.dart';
 import 'package:slide_to_act/slide_to_act.dart';
 import '../../../main/presention/main_state.dart';
 import '../alarm_cubit.dart';
-import '../components/animated_bell.dart';
 
 class AlarmRingView extends StatelessWidget {
   final AlarmSettings alarm;
@@ -20,17 +19,22 @@ class AlarmRingView extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            const SizedBox(height: 32),
             Column(
               children: [
-                const AnimatedBell(),
+                Text(DateTime.now().toString(),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(context).colorScheme.tertiary,
+                    )),
                 Text(
                   Format.formatAlarmTime(alarm.dateTime),
                   style: TextStyle(
-                    fontSize: 92,
-                    fontWeight: FontWeight.w200,
-                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 86,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 5),
@@ -47,29 +51,33 @@ class AlarmRingView extends StatelessWidget {
             GestureDetector(
               onTap: () {},
               child: Container(
-                padding: const EdgeInsets.all(42),
+                padding: const EdgeInsets.all(52),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.onSecondary,
                   shape: BoxShape.circle,
                 ),
-                child: const Text(
+                child: Text(
                   "Snooze",
                   style: TextStyle(
-                    color: Colors.blue,
+                    color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.bold,
-                    fontSize: 26,
+                    fontSize: 24,
                   ),
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
               child: SlideAction(
                 sliderRotate: false,
-                elevation: 1,
-                outerColor: Theme.of(context).colorScheme.tertiary,
+                elevation: 0,
+                outerColor: Theme.of(context).colorScheme.onSurfaceVariant,
                 innerColor: Theme.of(context).colorScheme.primary,
-                textColor: Colors.red,
+                textStyle: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
                 text: "Stop",
                 onSubmit: () => context.read<AlarmCubit>().stopAlarm(alarm.id),
               ),

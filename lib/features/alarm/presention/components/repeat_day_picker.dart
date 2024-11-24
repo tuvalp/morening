@@ -28,23 +28,31 @@ class RepeatDayPicker extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 2),
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-                color: isSelected ? Colors.white : Colors.transparent,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: isSelected
-                    ? [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          spreadRadius: 1,
-                          blurRadius: 2,
-                          offset: const Offset(0, 1),
-                        ),
-                      ]
-                    : []),
+              color: isSelected
+                  ? Theme.of(context).colorScheme.secondary
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: isSelected
+                  ? [
+                      BoxShadow(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.5),
+                        spreadRadius: 1,
+                        blurRadius: 2,
+                        offset: const Offset(0, 1),
+                      ),
+                    ]
+                  : [],
+            ),
             child: Text(
               dayName,
               style: TextStyle(
                 fontSize: 13.5,
-                color: isSelected ? Colors.blue : Colors.white,
+                color: isSelected
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.secondary,
               ),
             ),
           ),
@@ -63,17 +71,20 @@ class RepeatDayPicker extends StatelessWidget {
             }
           },
           child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 4),
+            margin: const EdgeInsets.symmetric(horizontal: 2),
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: DaysArray.days.length == selectedDays.length
-                  ? Colors.white
+                  ? Theme.of(context).colorScheme.secondary
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(12),
               boxShadow: DaysArray.days.length == selectedDays.length
                   ? [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.5),
                         spreadRadius: 1,
                         blurRadius: 2,
                         offset: const Offset(0, 1),
@@ -86,8 +97,8 @@ class RepeatDayPicker extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13.5,
                 color: DaysArray.days.length == selectedDays.length
-                    ? Colors.blue
-                    : Colors.white,
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.secondary,
               ),
             ),
           ),

@@ -3,6 +3,7 @@ import 'package:audioplayers/audioplayers.dart';
 
 // Utils
 import '../../../../config/ringtone_array.dart';
+import '../../../../utils/format.dart';
 
 class RingtoneSheet extends StatefulWidget {
   final String selectedRingtone;
@@ -39,7 +40,7 @@ class _RingtoneSheetState extends State<RingtoneSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(32),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -47,8 +48,8 @@ class _RingtoneSheetState extends State<RingtoneSheet> {
             'Select Ringtone',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          const Divider(),
-          const SizedBox(height: 10),
+          Divider(color: Theme.of(context).colorScheme.onSecondary),
+          const SizedBox(height: 20),
           for (String ringtone in RingtoneArray.ringtones)
             ListTile(
               leading: IconButton(
@@ -58,17 +59,20 @@ class _RingtoneSheetState extends State<RingtoneSheet> {
                       ? Icons.radio_button_checked
                       : Icons.radio_button_unchecked,
                   color: widget.selectedRingtone == ringtone
-                      ? Colors.blue
-                      : Colors.grey,
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.onSecondary,
                 ),
               ),
               trailing: IconButton(
-                icon: const Icon(Icons.play_arrow),
+                icon: Icon(
+                  Icons.play_arrow,
+                  color: Theme.of(context).colorScheme.tertiary,
+                ),
                 onPressed: () => _playPreview(ringtone),
               ),
               title: GestureDetector(
                 onTap: () => _selectRingtone(ringtone),
-                child: Text(ringtone),
+                child: Text(Format.formatPlanLabel(ringtone)),
               ),
             ),
         ],
@@ -97,9 +101,9 @@ class RingtonePicker extends StatelessWidget {
             selectedRingtone: selectedRingtone,
             onRingtoneChanged: onRingtoneChanged,
           ),
-          backgroundColor: Theme.of(context).colorScheme.primary,
+          backgroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
           shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
           ),
         );
       },

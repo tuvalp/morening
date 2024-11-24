@@ -138,18 +138,14 @@ class AddEditAlarmViewState extends State<AddEditAlarmView> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Divider(
-                  color: Theme.of(context).colorScheme.tertiary,
-                ),
+                Divider(color: Theme.of(context).colorScheme.onSecondary),
                 const SizedBox(height: 10),
                 RepeatDayPicker(
                   selectedDays: _selectedDays,
                   onDaysChanged: _onDaysChanged,
                 ),
                 const SizedBox(height: 10),
-                Divider(
-                  color: Theme.of(context).colorScheme.tertiary,
-                ),
+                Divider(color: Theme.of(context).colorScheme.onSecondary),
                 const SizedBox(height: 1),
                 Row(
                   children: [
@@ -157,7 +153,7 @@ class AddEditAlarmViewState extends State<AddEditAlarmView> {
                       "Label",
                       style: TextStyle(
                         fontSize: 18,
-                        color: Theme.of(context).colorScheme.primary,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     const Spacer(),
@@ -170,7 +166,7 @@ class AddEditAlarmViewState extends State<AddEditAlarmView> {
                           hintText: "Enter Label",
                           hintStyle: TextStyle(
                             fontSize: 14,
-                            color: Theme.of(context).colorScheme.secondary,
+                            color: Theme.of(context).colorScheme.onSecondary,
                           ),
                         ),
                         style: TextStyle(
@@ -183,9 +179,7 @@ class AddEditAlarmViewState extends State<AddEditAlarmView> {
                   ],
                 ),
                 const SizedBox(height: 1),
-                Divider(
-                  color: Theme.of(context).colorScheme.tertiary,
-                ),
+                Divider(color: Theme.of(context).colorScheme.onSecondary),
                 const SizedBox(height: 10),
                 Row(
                   children: [
@@ -193,7 +187,7 @@ class AddEditAlarmViewState extends State<AddEditAlarmView> {
                       "Wakeup Plan",
                       style: TextStyle(
                         fontSize: 18,
-                        color: Theme.of(context).colorScheme.primary,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     const Spacer(),
@@ -201,9 +195,7 @@ class AddEditAlarmViewState extends State<AddEditAlarmView> {
                   ],
                 ),
                 const SizedBox(height: 10),
-                Divider(
-                  color: Theme.of(context).colorScheme.tertiary,
-                ),
+                Divider(color: Theme.of(context).colorScheme.onSecondary),
                 const SizedBox(height: 10),
                 Row(
                   children: [
@@ -211,7 +203,7 @@ class AddEditAlarmViewState extends State<AddEditAlarmView> {
                       "Ringtone",
                       style: TextStyle(
                         fontSize: 18,
-                        color: Theme.of(context).colorScheme.primary,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     const Spacer(),
@@ -222,9 +214,7 @@ class AddEditAlarmViewState extends State<AddEditAlarmView> {
                   ],
                 ),
                 const SizedBox(height: 10),
-                Divider(
-                  color: Theme.of(context).colorScheme.tertiary,
-                ),
+                Divider(color: Theme.of(context).colorScheme.onSecondary),
                 const SizedBox(height: 10),
                 Row(
                   children: [
@@ -232,12 +222,12 @@ class AddEditAlarmViewState extends State<AddEditAlarmView> {
                       "Physical device",
                       style: TextStyle(
                         fontSize: 18,
-                        color: Theme.of(context).colorScheme.primary,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     const Spacer(),
                     CupertinoSwitch(
-                      activeColor: const Color(0xFF4CAF50),
+                      activeColor: Theme.of(context).colorScheme.primary,
                       value: _physicalDevice,
                       onChanged: (value) {
                         _onPhysicalDeviceChanged(value);
@@ -246,9 +236,7 @@ class AddEditAlarmViewState extends State<AddEditAlarmView> {
                   ],
                 ),
                 const SizedBox(height: 10),
-                Divider(
-                  color: Theme.of(context).colorScheme.tertiary,
-                ),
+                Divider(color: Theme.of(context).colorScheme.onSecondary),
               ],
             ),
             widget.alarm == null

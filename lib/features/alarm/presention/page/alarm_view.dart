@@ -12,15 +12,39 @@ class AlarmView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AlarmCubit, List<Alarm>>(
       builder: (context, alarms) {
-        return ListView.builder(
-          itemCount: alarms.length,
-          itemBuilder: (context, index) {
-            final alarm = alarms[index];
-            return Column(children: [
-              AlarmTile(alarm: alarm),
-              Divider(color: Theme.of(context).colorScheme.tertiary),
-            ]);
-          },
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 32),
+              Text(
+                'Alarms',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.onSecondary,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: alarms.length,
+                  itemBuilder: (context, index) {
+                    final alarm = alarms[index];
+                    return Column(children: [
+                      const SizedBox(height: 8),
+                      AlarmTile(alarm: alarm),
+                      const SizedBox(height: 8),
+                      Divider(
+                        color: Theme.of(context).colorScheme.onSecondary,
+                      ),
+                    ]);
+                  },
+                ),
+              ),
+            ],
+          ),
         );
       },
     );

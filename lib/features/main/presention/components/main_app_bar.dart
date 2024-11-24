@@ -11,13 +11,24 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: Colors.transparent,
       shadowColor: Colors.transparent,
-      foregroundColor: Colors.white,
       elevation: 0,
       centerTitle: true,
-      title: Text(title != null ? title! : "MoreNing",
-          style: const TextStyle(fontSize: 24, letterSpacing: 1.5)),
+      title: Text(
+        title != null ? title! : "MoreNing",
+        style: TextStyle(
+          fontSize: 30,
+          fontWeight: FontWeight.w600,
+          color: title != null
+              ? Theme.of(context).colorScheme.onSurface
+              : Theme.of(context).colorScheme.primary,
+        ),
+      ),
       leading: IconButton(
-        icon: const Icon(Icons.add_circle),
+        icon: Icon(
+          Icons.add,
+          color: Theme.of(context).colorScheme.primary,
+          size: 28,
+        ),
         onPressed: () {
           Navigator.push(
             context,
@@ -27,7 +38,11 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.wifi),
+          icon: Icon(
+            Icons.wifi,
+            color: Theme.of(context).colorScheme.primary,
+            size: 24,
+          ),
           onPressed: () {},
         ),
       ],

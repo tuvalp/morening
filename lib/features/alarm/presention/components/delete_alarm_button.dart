@@ -18,23 +18,18 @@ class DeleteAlarmButton extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 16),
             width: double.infinity,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(100),
               color: const Color(0xFFFF4C4C),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  spreadRadius: 2,
-                  blurRadius: 3,
-                  offset: const Offset(0, 1),
-                ),
-              ],
             ),
-            padding: const EdgeInsets.all(16),
-            child: const Center(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+            child: Center(
               child: Text(
                 "Remove Alarm",
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
               ),
             ),
           ),
