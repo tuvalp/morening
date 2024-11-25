@@ -3,20 +3,23 @@ import '../../alarm/domain/models/alarm.dart';
 import '../data/repository/alarm_native_repo.dart';
 import '../../main/presention/main_cubit.dart';
 import '../domain/repository/alarm_repo.dart';
+import 'alarm_state.dart';
 
-class AlarmCubit extends Cubit<List<Alarm>> {
+class AlarmCubit extends Cubit<AlarmState> {
   final AlarmRepo alarmRepo;
   final AlarmNativeRepo alarmNativeRepo;
   final MainCubit mainCubit;
 
-  AlarmCubit(this.alarmRepo, this.alarmNativeRepo, this.mainCubit) : super([]) {
+  AlarmCubit(this.alarmRepo, this.alarmNativeRepo, this.mainCubit)
+      : super(AlarmInitial()) {
     loadAlarms();
   }
 
   Future<void> loadAlarms() async {
+    emit(AlarmLoading());
     final alarms = await alarmRepo.getAlarms();
     alarms.sort((a, b) => a.id.compareTo(b.id));
-    emit(alarms);
+    emit(AlarmLoaded(alarms));
   }
 
   Future<void> addAlarm(Alarm alarm) async {
@@ -47,12 +50,10 @@ class AlarmCubit extends Cubit<List<Alarm>> {
     // Update the alarm in persistent storage
     await alarmRepo.updateAlarm(alarm);
 
-    // Reschedule the alarm based on the `days` list
     if (alarm.days.isEmpty || alarm.days.contains(now.weekday)) {
       // Schedule immediately
       await alarmNativeRepo.updateAlarm(alarm);
     } else {
-      // Schedule for the next day in the list
       final nextDay = _getNextDay(alarm.days, now.weekday);
       final nextAlarmTime = _getNextDateForDay(now, nextDay, alarm.time);
       final adjustedAlarm =
@@ -80,6 +81,9 @@ class AlarmCubit extends Cubit<List<Alarm>> {
       final adjustedAlarm =
           alarm.copyWith(time: nextAlarmTime, id: alarm.id + nextDay);
       await alarmNativeRepo.addAlarm(adjustedAlarm);
+    } else {
+      final updateAlarm = alarm.copyWith(isActive: false);
+      await alarmRepo.updateAlarm(updateAlarm);
     }
 
     mainCubit.checkAuthentication(true);

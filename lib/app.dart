@@ -56,6 +56,8 @@ class AppView extends StatefulWidget {
 }
 
 class _AppViewState extends State<AppView> {
+  static StreamSubscription<AlarmSettings>? ringSubscription;
+
   @override
   void initState() {
     super.initState();
@@ -64,6 +66,25 @@ class _AppViewState extends State<AppView> {
     if (Alarm.android) {
       AlarmPermissions.checkAndroidScheduleExactAlarmPermission();
     }
+
+    // Subscribe to the ringStream
+    ringSubscription ??= Alarm.ringStream.stream.listen(navigateToRingScreen);
+  }
+
+  Future<void> navigateToRingScreen(AlarmSettings alarm) async {
+    //context.read<MainCubit>().onAlarmRing(alarm);
+    Alarm.isRinging(alarm.id).then((isRinging) {
+      if (!isRinging) {
+        context.read<MainCubit>().onAlarmRing(alarm);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    ringSubscription?.cancel();
+    ringSubscription = null;
+    super.dispose();
   }
 
   @override
