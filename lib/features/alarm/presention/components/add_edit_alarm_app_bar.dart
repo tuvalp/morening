@@ -16,44 +16,46 @@ class AddEditAlarmAppBar extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      backgroundColor: Colors.transparent,
-      shadowColor: Colors.transparent,
-      title: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 28,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-      centerTitle: true,
-      leadingWidth: 60,
-      leading: TextButton(
-        child: Text(
-          "Back",
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.primary,
-            fontWeight: FontWeight.w400,
-            fontSize: 16,
+    return SafeArea(
+      child: AppBar(
+        backgroundColor: Colors.transparent,
+        shadowColor: Colors.transparent,
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.w600,
           ),
         ),
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      ),
-      actions: [
-        TextButton(
-          onPressed: onSave,
+        centerTitle: true,
+        leadingWidth: 60,
+        leading: TextButton(
           child: Text(
-            "Done",
+            "Back",
             style: TextStyle(
               color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.w400,
               fontSize: 16,
             ),
           ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
-      ],
+        actions: [
+          TextButton(
+            onPressed: onSave,
+            child: Text(
+              "Done",
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.w400,
+                fontSize: 16,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

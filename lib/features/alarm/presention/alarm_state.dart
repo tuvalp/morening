@@ -15,3 +15,9 @@ class AlarmLoaded extends AlarmState {
 
   const AlarmLoaded(this.alarms);
 }
+
+class AlarmError extends AlarmState {
+  final String message;
+
+  const AlarmError(this.message);
+}

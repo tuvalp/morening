@@ -36,28 +36,30 @@ class _MainBottomNavBarState extends State<MainBottomNavBar> {
           ),
         ),
       ),
-      child: BottomAppBar(
-        color: Colors.transparent,
-        height: 50,
-        child: SafeArea(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: mainRoutes.keys.map((routeName) {
-              final route = mainRoutes[routeName]!;
+      child: SafeArea(
+        child: BottomAppBar(
+          color: Colors.transparent,
+          height: 50,
+          child: SafeArea(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: mainRoutes.keys.map((routeName) {
+                final route = mainRoutes[routeName]!;
 
-              return GestureDetector(
-                child: Icon(
-                  size: 28,
-                  route.icon,
-                  color: isActive(routeName),
-                ),
-                onTap: () {
-                  context.read<MainCubit>().onWidgetChanged(route);
-                  setState(() {});
-                },
-              );
-            }).toList(),
+                return GestureDetector(
+                  child: Icon(
+                    size: 28,
+                    route.icon,
+                    color: isActive(routeName),
+                  ),
+                  onTap: () {
+                    context.read<MainCubit>().onWidgetChanged(route);
+                    setState(() {});
+                  },
+                );
+              }).toList(),
+            ),
           ),
         ),
       ),

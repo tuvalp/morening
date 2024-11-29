@@ -17,77 +17,108 @@ class AlarmCubit extends Cubit<AlarmState> {
 
   Future<void> loadAlarms() async {
     emit(AlarmLoading());
-    final alarms = await alarmRepo.getAlarms();
-    alarms.sort((a, b) => a.id.compareTo(b.id));
-    emit(AlarmLoaded(alarms));
+    try {
+      final alarms = await alarmRepo.getAlarms();
+      alarms.sort((a, b) => a.id.compareTo(b.id));
+      emit(AlarmLoaded(alarms));
+    } catch (error) {
+      emit(AlarmError('Failed to load alarms: $error'));
+    }
   }
 
   Future<void> addAlarm(Alarm alarm) async {
-    final now = DateTime.now();
-    await alarmRepo.addAlarm(alarm);
+    try {
+      emit(AlarmLoading());
+      final now = DateTime.now();
+      final adjustedAlarm = await _getAdjustedAlarm(alarm, now);
 
-    if (alarm.days.isEmpty || alarm.days.contains(now.weekday)) {
-      await alarmNativeRepo.addAlarm(alarm);
-    } else {
-      final nextDay = _getNextDay(alarm.days, now.weekday);
-      final nextAlarmTime = _getNextDateForDay(now, nextDay, alarm.time);
-      final adjustedAlarm =
-          alarm.copyWith(time: nextAlarmTime, id: alarm.id + nextDay);
+      await alarmRepo.addAlarm(alarm);
       await alarmNativeRepo.addAlarm(adjustedAlarm);
+
+      loadAlarms();
+    } catch (error) {
+      emit(AlarmError('Failed to add alarm: $error'));
     }
-    loadAlarms();
   }
 
   Future<void> removeAlarm(Alarm alarm) async {
-    await alarmRepo.removeAlarm(alarm);
-    await alarmNativeRepo.removeAlarm(alarm.id);
-    loadAlarms();
+    try {
+      emit(AlarmLoading());
+      await alarmRepo.removeAlarm(alarm);
+      await alarmNativeRepo.removeAlarm(alarm.id);
+      loadAlarms();
+    } catch (error) {
+      emit(AlarmError('Failed to remove alarm: $error'));
+    }
   }
 
   Future<void> updateAlarm(Alarm alarm) async {
-    final now = DateTime.now();
+    try {
+      emit(AlarmLoading());
+      final now = DateTime.now();
+      final adjustedAlarm = await _getAdjustedAlarm(alarm, now);
 
-    // Update the alarm in persistent storage
-    await alarmRepo.updateAlarm(alarm);
-
-    if (alarm.days.isEmpty || alarm.days.contains(now.weekday)) {
-      // Schedule immediately
-      await alarmNativeRepo.updateAlarm(alarm);
-    } else {
-      final nextDay = _getNextDay(alarm.days, now.weekday);
-      final nextAlarmTime = _getNextDateForDay(now, nextDay, alarm.time);
-      final adjustedAlarm =
-          alarm.copyWith(time: nextAlarmTime, id: alarm.id + nextDay);
+      await alarmRepo.updateAlarm(alarm);
       await alarmNativeRepo.updateAlarm(adjustedAlarm);
-    }
 
-    // Reload alarms
-    loadAlarms();
+      loadAlarms();
+    } catch (error) {
+      emit(AlarmError('Failed to update alarm: $error'));
+    }
   }
 
   Future<void> toggleAlarmActive(Alarm alarm) async {
-    final updatedAlarm = alarm.toggleActive();
-    await updateAlarm(updatedAlarm); // Reuse the updated logic
+    try {
+      final updatedAlarm = alarm.toggleActive();
+      await updateAlarm(updatedAlarm);
+    } catch (error) {
+      emit(AlarmError('Failed to toggle alarm: $error'));
+    }
   }
 
   Future<void> stopAlarm(int id) async {
-    final alarm = await alarmRepo.getAlarm(id);
-    await alarmNativeRepo.removeAlarm(id);
+    try {
+      emit(AlarmLoading());
+      final alarm = await alarmRepo.getAlarm(id);
+      await alarmNativeRepo.removeAlarm(id);
 
-    if (alarm.days.isNotEmpty) {
-      final now = DateTime.now();
+      if (alarm.days.isNotEmpty) {
+        final now = DateTime.now();
+        final adjustedAlarm = await _getAdjustedAlarm(alarm, now);
+        await alarmNativeRepo.addAlarm(adjustedAlarm);
+      } else {
+        final updatedAlarm = alarm.copyWith(isActive: false);
+        await alarmRepo.updateAlarm(updatedAlarm);
+      }
+
+      mainCubit.checkAuthentication(true);
+      loadAlarms();
+    } catch (error) {
+      emit(AlarmError('Failed to stop alarm: $error'));
+    }
+  }
+
+  Future<Alarm> _getAdjustedAlarm(Alarm alarm, DateTime now) async {
+    if (alarm.days.isEmpty) {
+      // If no days are specified, schedule for tomorrow if time has passed
+      final nextAlarmTime = alarm.time.isBefore(now)
+          ? alarm.time.add(Duration(days: 1))
+          : alarm.time;
+      return alarm.copyWith(time: nextAlarmTime);
+    } else if (alarm.days.contains(now.weekday)) {
+      // If today is in the alarm days, but the time has passed
+      if (alarm.time.isBefore(now)) {
+        final nextDay = _getNextDay(alarm.days, now.weekday);
+        final nextAlarmTime = _getNextDateForDay(now, nextDay, alarm.time);
+        return alarm.copyWith(time: nextAlarmTime, id: alarm.id + nextDay);
+      }
+    } else {
+      // If today is not in alarm.days, find the next valid day
       final nextDay = _getNextDay(alarm.days, now.weekday);
       final nextAlarmTime = _getNextDateForDay(now, nextDay, alarm.time);
-      final adjustedAlarm =
-          alarm.copyWith(time: nextAlarmTime, id: alarm.id + nextDay);
-      await alarmNativeRepo.addAlarm(adjustedAlarm);
-    } else {
-      final updateAlarm = alarm.copyWith(isActive: false);
-      await alarmRepo.updateAlarm(updateAlarm);
+      return alarm.copyWith(time: nextAlarmTime, id: alarm.id + nextDay);
     }
-
-    mainCubit.checkAuthentication(true);
-    loadAlarms();
+    return alarm; // Return unchanged if no adjustments are needed
   }
 
   int _getNextDay(List<int> days, int currentDay) {

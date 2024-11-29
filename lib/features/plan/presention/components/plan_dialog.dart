@@ -45,14 +45,28 @@ class PlanDialog extends StatelessWidget {
                             nextStage = plan.stages[start + index + 1];
                           }
                           return Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text(Format.formatDuration(stage.duration)),
-                              Icon(
-                                Format.getTriggerIcon(stage.trigger),
-                                color: Colors.blue,
-                                size: 24,
+                              Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant,
+                                    ),
+                                    child: Icon(
+                                      Format.getTriggerIcon(stage.trigger),
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      size: 24,
+                                    ),
+                                  ),
+                                  Text(Format.formatDuration(stage.duration)),
+                                ],
                               ),
                               const SizedBox(width: 5),
                               if (start + index < plan.stages.length - 1)

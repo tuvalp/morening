@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
+        title: 'MoreNing',
         theme: theme(),
         home: const AppView(),
       ),
@@ -72,12 +72,11 @@ class _AppViewState extends State<AppView> {
   }
 
   Future<void> navigateToRingScreen(AlarmSettings alarm) async {
-    //context.read<MainCubit>().onAlarmRing(alarm);
-    Alarm.isRinging(alarm.id).then((isRinging) {
-      if (!isRinging) {
-        context.read<MainCubit>().onAlarmRing(alarm);
-      }
-    });
+    // Alarm.isRinging(alarm.id).then((isRinging) {
+    //   if (!isRinging) {
+    context.read<MainCubit>().onAlarmRing(alarm);
+    //   }
+    // });
   }
 
   @override
