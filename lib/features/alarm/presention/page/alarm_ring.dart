@@ -53,7 +53,7 @@ class AlarmRingView extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(52),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.onSecondary,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   shape: BoxShape.circle,
                 ),
                 child: Text(

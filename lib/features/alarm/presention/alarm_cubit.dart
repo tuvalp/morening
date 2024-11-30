@@ -11,7 +11,7 @@ class AlarmCubit extends Cubit<AlarmState> {
   final MainCubit mainCubit;
 
   AlarmCubit(this.alarmRepo, this.alarmNativeRepo, this.mainCubit)
-      : super(AlarmInitial()) {
+      : super(const AlarmInitial()) {
     loadAlarms();
   }
 
@@ -99,10 +99,11 @@ class AlarmCubit extends Cubit<AlarmState> {
   }
 
   Future<Alarm> _getAdjustedAlarm(Alarm alarm, DateTime now) async {
+    now.copyWith(second: 0, millisecond: 0);
     if (alarm.days.isEmpty) {
       // If no days are specified, schedule for tomorrow if time has passed
       final nextAlarmTime = alarm.time.isBefore(now)
-          ? alarm.time.add(Duration(days: 1))
+          ? alarm.time.add(const Duration(days: 1))
           : alarm.time;
       return alarm.copyWith(time: nextAlarmTime);
     } else if (alarm.days.contains(now.weekday)) {
