@@ -23,7 +23,7 @@ class AddEditAlarmAppBar extends StatelessWidget
         title: Text(
           title,
           style: const TextStyle(
-            fontSize: 28,
+            fontSize: 26,
             fontWeight: FontWeight.w600,
           ),
         ),

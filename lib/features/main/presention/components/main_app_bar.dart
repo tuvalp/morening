@@ -17,7 +17,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
         title: Text(
           title != null ? title! : "MoreNing",
           style: TextStyle(
-            fontSize: 30,
+            fontSize: 26,
             fontWeight: FontWeight.w600,
             color: title != null
                 ? Theme.of(context).colorScheme.onSurface

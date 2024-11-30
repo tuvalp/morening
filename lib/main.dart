@@ -10,7 +10,7 @@ void main() async {
     const SystemUiOverlayStyle(
       statusBarColor: Colors.white,
       statusBarIconBrightness: Brightness.dark,
-      systemNavigationBarColor: Color(0XFFF6F6F6), // Navigation bar color
+      systemNavigationBarColor: Color(0XFFFAFAFA), // Navigation bar color
       systemNavigationBarIconBrightness:
           Brightness.light, // Light icons for dark backgrounds
     ),

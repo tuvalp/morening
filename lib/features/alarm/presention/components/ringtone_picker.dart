@@ -108,7 +108,7 @@ class RingtonePicker extends StatelessWidget {
         );
       },
       child: Text(
-        selectedRingtone,
+        Format.formatPlanLabel(selectedRingtone),
         style: TextStyle(
           fontSize: 14,
           color: Theme.of(context).colorScheme.primary,
