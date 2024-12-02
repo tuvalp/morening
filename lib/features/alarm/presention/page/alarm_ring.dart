@@ -1,5 +1,6 @@
 import 'package:alarm/alarm.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:morening_2/features/main/presention/main_cubit.dart';
 import 'package:morening_2/utils/format.dart';
@@ -24,7 +25,7 @@ class AlarmRingView extends StatelessWidget {
             const SizedBox(height: 32),
             Column(
               children: [
-                Text(DateTime.now().toString(),
+                Text(DateFormat('EEEE, dd MMM, yyyy').format(DateTime.now()),
                     style: TextStyle(
                       fontSize: 14,
                       color: Theme.of(context).colorScheme.tertiary,
@@ -49,12 +50,23 @@ class AlarmRingView extends StatelessWidget {
               ],
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: () => context.read<AlarmCubit>().snoozeAlarm(alarm.id),
               child: Container(
                 padding: const EdgeInsets.all(52),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                   shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.1),
+                      spreadRadius: 2,
+                      blurRadius: 4,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
                 ),
                 child: Text(
                   "Snooze",

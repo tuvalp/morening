@@ -33,7 +33,7 @@ class AlarmTile extends StatelessWidget {
                   ),
                   Text(
                     alarm.label == ''
-                        ? alarm.planId
+                        ? Format.formatPlanLabel(alarm.planId)
                         : "${alarm.label} | ${Format.formatPlanLabel(alarm.planId)}",
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.tertiary,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'config/cognito_config.dart';
 import '../app.dart';
 import 'package:alarm/alarm.dart';
 
@@ -17,5 +18,7 @@ void main() async {
   );
 
   await Alarm.init();
+  await CognitoConfig().configureAmplify();
+
   runApp(const MyApp());
 }

@@ -4,12 +4,16 @@ import 'package:alarm/alarm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:morening_2/config/permission.dart';
+import 'package:morening_2/features/auth/presention/page/terms_screen.dart';
 import 'package:morening_2/features/main/presention/main_view.dart';
 import 'package:morening_2/theme/theme.dart';
 import '../features/alarm/data/repository/alarm_store_repo.dart';
 import '../features/alarm/presention/alarm_cubit.dart';
 import 'features/alarm/data/repository/alarm_native_repo.dart';
 import 'features/alarm/presention/page/alarm_ring.dart';
+import 'features/auth/data/auth_cognito_repo.dart';
+import 'features/auth/presention/auth_cubit.dart';
+import 'features/auth/presention/page/login_screen.dart';
 import 'features/main/presention/main_cubit.dart';
 import 'features/main/presention/main_state.dart';
 import 'features/plan/data/repository/plan_api_repo.dart';
@@ -24,6 +28,9 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(
           create: (context) => MainCubit(),
+        ),
+        BlocProvider(
+          create: (context) => AuthCubit(AuthCognitoRepo()),
         ),
         BlocProvider(
           create: (context) => AlarmCubit(
@@ -67,16 +74,11 @@ class _AppViewState extends State<AppView> {
       AlarmPermissions.checkAndroidScheduleExactAlarmPermission();
     }
 
-    // Subscribe to the ringStream
     ringSubscription ??= Alarm.ringStream.stream.listen(navigateToRingScreen);
   }
 
   Future<void> navigateToRingScreen(AlarmSettings alarm) async {
-    // Alarm.isRinging(alarm.id).then((isRinging) {
-    //   if (!isRinging) {
     context.read<MainCubit>().onAlarmRing(alarm);
-    //   }
-    // });
   }
 
   @override
@@ -98,11 +100,8 @@ class _AppViewState extends State<AppView> {
           return AlarmRingView(alarm: state.alarm);
         } else if (state is UnauthenticatedState) {
           // Auth view
-          return const Scaffold(
-            body: Center(
-              child: Text("Not Authenticated"),
-            ),
-          );
+          //return const TermsScreen();
+          return const LoginScreen();
         } else {
           return const Scaffold(
             body: Center(

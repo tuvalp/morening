@@ -3,27 +3,41 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:morening_2/features/main/domain/models/route.dart';
 
 import '../../../config/Routes.dart';
+import '../../auth/presention/auth_cubit.dart';
+import '../../auth/presention/auth_state.dart';
 import 'main_state.dart';
 
 class MainCubit extends Cubit<MainState> {
-  MainCubit() : super(const MainInitial()) {
-    checkAuthentication(true);
+  final AuthCubit authCubit;
+
+  MainCubit(this.authCubit) : super(const MainInitial()) {
+    checkAuthentication();
   }
+
   // Method to handle alarm ringing
   void onAlarmRing(AlarmSettings alarm) {
     emit(AlarmRingingState(alarm));
   }
 
   void onWidgetChanged(MainRoute screen) {
-    emit(AuthenticatedState(screen));
+    final currentState = authCubit.state;
+    if (currentState is AuthUserLoaded) {
+      emit(AuthenticatedState(screen, currentState.user));
+    }
   }
 
   // Method to handle authentication
-  void checkAuthentication(bool isAuthenticated,
-      {String defaultRoute = "alarms"}) {
-    if (isAuthenticated) {
-      emit(AuthenticatedState(mainRoutes[defaultRoute]!));
-    } else {
+  void checkAuthentication() async {
+    emit(MainLoading());
+    try {
+      final user = await authCubit.getCurrentUser();
+      if (user.isNotEmpty) {
+        String defaultRoute = "alarms";
+        emit(AuthenticatedState(mainRoutes[defaultRoute]!, user));
+      } else {
+        emit(UnauthenticatedState());
+      }
+    } catch (e) {
       emit(UnauthenticatedState());
     }
   }

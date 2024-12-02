@@ -1,4 +1,5 @@
 import 'dart:io';
+import '../../../../utils/format.dart';
 import '../../domain/models/alarm.dart' as alarm_obj;
 import 'package:alarm/alarm.dart';
 
@@ -14,7 +15,7 @@ class AlarmNativeRepo {
       fadeDuration: 3.0,
       warningNotificationOnKill: Platform.isIOS,
       notificationSettings: NotificationSettings(
-        title: "${alarm.time}",
+        title: Format.formatAlarmTime(alarm.time),
         body: alarm.label,
         stopButton: "Stop",
         icon: 'notification_icon',

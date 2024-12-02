@@ -91,7 +91,23 @@ class AlarmCubit extends Cubit<AlarmState> {
         await alarmRepo.updateAlarm(updatedAlarm);
       }
 
-      mainCubit.checkAuthentication(true);
+      mainCubit.checkAuthentication();
+      loadAlarms();
+    } catch (error) {
+      emit(AlarmError('Failed to stop alarm: $error'));
+    }
+  }
+
+  Future<void> snoozeAlarm(int id) async {
+    try {
+      emit(AlarmLoading());
+      final alarm = await alarmRepo.getAlarm(id);
+      final newtime = DateTime.now()
+          .add(const Duration(minutes: 5))
+          .copyWith(second: 0, microsecond: 0);
+      final updatedAlarm = alarm.copyWith(isActive: true, time: newtime);
+      await alarmNativeRepo.addAlarm(updatedAlarm);
+      mainCubit.checkAuthentication();
       loadAlarms();
     } catch (error) {
       emit(AlarmError('Failed to stop alarm: $error'));

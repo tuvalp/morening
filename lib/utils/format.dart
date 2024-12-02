@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 
 class Format {
   static String formatPlanLabel(String label) {
+    if (label.isEmpty) {
+      return label;
+    }
+
     return label
         .split('_') // Split the label by underscores
         .map((word) =>
@@ -39,5 +43,14 @@ class Format {
     final now = date ?? DateTime.now();
     return DateTime(
         now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
+  }
+
+  static String extractMessage(String error) {
+    final regex = RegExp(r'"message":\s?"(.*?)"');
+    final match = regex.firstMatch(error);
+    if (match != null && match.groupCount > 0) {
+      return match.group(1)!;
+    }
+    return "An unknown error occurred";
   }
 }
