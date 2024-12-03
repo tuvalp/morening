@@ -5,15 +5,25 @@ import 'auth_state.dart';
 class AuthCubit extends Cubit<AuthState> {
   final AuthCognitoRepo _authRepo;
 
-  AuthCubit(this._authRepo) : super(AuthInitial());
+  AuthCubit(this._authRepo) : super(AuthInitial()) {
+    print('AuthCubit initialized'); // Debugging log
+    getCurrentUser();
+  }
 
   Future<String> getCurrentUser() async {
+    emit(AuthLoading());
     try {
       final user = await _authRepo.getUser();
-      emit(AuthUserLoaded(user));
+      print('User fetched: $user'); // Debugging log
+      if (user.isEmpty) {
+        emit(Unauthenticated());
+      } else {
+        emit(Authenticated(user));
+      }
       return user;
     } catch (e) {
-      emit(AuthError('Failed to get current user: $e'));
+      print('Error in getUser: $e'); // Debugging log
+      emit(Unauthenticated());
       return '';
     }
   }
@@ -24,17 +34,40 @@ class AuthCubit extends Cubit<AuthState> {
       await _authRepo.login(email, password);
       await getCurrentUser();
     } catch (e) {
-      emit(AuthError('Failed to login: $e'));
+      emit(AuthError(e.toString()));
     }
   }
 
-  void register(String email, String password) async {
+  void register(String email, String password, String name) async {
     emit(AuthLoading());
     try {
-      await _authRepo.register(email, password);
-      await getCurrentUser();
+      await _authRepo.register(email, password, name);
+      emit(AuthOnRegister());
     } catch (e) {
-      emit(AuthError('Failed to register: $e'));
+      emit(AuthError(e.toString()));
+    }
+  }
+
+  void confirmUser(String confirmationCode, String email) async {
+    emit(AuthLoading());
+    try {
+      await _authRepo.confirmUser(confirmationCode, email);
+      emit(AuthRegisterSuccess());
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
+
+  void logout() async {
+    emit(AuthLoading());
+    try {
+      print('Attempting logout...'); // Debug log
+      await _authRepo.logout();
+      print('Logout successful, emitting Unauthenticated...'); // Debug log
+      emit(Unauthenticated());
+    } catch (e) {
+      print('Error during logout: $e'); // Debug log
+      emit(AuthError('Logout failed: ${e.toString()}'));
     }
   }
 }

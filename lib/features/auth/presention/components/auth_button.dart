@@ -5,10 +5,12 @@ class AuthButton extends StatelessWidget {
     super.key,
     required this.onPressed,
     required this.text,
+    this.disabled = false,
   });
 
   final void Function() onPressed;
   final String text;
+  final bool disabled;
 
   @override
   Widget build(BuildContext context) {
@@ -19,14 +21,18 @@ class AuthButton extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(100),
-          color: Theme.of(context).colorScheme.primary,
+          color: disabled
+              ? Theme.of(context).colorScheme.onSurfaceVariant
+              : Theme.of(context).colorScheme.primary,
         ),
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
         child: Center(
           child: Text(
             text,
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onPrimary,
+              color: disabled
+                  ? Theme.of(context).colorScheme.tertiary
+                  : Theme.of(context).colorScheme.onPrimary,
               fontWeight: FontWeight.w600,
               fontSize: 16,
             ),

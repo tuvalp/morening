@@ -1,9 +1,39 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:morening_2/features/auth/presention/page/confirm_screen.dart';
 import '../components/auth_button.dart';
 
-class TermsScreen extends StatelessWidget {
-  const TermsScreen({super.key});
+class TermsScreen extends StatefulWidget {
+  final String email;
+  const TermsScreen({super.key, required this.email});
+
+  @override
+  State<TermsScreen> createState() => _TermsScreenState();
+}
+
+class _TermsScreenState extends State<TermsScreen> {
+  String fileContent = "";
+  bool isAgree = false;
+
+  @override
+  void initState() {
+    super.initState();
+    loadTxtFile();
+  }
+
+  Future<void> loadTxtFile() async {
+    try {
+      final content =
+          await rootBundle.loadString('assets/terms_of_agreement.txt');
+      setState(() {
+        fileContent = content;
+      });
+    } catch (e) {
+      setState(() {
+        fileContent = "Failed to load the file: $e";
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,11 +74,11 @@ class TermsScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Container(
-                  height: 250,
+                  height: 300,
                   padding: const EdgeInsets.all(16),
                   child: SingleChildScrollView(
                     child: Text(
-                      'By continuing, you agree to the terms and conditions of MoreNing. If you do not agree to these terms, please do not continue to use our app.',
+                      fileContent,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.normal,
@@ -60,7 +90,12 @@ class TermsScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Checkbox(value: false, onChanged: (v) => ()),
+                    Checkbox(
+                      value: isAgree,
+                      onChanged: (value) => (setState(() {
+                        isAgree = value!;
+                      })),
+                    ),
                     const Text(
                       'I agree to the terms and conditions',
                       style: TextStyle(
@@ -75,7 +110,17 @@ class TermsScreen extends StatelessWidget {
             const SizedBox(height: 32),
             AuthButton(
               text: 'Continue',
-              onPressed: () => (),
+              onPressed: () {
+                if (isAgree) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ConfirmScreen(email: widget.email),
+                    ),
+                  );
+                }
+              },
+              disabled: !isAgree,
             ),
             const SizedBox(height: 32),
             const SizedBox(height: 62),

@@ -36,7 +36,7 @@ class AuthCognitoRepo implements AuthRepo {
 
   @override
   @override
-  Future<void> register(String email, String password) async {
+  Future<void> register(String email, String password, String name) async {
     try {
       // Sign up a new user with email and password
       SignUpResult result = await Amplify.Auth.signUp(
@@ -45,13 +45,7 @@ class AuthCognitoRepo implements AuthRepo {
         options: SignUpOptions(
           userAttributes: {
             CognitoUserAttributeKey.email: email,
-            CognitoUserAttributeKey.birthdate: '2000-01-01', // Example value
-            CognitoUserAttributeKey.gender: 'male', // Example value
-            CognitoUserAttributeKey.updatedAt:
-                DateTime.now().millisecondsSinceEpoch.toString(),
-            CognitoUserAttributeKey.name: 'John Doe',
-            CognitoUserAttributeKey.zoneinfo: 'America/Los_Angeles',
-            CognitoUserAttributeKey.picture: 'https://example.com/picture.jpg',
+            CognitoUserAttributeKey.name: name
           },
         ),
       );
@@ -63,6 +57,21 @@ class AuthCognitoRepo implements AuthRepo {
       }
     } catch (e) {
       print('Error during registration: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> confirmUser(String confirmationCode, email) async {
+    try {
+      // Confirm the user's sign-up
+      await Amplify.Auth.confirmSignUp(
+        username: email,
+        confirmationCode: confirmationCode,
+      );
+      print('User confirmed successfully');
+    } catch (e) {
+      print('Error during confirmation: $e');
       rethrow;
     }
   }

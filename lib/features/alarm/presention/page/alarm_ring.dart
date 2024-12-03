@@ -2,11 +2,10 @@ import 'package:alarm/alarm.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:morening_2/features/main/presention/main_cubit.dart';
 import 'package:morening_2/utils/format.dart';
 import 'package:slide_to_act/slide_to_act.dart';
-import '../../../main/presention/main_state.dart';
 import '../alarm_cubit.dart';
+import '../alarm_state.dart';
 
 class AlarmRingView extends StatelessWidget {
   final AlarmSettings alarm;
@@ -14,7 +13,7 @@ class AlarmRingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final alarms = context.read<MainCubit>().state as AlarmRingingState;
+    final alarms = context.read<AlarmCubit>().state as AlarmRingingState;
     final alarm = alarms.alarm;
 
     return Scaffold(

@@ -30,6 +30,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/ringtones/
+    - assets/terms_of_agreement.txt
 
   fonts:
     - family: Roboto

@@ -1,3 +1,4 @@
+import 'package:alarm/alarm.dart' show AlarmSettings;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../alarm/domain/models/alarm.dart';
 import '../data/repository/alarm_native_repo.dart';
@@ -13,6 +14,10 @@ class AlarmCubit extends Cubit<AlarmState> {
   AlarmCubit(this.alarmRepo, this.alarmNativeRepo, this.mainCubit)
       : super(const AlarmInitial()) {
     loadAlarms();
+  }
+
+  void onAlarmRing(AlarmSettings alarm) {
+    emit(AlarmRingingState(alarm));
   }
 
   Future<void> loadAlarms() async {
@@ -91,7 +96,7 @@ class AlarmCubit extends Cubit<AlarmState> {
         await alarmRepo.updateAlarm(updatedAlarm);
       }
 
-      mainCubit.checkAuthentication();
+      mainCubit.mainHome();
       loadAlarms();
     } catch (error) {
       emit(AlarmError('Failed to stop alarm: $error'));
@@ -107,7 +112,7 @@ class AlarmCubit extends Cubit<AlarmState> {
           .copyWith(second: 0, microsecond: 0);
       final updatedAlarm = alarm.copyWith(isActive: true, time: newtime);
       await alarmNativeRepo.addAlarm(updatedAlarm);
-      mainCubit.checkAuthentication();
+      mainCubit.mainHome();
       loadAlarms();
     } catch (error) {
       emit(AlarmError('Failed to stop alarm: $error'));

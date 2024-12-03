@@ -1,5 +1,3 @@
-import 'package:alarm/model/alarm_settings.dart';
-
 import '../domain/models/route.dart';
 
 abstract class MainState {
@@ -14,17 +12,8 @@ class MainLoading extends MainState {
   const MainLoading();
 }
 
-class AlarmRingingState extends MainState {
-  final AlarmSettings alarm;
-
-  const AlarmRingingState(this.alarm);
-}
-
-class AuthenticatedState extends MainState {
+class MainLoad extends MainState {
   final MainRoute screen;
-  final String? userId;
 
-  const AuthenticatedState(this.screen, this.userId);
+  const MainLoad(this.screen);
 }
-
-class UnauthenticatedState extends MainState {}

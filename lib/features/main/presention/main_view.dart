@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:morening_2/features/main/domain/models/route.dart';
+import '/features/main/domain/models/route.dart';
 
 import 'components/main_app_bar.dart';
 import 'components/main_bottom_bar.dart';

@@ -4,15 +4,16 @@ import 'package:alarm/alarm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:morening_2/config/permission.dart';
-import 'package:morening_2/features/auth/presention/page/terms_screen.dart';
 import 'package:morening_2/features/main/presention/main_view.dart';
 import 'package:morening_2/theme/theme.dart';
 import '../features/alarm/data/repository/alarm_store_repo.dart';
 import '../features/alarm/presention/alarm_cubit.dart';
 import 'features/alarm/data/repository/alarm_native_repo.dart';
+import 'features/alarm/presention/alarm_state.dart';
 import 'features/alarm/presention/page/alarm_ring.dart';
 import 'features/auth/data/auth_cognito_repo.dart';
 import 'features/auth/presention/auth_cubit.dart';
+import 'features/auth/presention/auth_state.dart';
 import 'features/auth/presention/page/login_screen.dart';
 import 'features/main/presention/main_cubit.dart';
 import 'features/main/presention/main_state.dart';
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => MainCubit(),
+          create: (context) => MainCubit(AuthCubit(AuthCognitoRepo())),
         ),
         BlocProvider(
           create: (context) => AuthCubit(AuthCognitoRepo()),
@@ -78,7 +79,7 @@ class _AppViewState extends State<AppView> {
   }
 
   Future<void> navigateToRingScreen(AlarmSettings alarm) async {
-    context.read<MainCubit>().onAlarmRing(alarm);
+    context.read<AlarmCubit>().onAlarmRing(alarm);
   }
 
   @override
@@ -90,26 +91,59 @@ class _AppViewState extends State<AppView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MainCubit, MainState>(
+    return BlocBuilder<AlarmCubit, AlarmState>(
       builder: (context, state) {
-        if (state is AuthenticatedState) {
-          // Main View
-          return MainView(screen: state.screen);
-        } else if (state is AlarmRingingState) {
-          // Alarm Ring
+        if (state is AlarmRingingState) {
           return AlarmRingView(alarm: state.alarm);
-        } else if (state is UnauthenticatedState) {
-          // Auth view
-          //return const TermsScreen();
-          return const LoginScreen();
         } else {
-          return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
+          return BlocBuilder<AuthCubit, AuthState>(
+            builder: (context, state) {
+              if (state is Authenticated) {
+                // Main View
+                return BlocBuilder<MainCubit, MainState>(
+                  builder: (context, state) {
+                    if (state is MainLoad) {
+                      return MainView(screen: state.screen);
+                    } else {
+                      return const LoginScreen();
+                    }
+                  },
+                );
+              } else if (state is Unauthenticated) {
+                // Auth view
+                return const LoginScreen();
+              } else {
+                return const Scaffold(
+                  body: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
+            },
           );
         }
       },
     );
+
+    // return BlocBuilder<MainCubit, MainState>(
+    //   builder: (context, state) {
+    //     if (state is AuthenticatedState) {
+    //       // Main View
+    //       return MainView(screen: state.screen);
+    //     } else if (state is AlarmRingingState) {
+    //       // Alarm Ring
+    //       return AlarmRingView(alarm: state.alarm);
+    //     } else if (state is UnauthenticatedState) {
+    //       // Auth view
+    //       return const LoginScreen();
+    //     } else {
+    //       return const Scaffold(
+    //         body: Center(
+    //           child: CircularProgressIndicator(),
+    //         ),
+    //       );
+    //     }
+    //   },
+    //);
   }
 }

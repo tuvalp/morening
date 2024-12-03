@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../config/Routes.dart';
+import '../../data/main_routes.dart';
 import '../main_cubit.dart';
 import '../main_state.dart';
 
@@ -18,8 +18,7 @@ class _MainBottomNavBarState extends State<MainBottomNavBar> {
     Color isActive(String routeName) {
       final state = context.read<MainCubit>().state;
 
-      if (state is AuthenticatedState &&
-          state.screen == mainRoutes[routeName]) {
+      if (state is MainLoad && state.screen == mainRoutes[routeName]) {
         return Theme.of(context).colorScheme.primary;
       }
       return Theme.of(context).colorScheme.onSecondary;
