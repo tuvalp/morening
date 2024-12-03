@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
           create: (context) => MainCubit(AuthCubit(AuthCognitoRepo())),
         ),
         BlocProvider(
-          create: (context) => AuthCubit(AuthCognitoRepo()),
+          create: (context) => AuthCubit(AuthCognitoRepo())..getCurrentUser(),
         ),
         BlocProvider(
           create: (context) => AlarmCubit(

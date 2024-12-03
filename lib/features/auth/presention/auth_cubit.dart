@@ -6,25 +6,18 @@ class AuthCubit extends Cubit<AuthState> {
   final AuthCognitoRepo _authRepo;
 
   AuthCubit(this._authRepo) : super(AuthInitial()) {
-    print('AuthCubit initialized'); // Debugging log
     getCurrentUser();
   }
 
-  Future<String> getCurrentUser() async {
+  void getCurrentUser() async {
     emit(AuthLoading());
-    try {
-      final user = await _authRepo.getUser();
-      print('User fetched: $user'); // Debugging log
-      if (user.isEmpty) {
-        emit(Unauthenticated());
-      } else {
-        emit(Authenticated(user));
-      }
-      return user;
-    } catch (e) {
-      print('Error in getUser: $e'); // Debugging log
+
+    final user = await _authRepo.getUser();
+
+    if (user == null) {
       emit(Unauthenticated());
-      return '';
+    } else {
+      emit(Authenticated(user));
     }
   }
 
@@ -32,7 +25,7 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthLoading());
     try {
       await _authRepo.login(email, password);
-      await getCurrentUser();
+      getCurrentUser();
     } catch (e) {
       emit(AuthError(e.toString()));
     }

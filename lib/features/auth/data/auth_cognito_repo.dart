@@ -3,14 +3,16 @@ import '../domain/repository/auth_repo.dart';
 
 class AuthCognitoRepo implements AuthRepo {
   @override
-  Future<String> getUser() async {
+  Future<String?> getUser() async {
     try {
-      // Get the current user
       final user = await Amplify.Auth.getCurrentUser();
-      return user.userId;
+      return user.userId; // Return the user if signed in
     } catch (e) {
-      print('Error getting current user: $e');
-      rethrow;
+      if (e is SignedOutException) {
+        print("No user is currently signed in.");
+        return null; // Handle the scenario when no user is signed in
+      }
+      throw Exception("Error getting user: $e");
     }
   }
 
