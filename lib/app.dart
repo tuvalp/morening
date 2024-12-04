@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 
 import 'package:alarm/alarm.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:morening_2/utils/format.dart';
 
 import '/config/permission.dart';
 import '/theme/theme.dart';
+import 'utils/format.dart';
 
 import 'features/main/presention/main_view.dart';
 import 'features/main/presention/main_cubit.dart';
@@ -106,6 +106,7 @@ class _AppViewState extends State<AppView> {
           );
         } else if (state is AlarmError) {
           showSnackBar(context, state.message);
+          context.read<MainCubit>().resetMainView();
         }
       },
       child: BlocConsumer<AuthCubit, AuthState>(
@@ -116,6 +117,7 @@ class _AppViewState extends State<AppView> {
             context.read<MainCubit>().resetMainView();
           } else if (state is AuthError) {
             showSnackBar(context, state.error);
+            context.read<MainCubit>().resetMainView();
           }
         },
         builder: (context, state) {

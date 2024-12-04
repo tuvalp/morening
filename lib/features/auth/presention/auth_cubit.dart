@@ -22,13 +22,13 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   void login(String email, String password) async {
-    emit(AuthLoading());
+    emit(AuthInitial());
     try {
       await _authRepo.login(email, password);
       getCurrentUser();
-      emit(AuthInitial());
     } catch (e) {
       emit(AuthError(e.toString()));
+      getCurrentUser();
     }
   }
 
