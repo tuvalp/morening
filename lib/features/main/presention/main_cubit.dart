@@ -12,30 +12,19 @@ class MainCubit extends Cubit<MainState> {
     mainHome();
   }
 
+  void loadMainView() {
+    emit(MainLoad(mainRoutes["alarms"]!));
+  }
+
+  void resetMainView() {
+    emit(MainInitial());
+  }
+
   void mainHome() {
     onWidgetChanged(mainRoutes["alarms"]!);
   }
 
-  // Method to handle alarm ringing
-
   void onWidgetChanged(MainRoute screen) {
     emit(MainLoad(screen));
   }
-
-  // Method to handle authentication
-  // void checkAuthentication() async {
-  //   emit(MainLoading());
-  //   try {
-  //     final user = await authCubit.getCurrentUser();
-  //     if (user.isNotEmpty) {
-  //       print("user: $user");
-  //       String defaultRoute = "alarms";
-  //       emit(AuthenticatedState(mainRoutes[defaultRoute]!, user));
-  //     } else {
-  //       emit(UnauthenticatedState());
-  //     }
-  //   } catch (e) {
-  //     emit(UnauthenticatedState());
-  //   }
-  // }
 }

@@ -83,7 +83,7 @@ class AlarmCubit extends Cubit<AlarmState> {
 
   Future<void> stopAlarm(int id) async {
     try {
-      emit(AlarmLoading());
+      emit(AlarmInitial());
       final alarm = await alarmRepo.getAlarm(id);
       await alarmNativeRepo.removeAlarm(id);
 
@@ -96,7 +96,6 @@ class AlarmCubit extends Cubit<AlarmState> {
         await alarmRepo.updateAlarm(updatedAlarm);
       }
 
-      mainCubit.mainHome();
       loadAlarms();
     } catch (error) {
       emit(AlarmError('Failed to stop alarm: $error'));

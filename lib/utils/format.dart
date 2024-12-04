@@ -28,7 +28,7 @@ class Format {
 
   static String formatDuration(int duration) {
     if (duration > 60) {
-      return '${(duration / 60).toInt()}m';
+      return '${duration ~/ 60}m';
     } else {
       return '${duration}s';
     }

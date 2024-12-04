@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '/features/auth/presention/components/auth_textfield.dart';
-import '../../../../utils/format.dart';
 import '../auth_cubit.dart';
 import '../auth_state.dart';
 import '../components/auth_button.dart';
@@ -37,14 +36,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
         listener: (context, state) {
-          if (state is AuthError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                showCloseIcon: true,
-                content: Text(Format.extractMessage(state.error)),
-              ),
-            );
-          } else if (state is AuthRegisterSuccess) {
+          if (state is AuthRegisterSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 showCloseIcon: true,

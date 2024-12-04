@@ -1,24 +1,30 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 
 import 'package:alarm/alarm.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:morening_2/config/permission.dart';
-import 'package:morening_2/features/main/presention/main_view.dart';
-import 'package:morening_2/theme/theme.dart';
-import '../features/alarm/data/repository/alarm_store_repo.dart';
-import '../features/alarm/presention/alarm_cubit.dart';
-import 'features/alarm/data/repository/alarm_native_repo.dart';
-import 'features/alarm/presention/alarm_state.dart';
-import 'features/alarm/presention/page/alarm_ring.dart';
-import 'features/auth/data/auth_cognito_repo.dart';
-import 'features/auth/presention/auth_cubit.dart';
-import 'features/auth/presention/auth_state.dart';
-import 'features/auth/presention/page/login_screen.dart';
+import 'package:morening_2/utils/format.dart';
+
+import '/config/permission.dart';
+import '/theme/theme.dart';
+
+import 'features/main/presention/main_view.dart';
 import 'features/main/presention/main_cubit.dart';
 import 'features/main/presention/main_state.dart';
-import 'features/plan/data/repository/plan_api_repo.dart';
+
+import 'features/alarm/presention/alarm_cubit.dart';
+import 'features/alarm/presention/alarm_state.dart';
+import 'features/alarm/presention/page/alarm_ring.dart';
+import 'features/alarm/data/repository/alarm_native_repo.dart';
+import 'features/alarm/data/repository/alarm_store_repo.dart';
+
+import 'features/auth/presention/auth_cubit.dart';
+import 'features/auth/presention/auth_state.dart';
+import 'features/auth/data/auth_cognito_repo.dart';
+import 'features/auth/presention/page/login_screen.dart';
+
 import 'features/plan/presention/plan_cubit.dart';
+import 'features/plan/data/repository/plan_api_repo.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -75,11 +81,9 @@ class _AppViewState extends State<AppView> {
       AlarmPermissions.checkAndroidScheduleExactAlarmPermission();
     }
 
-    ringSubscription ??= Alarm.ringStream.stream.listen(navigateToRingScreen);
-  }
-
-  Future<void> navigateToRingScreen(AlarmSettings alarm) async {
-    context.read<AlarmCubit>().onAlarmRing(alarm);
+    ringSubscription = Alarm.ringStream.stream.listen((alarm) {
+      context.read<AlarmCubit>().onAlarmRing(alarm);
+    });
   }
 
   @override
@@ -91,59 +95,66 @@ class _AppViewState extends State<AppView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AlarmCubit, AlarmState>(
-      builder: (context, state) {
+    return BlocListener<AlarmCubit, AlarmState>(
+      listener: (context, state) {
         if (state is AlarmRingingState) {
-          return AlarmRingView(alarm: state.alarm);
-        } else {
-          return BlocBuilder<AuthCubit, AuthState>(
-            builder: (context, state) {
-              if (state is Authenticated) {
-                // Main View
-                return BlocBuilder<MainCubit, MainState>(
-                  builder: (context, state) {
-                    if (state is MainLoad) {
-                      return MainView(screen: state.screen);
-                    } else {
-                      return const LoginScreen();
-                    }
-                  },
-                );
-              } else if (state is Unauthenticated) {
-                // Auth view
-                return const LoginScreen();
-              } else {
-                return const Scaffold(
-                  body: Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                );
-              }
-            },
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AlarmRingView(alarm: state.alarm),
+            ),
           );
+        } else if (state is AlarmError) {
+          showSnackBar(context, state.message);
         }
       },
+      child: BlocConsumer<AuthCubit, AuthState>(
+        listener: (context, state) {
+          if (state is Authenticated) {
+            context.read<MainCubit>().loadMainView();
+          } else if (state is Unauthenticated) {
+            context.read<MainCubit>().resetMainView();
+          } else if (state is AuthError) {
+            showSnackBar(context, state.error);
+          }
+        },
+        builder: (context, state) {
+          if (state is AuthInitial) {
+            return const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          } else if (state is Authenticated) {
+            return BlocBuilder<MainCubit, MainState>(
+              builder: (context, mainState) {
+                if (mainState is MainLoad) {
+                  return MainView(screen: mainState.screen);
+                } else {
+                  return const LoginScreen();
+                }
+              },
+            );
+          } else if (state is Unauthenticated) {
+            return const LoginScreen();
+          } else {
+            return const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+        },
+      ),
     );
-
-    // return BlocBuilder<MainCubit, MainState>(
-    //   builder: (context, state) {
-    //     if (state is AuthenticatedState) {
-    //       // Main View
-    //       return MainView(screen: state.screen);
-    //     } else if (state is AlarmRingingState) {
-    //       // Alarm Ring
-    //       return AlarmRingView(alarm: state.alarm);
-    //     } else if (state is UnauthenticatedState) {
-    //       // Auth view
-    //       return const LoginScreen();
-    //     } else {
-    //       return const Scaffold(
-    //         body: Center(
-    //           child: CircularProgressIndicator(),
-    //         ),
-    //       );
-    //     }
-    //   },
-    //);
   }
+}
+
+showSnackBar(BuildContext context, String message) {
+  return ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      showCloseIcon: true,
+      content: Text(Format.extractMessage(message)),
+    ),
+  );
 }

@@ -16,6 +16,11 @@ class AlarmRingView extends StatelessWidget {
     final alarms = context.read<AlarmCubit>().state as AlarmRingingState;
     final alarm = alarms.alarm;
 
+    Future<void> stopAlarm() async {
+      context.read<AlarmCubit>().stopAlarm(alarm.id);
+      Navigator.pop(context);
+    }
+
     return Scaffold(
       body: Center(
         child: Column(
@@ -90,7 +95,7 @@ class AlarmRingView extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
                 text: "Stop",
-                onSubmit: () => context.read<AlarmCubit>().stopAlarm(alarm.id),
+                onSubmit: stopAlarm,
               ),
             ),
           ],

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '/features/auth/presention/page/terms_screen.dart';
 
-import '../../../../utils/format.dart';
 import '../auth_cubit.dart';
 import '../auth_state.dart';
 import '../components/auth_button.dart';
@@ -56,14 +55,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
-        if (state is AuthError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              showCloseIcon: true,
-              content: Text(Format.extractMessage(state.error)),
-            ),
-          );
-        } else if (state is AuthOnRegister) {
+        if (state is AuthOnRegister) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
