@@ -81,6 +81,8 @@ class _AppViewState extends State<AppView> {
       AlarmPermissions.checkAndroidScheduleExactAlarmPermission();
     }
 
+    AlarmPermissions.initAutoStart();
+
     ringSubscription = Alarm.ringStream.stream.listen((alarm) {
       context.read<AlarmCubit>().onAlarmRing(alarm);
     });

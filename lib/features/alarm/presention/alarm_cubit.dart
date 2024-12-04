@@ -104,7 +104,7 @@ class AlarmCubit extends Cubit<AlarmState> {
 
   Future<void> snoozeAlarm(int id) async {
     try {
-      emit(AlarmLoading());
+      emit(AlarmInitial());
       final alarm = await alarmRepo.getAlarm(id);
       final newtime = DateTime.now()
           .add(const Duration(minutes: 5))

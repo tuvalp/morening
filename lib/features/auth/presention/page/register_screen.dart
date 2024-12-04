@@ -64,7 +64,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           );
         }
       },
-      child: SingleChildScrollView(
+      child: SafeArea(
         child: Scaffold(
           body: Center(
             child: Column(

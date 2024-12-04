@@ -21,6 +21,7 @@ dependencies:
   intl: ^0.20.1
   amplify_flutter: ^1.0.0
   amplify_auth_cognito: ^1.0.0
+  auto_start_flutter: ^0.1.1
 
 dev_dependencies:
   flutter_test:
