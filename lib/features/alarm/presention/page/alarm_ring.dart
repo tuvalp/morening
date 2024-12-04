@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:morening_2/utils/format.dart';
 import 'package:slide_to_act/slide_to_act.dart';
 import '../alarm_cubit.dart';
-import '../alarm_state.dart';
 
 class AlarmRingView extends StatelessWidget {
   final AlarmSettings alarm;
@@ -13,9 +12,6 @@ class AlarmRingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final alarms = context.read<AlarmCubit>().state as AlarmRingingState;
-    final alarm = alarms.alarm;
-
     Future<void> stopAlarm() async {
       context.read<AlarmCubit>().stopAlarm(alarm.id);
       Navigator.pop(context);
