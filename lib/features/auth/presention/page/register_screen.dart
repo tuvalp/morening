@@ -64,95 +64,97 @@ class _RegisterScreenState extends State<RegisterScreen> {
           );
         }
       },
-      child: Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              const SizedBox(height: 62),
-              Column(
-                children: [
-                  Text(
-                    'MoreNing',
-                    style: TextStyle(
-                      fontSize: 54,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                  const Text(
-                    'let\'s get started',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 62),
-              Column(
-                children: [
-                  AuthTextfield(
-                    controller: nameController,
-                    obscureText: false,
-                    labelText: 'Full Name',
-                  ),
-                  AuthTextfield(
-                    controller: emailController,
-                    obscureText: false,
-                    labelText: 'Email',
-                  ),
-                  AuthTextfield(
-                    controller: passwordController,
-                    obscureText: true,
-                    labelText: 'Password',
-                  ),
-                  AuthTextfield(
-                    controller: confirmPasswordController,
-                    obscureText: true,
-                    labelText: 'Confirm Password',
-                  ),
-                ],
-              ),
-              const SizedBox(height: 32),
-              AuthButton(
-                text: 'Register',
-                onPressed: register,
-              ),
-              const SizedBox(height: 32),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginScreen(),
-                    ),
-                  );
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+      child: SingleChildScrollView(
+        child: Scaffold(
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                const SizedBox(height: 62),
+                Column(
                   children: [
-                    const Text(
-                      'Already have an account?',
+                    Text(
+                      'MoreNing',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 54,
                         fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
-                    const SizedBox(width: 4),
-                    Text(
-                      "Login",
+                    const Text(
+                      'let\'s get started',
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 62),
-            ],
+                const SizedBox(height: 62),
+                Column(
+                  children: [
+                    AuthTextfield(
+                      controller: nameController,
+                      obscureText: false,
+                      labelText: 'Full Name',
+                    ),
+                    AuthTextfield(
+                      controller: emailController,
+                      obscureText: false,
+                      labelText: 'Email',
+                    ),
+                    AuthTextfield(
+                      controller: passwordController,
+                      obscureText: true,
+                      labelText: 'Password',
+                    ),
+                    AuthTextfield(
+                      controller: confirmPasswordController,
+                      obscureText: true,
+                      labelText: 'Confirm Password',
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 32),
+                AuthButton(
+                  text: 'Register',
+                  onPressed: register,
+                ),
+                const SizedBox(height: 32),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const LoginScreen(),
+                      ),
+                    );
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Already have an account?',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        "Login",
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 62),
+              ],
+            ),
           ),
         ),
       ),
