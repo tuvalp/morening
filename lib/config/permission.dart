@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'package:flutter/services.dart';
 
 import 'package:alarm/alarm.dart';
-import 'package:auto_start_flutter/auto_start_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class AlarmPermissions {
@@ -37,18 +35,6 @@ class AlarmPermissions {
       alarmPrint(
         'Schedule exact alarm permission ${res.isGranted ? '' : 'not'} granted',
       );
-    }
-  }
-
-  static Future<void> initAutoStart() async {
-    try {
-      //check auto-start availability.
-      var test = await (isAutoStartAvailable as FutureOr<bool>);
-      print(test);
-      //if available then navigate to auto-start setting page.
-      if (test) await getAutoStartPermission();
-    } on PlatformException catch (e) {
-      print(e);
     }
   }
 }
