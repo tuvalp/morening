@@ -17,6 +17,11 @@ class AlarmRingView extends StatelessWidget {
       Navigator.pop(context);
     }
 
+    Future<void> snoozeAlarm() async {
+      context.read<AlarmCubit>().snoozeAlarm(alarm.id);
+      Navigator.pop(context);
+    }
+
     return Scaffold(
       body: Center(
         child: Column(
@@ -50,7 +55,7 @@ class AlarmRingView extends StatelessWidget {
               ],
             ),
             GestureDetector(
-              onTap: () => context.read<AlarmCubit>().snoozeAlarm(alarm.id),
+              onTap: snoozeAlarm,
               child: Container(
                 padding: const EdgeInsets.all(52),
                 decoration: BoxDecoration(
