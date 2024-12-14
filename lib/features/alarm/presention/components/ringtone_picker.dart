@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 // Utils
-import '../../../../config/ringtone_array.dart';
+import '../../../../utils/ringtone_array.dart';
 import '../../../../utils/format.dart';
 
 class RingtoneSheet extends StatefulWidget {

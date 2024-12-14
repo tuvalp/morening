@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:alarm/alarm.dart';
-import 'package:autostarter/autostarter.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class AlarmPermissions {
@@ -37,26 +36,15 @@ class AlarmPermissions {
         'Schedule exact alarm permission ${res.isGranted ? '' : 'not'} granted',
       );
     }
-  }
 
-  static Future<void> getAutoStartPermission() async {
-    try {
-      // Check if AutoStart permission feature is available on the device
-      bool? isAvailable = await Autostarter.isAutoStartPermissionAvailable();
-      if (isAvailable == true) {
-        // Check the AutoStart permission state
-        bool? status = await Autostarter.checkAutoStartState();
-        if (status == null) {
-          // Handle null status if needed
-        } else {
-          if (status == false) {
-            // Request AutoStart permission if it is not enabled
-            await Autostarter.getAutoStartPermission(newTask: true);
-          }
-        }
-      }
-    } catch (e) {
-      print(e);
+    final autoStart = await Permission.criticalAlerts.status;
+    alarmPrint('Critical alerts permission: $autoStart.');
+    if (autoStart.isDenied) {
+      alarmPrint('Requesting critical alerts permission...');
+      final res = await Permission.criticalAlerts.request();
+      alarmPrint(
+        'Critical alerts permission ${res.isGranted ? '' : 'not'} granted',
+      );
     }
   }
 }

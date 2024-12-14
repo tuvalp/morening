@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:alarm/alarm.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:morening_2/features/auth/data/auth_api_repo.dart';
 
 import '/config/permission.dart';
 import '/theme/theme.dart';
@@ -31,32 +32,44 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => MainCubit(AuthCubit(AuthCognitoRepo())),
-        ),
-        BlocProvider(
-          create: (context) => AuthCubit(AuthCognitoRepo())..getCurrentUser(),
-        ),
-        BlocProvider(
-          create: (context) => AlarmCubit(
-            AlarmStoreRepo(),
-            AlarmNativeRepo(),
-            context.read<MainCubit>(),
-          ),
-        ),
-        BlocProvider(
-          create: (context) => PlanCubit(
-            PlanApiRepo(),
-          ),
-        ),
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'MoreNing',
-        theme: theme(),
-        home: const AppView(),
+    return BlocProvider(
+      create: (context) =>
+          AuthCubit(AuthCognitoRepo(), AuthApiRepo())..getCurrentUser(),
+      child: BlocBuilder<AuthCubit, AuthState>(
+        builder: (context, state) {
+          if (state is Authenticated) {
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (context) => MainCubit(context.read<AuthCubit>()),
+                ),
+                BlocProvider(
+                  create: (context) =>
+                      PlanCubit(PlanApiRepo(), state.user.id)..loadPlan(),
+                ),
+                BlocProvider(
+                  create: (context) => AlarmCubit(
+                    AlarmStoreRepo(),
+                    AlarmNativeRepo(),
+                    context.read<MainCubit>(),
+                  ),
+                ),
+              ],
+              child: MaterialApp(
+                debugShowCheckedModeBanner: false,
+                title: 'MoreNing',
+                theme: theme(),
+                home: const AppView(),
+              ),
+            );
+          }
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'MoreNing',
+            theme: theme(),
+            home: const LoginScreen(),
+          );
+        },
       ),
     );
   }
@@ -71,6 +84,7 @@ class AppView extends StatefulWidget {
 
 class _AppViewState extends State<AppView> {
   static StreamSubscription<AlarmSettings>? ringSubscription;
+  static final _alarmStream = Alarm.ringStream.stream.asBroadcastStream();
 
   @override
   void initState() {
@@ -81,9 +95,8 @@ class _AppViewState extends State<AppView> {
       AlarmPermissions.checkAndroidScheduleExactAlarmPermission();
     }
 
-    AlarmPermissions.getAutoStartPermission();
-
-    ringSubscription = Alarm.ringStream.stream.listen((alarm) {
+    ringSubscription = _alarmStream.listen((alarm) {
+      if (!mounted) return;
       context.read<AlarmCubit>().onAlarmRing(alarm);
     });
   }
@@ -97,57 +110,44 @@ class _AppViewState extends State<AppView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AlarmCubit, AlarmState>(
-      listener: (context, state) {
-        if (state is AlarmRingingState) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AlarmRingView(alarm: state.alarm),
-            ),
-          );
-        } else if (state is AlarmError) {
-          showSnackBar(context, state.message);
-          context.read<MainCubit>().resetMainView();
-        }
-      },
-      child: BlocConsumer<AuthCubit, AuthState>(
-        listener: (context, state) {
-          if (state is Authenticated) {
-            context.read<MainCubit>().loadMainView();
-          } else if (state is Unauthenticated) {
-            context.read<MainCubit>().resetMainView();
-          } else if (state is AuthError) {
-            showSnackBar(context, state.error);
-            context.read<MainCubit>().resetMainView();
-          }
-        },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<AlarmCubit, AlarmState>(
+          listener: (context, state) {
+            if (state is AlarmRingingState) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AlarmRingView(alarm: state.alarm),
+                ),
+              );
+            } else if (state is AlarmError) {
+              showSnackBar(context, state.message);
+              if (context.read<AuthCubit>().state is Authenticated) {
+                context.read<MainCubit>().resetMainView();
+              }
+            }
+          },
+        ),
+        BlocListener<AuthCubit, AuthState>(
+          listener: (context, state) {
+            if (state is Unauthenticated || state is AuthError) {
+              if (state is AuthError) {
+                showSnackBar(context, state.error);
+              }
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (_) => const LoginScreen()),
+                (route) => false,
+              );
+            }
+          },
+        ),
+      ],
+      child: BlocBuilder<MainCubit, MainState>(
         builder: (context, state) {
-          if (state is AuthInitial) {
-            return const Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          } else if (state is Authenticated) {
-            return BlocBuilder<MainCubit, MainState>(
-              builder: (context, mainState) {
-                if (mainState is MainLoad) {
-                  return MainView(screen: mainState.screen);
-                } else {
-                  return const LoginScreen();
-                }
-              },
-            );
-          } else if (state is Unauthenticated) {
-            return const LoginScreen();
-          } else {
-            return const Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          }
+          return state is MainLoad
+              ? MainView(screen: state.screen)
+              : const Center(child: CircularProgressIndicator());
         },
       ),
     );

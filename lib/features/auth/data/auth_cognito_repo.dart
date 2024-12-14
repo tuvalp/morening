@@ -6,11 +6,10 @@ class AuthCognitoRepo implements AuthRepo {
   Future<String?> getUser() async {
     try {
       final user = await Amplify.Auth.getCurrentUser();
-      return user.userId; // Return the user if signed in
+      return user.userId;
     } catch (e) {
       if (e is SignedOutException) {
-        print("No user is currently signed in.");
-        return null; // Handle the scenario when no user is signed in
+        return null;
       }
       throw Exception("Error getting user: $e");
     }
@@ -37,8 +36,7 @@ class AuthCognitoRepo implements AuthRepo {
   }
 
   @override
-  @override
-  Future<void> register(String email, String password, String name) async {
+  Future<String?> register(String email, String password, String name) async {
     try {
       // Sign up a new user with email and password
       SignUpResult result = await Amplify.Auth.signUp(
@@ -52,10 +50,10 @@ class AuthCognitoRepo implements AuthRepo {
         ),
       );
 
-      if (result.isSignUpComplete) {
-        print('User registered successfully');
+      if (result.userId != null) {
+        return result.userId;
       } else {
-        print('Registration not complete, additional steps required');
+        return null;
       }
     } catch (e) {
       print('Error during registration: $e');

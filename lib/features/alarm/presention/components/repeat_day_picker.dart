@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../config/days_array.dart';
+import '../../../../utils/days_array.dart';
 
 class RepeatDayPicker extends StatelessWidget {
   final List<int> selectedDays;

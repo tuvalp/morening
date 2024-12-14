@@ -2,8 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../plan/presention/plan_state.dart';
 import '../../presention/alarm_cubit.dart';
-import '../../../../config/ringtone_array.dart';
+import '../../../../utils/ringtone_array.dart';
 import '../../../plan/presention/plan_cubit.dart';
 import '../components/add_edit_alarm_app_bar.dart';
 import '../components/plans_picker.dart';
@@ -44,9 +45,11 @@ class AddEditAlarmViewState extends State<AddEditAlarmView> {
 
     _planId = widget.alarm?.planId ?? "";
     if (_planId.isEmpty) {
-      final plans = planCubit.state;
-      if (plans.isNotEmpty) {
-        _planId = plans.first.label;
+      if (planCubit.state is PlanLoaded) {
+        final plans = (planCubit.state as PlanLoaded).plans;
+        if (plans.isNotEmpty) {
+          _planId = plans.first.label;
+        }
       }
     }
   }

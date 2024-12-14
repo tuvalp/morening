@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:morening_2/features/auth/presention/auth_cubit.dart';
+import '../../profile/presention/pages/profile_screen.dart';
 import '../domain/models/route.dart';
 import '../../alarm/presention/page/alarm_view.dart';
 
@@ -20,16 +19,7 @@ Map<String, MainRoute> mainRoutes = {
     icon: Icons.devices,
   ),
   "profile": MainRoute(
-    widget: Center(
-      child: Builder(
-        builder: (context) => TextButton(
-          onPressed: () {
-            context.read<AuthCubit>().logout();
-          },
-          child: const Text("Logout"),
-        ),
-      ),
-    ),
+    widget: ProfileScreen(),
     title: "Profile",
     icon: Icons.account_circle,
   ),
