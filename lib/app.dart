@@ -94,8 +94,28 @@ class _AppViewState extends State<AppView> {
         builder: (context, state) {
           return state is MainLoad
               ? MainView(screen: state.screen)
-              : const Center(child: CircularProgressIndicator());
+              : _buildSplashScreen();
         },
+      ),
+    );
+  }
+
+  Widget _buildSplashScreen() {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          children: [
+            Text(
+              'MoreNing',
+              style: TextStyle(
+                fontSize: 54,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            CircularProgressIndicator(),
+          ],
+        ),
       ),
     );
   }
