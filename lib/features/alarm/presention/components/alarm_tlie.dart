@@ -34,6 +34,7 @@ class AlarmTile extends StatelessWidget {
   Widget _buildAlarmDetails(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
           Format.formatAlarmTime(alarm.time),
@@ -43,16 +44,16 @@ class AlarmTile extends StatelessWidget {
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
-        Text(
-          alarm.label.isEmpty
-              ? Format.formatPlanLabel(alarm.planId)
-              : "${alarm.label} | ${Format.formatPlanLabel(alarm.planId)}",
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.tertiary,
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
+        alarm.label.isEmpty
+            ? Text(
+                alarm.label,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.tertiary,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                ),
+              )
+            : Container(),
       ],
     );
   }
