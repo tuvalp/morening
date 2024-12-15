@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../services/navigation_service.dart';
+import '/utils/snackbar_extension.dart';
 import '/features/auth/presention/page/terms_screen.dart';
 
 import '../auth_cubit.dart';
@@ -16,39 +18,45 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  TextEditingController nameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
-  void register() {
-    final name = nameController.text;
-    final email = emailController.text;
-    final password = passwordController.text;
-    final confirmPassword = confirmPasswordController.text;
+  @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
 
-    if (name.isNotEmpty &&
-        email.isNotEmpty &&
-        password.isNotEmpty &&
-        confirmPassword.isNotEmpty) {
-      if (password == confirmPassword) {
-        context.read<AuthCubit>().register(email, password, name);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            showCloseIcon: true,
-            content: Text("Passwords do not match"),
-          ),
-        );
-      }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          showCloseIcon: true,
-          content: Text("Please fill all the fields"),
-        ),
-      );
+  void _register() {
+    final name = nameController.text.trim();
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+    final confirmPassword = confirmPasswordController.text.trim();
+
+    if (name.isEmpty ||
+        email.isEmpty ||
+        password.isEmpty ||
+        confirmPassword.isEmpty) {
+      context.showErrorSnackBar("Please fill all the fields");
+      return;
     }
+
+    if (password != confirmPassword) {
+      context.showErrorSnackBar("Passwords do not match");
+      return;
+    }
+
+    context.read<AuthCubit>().register(email, password, name);
+  }
+
+  void _navigateToLogin() {
+    NavigationService.navigateTo(const LoginScreen(), replace: true);
   }
 
   @override
@@ -56,107 +64,126 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is AuthOnRegister) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => TermsScreen(email: emailController.text),
+          NavigationService.navigateTo(
+            TermsScreen(email: emailController.text),
+            replace: true,
+          );
+        } else if (state is AuthError) {
+          if (Navigator.of(context, rootNavigator: true).canPop()) {
+            Navigator.of(context, rootNavigator: true).pop();
+          }
+          context.showErrorSnackBar(state.error);
+        } else if (state is AuthLoading) {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => const Center(
+              child: CircularProgressIndicator(),
             ),
           );
         }
       },
-      child: SafeArea(
-        child: Scaffold(
-          body: Center(
+      child: Scaffold(
+        body: SafeArea(
+          child: SingleChildScrollView(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(height: 62),
-                Column(
-                  children: [
-                    Text(
-                      'MoreNing',
-                      style: TextStyle(
-                        fontSize: 54,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                    const Text(
-                      'let\'s get started',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+                _buildHeader(context),
                 const SizedBox(height: 62),
-                Column(
-                  children: [
-                    AuthTextfield(
-                      controller: nameController,
-                      obscureText: false,
-                      labelText: 'Full Name',
-                    ),
-                    AuthTextfield(
-                      controller: emailController,
-                      obscureText: false,
-                      labelText: 'Email',
-                    ),
-                    AuthTextfield(
-                      controller: passwordController,
-                      obscureText: true,
-                      labelText: 'Password',
-                    ),
-                    AuthTextfield(
-                      controller: confirmPasswordController,
-                      obscureText: true,
-                      labelText: 'Confirm Password',
-                    ),
-                  ],
-                ),
+                _buildInputFields(),
                 const SizedBox(height: 32),
                 AuthButton(
                   text: 'Register',
-                  onPressed: register,
+                  onPressed: _register,
                 ),
                 const SizedBox(height: 32),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LoginScreen(),
-                      ),
-                    );
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Already have an account?',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        "Login",
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                _buildLoginLink(context),
                 const SizedBox(height: 62),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  /// Builds the header with the title and subtitle.
+  Widget _buildHeader(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          'MoreNing',
+          style: TextStyle(
+            fontSize: 54,
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+        const Text(
+          'Let\'s get started',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Builds the input fields for registration.
+  Widget _buildInputFields() {
+    return Column(
+      children: [
+        AuthTextfield(
+          controller: nameController,
+          obscureText: false,
+          labelText: 'Full Name',
+        ),
+        AuthTextfield(
+          controller: emailController,
+          obscureText: false,
+          labelText: 'Email',
+        ),
+        AuthTextfield(
+          controller: passwordController,
+          obscureText: true,
+          labelText: 'Password',
+        ),
+        AuthTextfield(
+          controller: confirmPasswordController,
+          obscureText: true,
+          labelText: 'Confirm Password',
+        ),
+      ],
+    );
+  }
+
+  /// Builds the login link at the bottom.
+  Widget _buildLoginLink(BuildContext context) {
+    return GestureDetector(
+      onTap: _navigateToLogin,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            'Already have an account?',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(width: 4),
+          Text(
+            "Login",
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.secondary,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
     );
   }

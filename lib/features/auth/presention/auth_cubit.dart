@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:morening_2/features/auth/data/auth_api_repo.dart';
+import '../data/auth_api_repo.dart';
 import '../data/auth_cognito_repo.dart';
 import 'auth_state.dart';
 
@@ -11,57 +11,65 @@ class AuthCubit extends Cubit<AuthState> {
     getCurrentUser();
   }
 
+  /// Fetches the current user and updates the state accordingly.
   Future<void> getCurrentUser() async {
     emit(AuthLoading());
+    try {
+      final userID = await _authRepo.getUser();
+      if (userID == null) {
+        emit(Unauthenticated());
+        return;
+      }
 
-    final userID = await _authRepo.getUser();
-    if (userID == null) {
-      emit(Unauthenticated());
-      return;
+      final user = await _apiRepo.getUser(userID);
+      emit(Authenticated(user));
+    } catch (e) {
+      emit(AuthError("Failed to fetch user: ${e.toString()}"));
     }
-
-    final user = await _apiRepo.getUser(userID);
-    emit(Authenticated(user));
   }
 
+  /// Logs the user in using email and password.
   Future<void> login(String email, String password) async {
     emit(AuthLoading());
     try {
       await _authRepo.login(email, password);
       await getCurrentUser();
     } catch (e) {
-      emit(AuthError(e.toString()));
+      emit(AuthError("Login failed: ${e.toString()}"));
     }
   }
 
+  /// Registers a new user with the given details.
   Future<void> register(String email, String password, String name) async {
     emit(AuthLoading());
     try {
       final userId = await _authRepo.register(email, password, name);
-      await _apiRepo.register(userId.toString(), email, name);
+      await _apiRepo.register(userId!, email, name);
       emit(AuthOnRegister());
     } catch (e) {
-      emit(AuthError(e.toString()));
+      emit(AuthError("Registration failed: ${e.toString()}"));
     }
   }
 
+  /// Confirms the user's account with a confirmation code.
   Future<void> confirmUser(String confirmationCode, String email) async {
     emit(AuthLoading());
     try {
       await _authRepo.confirmUser(confirmationCode, email);
       emit(AuthRegisterSuccess());
     } catch (e) {
-      emit(AuthError(e.toString()));
+      emit(AuthError("Confirmation failed: ${e.toString()}"));
     }
   }
 
+  /// Logs out the current user.
   Future<void> logout() async {
     emit(AuthLoading());
     try {
       await _authRepo.logout();
       emit(Unauthenticated());
     } catch (e) {
-      emit(AuthError('Logout failed: ${e.toString()}'));
+      emit(AuthError("Logout failed: ${e.toString()}"));
     }
   }
 }

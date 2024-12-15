@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:morening_2/utils/format.dart';
 import 'package:slide_to_act/slide_to_act.dart';
+import '../../../../app.dart';
+import '../../../../services/navigation_service.dart';
 import '../alarm_cubit.dart';
 
 class AlarmRingView extends StatelessWidget {
@@ -14,12 +16,12 @@ class AlarmRingView extends StatelessWidget {
   Widget build(BuildContext context) {
     Future<void> stopAlarm() async {
       context.read<AlarmCubit>().stopAlarm(alarm.id);
-      Navigator.pop(context);
+      NavigationService.navigateTo(const AppView());
     }
 
     Future<void> snoozeAlarm() async {
       context.read<AlarmCubit>().snoozeAlarm(alarm.id);
-      Navigator.pop(context);
+      NavigationService.navigateTo(const AppView());
     }
 
     return Scaffold(

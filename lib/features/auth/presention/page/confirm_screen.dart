@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '/services/navigation_service.dart';
+import '/utils/snackbar_extension.dart';
 import '/features/auth/presention/components/auth_textfield.dart';
 import '../auth_cubit.dart';
 import '../auth_state.dart';
@@ -8,6 +11,7 @@ import 'login_screen.dart';
 
 class ConfirmScreen extends StatefulWidget {
   final String email;
+
   const ConfirmScreen({super.key, required this.email});
 
   @override
@@ -15,91 +19,113 @@ class ConfirmScreen extends StatefulWidget {
 }
 
 class _ConfirmScreenState extends State<ConfirmScreen> {
-  TextEditingController confirmController = TextEditingController();
+  final TextEditingController confirmController = TextEditingController();
 
-  void confirm() {
-    if (confirmController.text.isNotEmpty) {
-      context
-          .read<AuthCubit>()
-          .confirmUser(confirmController.text, widget.email);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          showCloseIcon: true,
-          content: Text("Please Enter Your Confirmation Code"),
-        ),
-      );
+  @override
+  void dispose() {
+    confirmController.dispose();
+    super.dispose();
+  }
+
+  /// Handles the confirmation logic.
+  void _confirm() {
+    final confirmationCode = confirmController.text.trim();
+
+    if (confirmationCode.isEmpty) {
+      context.showErrorSnackBar("Please enter your confirmation code");
+      return;
     }
+
+    context.read<AuthCubit>().confirmUser(confirmationCode, widget.email);
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
-        listener: (context, state) {
-          if (state is AuthRegisterSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                showCloseIcon: true,
-                content: Text("You Have Registered Successfully, Please Login"),
-              ),
-            );
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => LoginScreen()));
-          }
-        },
-        child: Scaffold(
-          body: Center(
+      listener: (context, state) {
+        if (state is AuthRegisterSuccess) {
+          context.showErrorSnackBar(
+              "You have registered successfully, please login");
+          NavigationService.navigateTo(const LoginScreen(), replace: true);
+        } else if (state is AuthError) {
+          context.showErrorSnackBar(state.error);
+        } else if (state is AuthLoading) {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => const Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(height: 62),
-                Column(
-                  children: [
-                    Text(
-                      'MoreNing',
-                      style: TextStyle(
-                        fontSize: 54,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                    const Text(
-                      'Welcome to MoreNing',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+                _buildHeader(context),
                 const SizedBox(height: 62),
-                Column(
-                  children: [
-                    Text(
-                      'Please Enter Your Confirmation Code',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    AuthTextfield(
-                      controller: confirmController,
-                      labelText: 'Confirmation Code',
-                      obscureText: false,
-                    ),
-                  ],
-                ),
+                _buildConfirmationInput(),
                 const SizedBox(height: 32),
                 AuthButton(
                   text: 'Continue',
-                  onPressed: () => confirm(),
+                  onPressed: _confirm,
                 ),
-                const SizedBox(height: 32),
                 const SizedBox(height: 62),
               ],
             ),
           ),
-        ));
+        ),
+      ),
+    );
+  }
+
+  /// Builds the header with the app name and welcome message.
+  Widget _buildHeader(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          'MoreNing',
+          style: TextStyle(
+            fontSize: 54,
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+        const Text(
+          'Welcome to MoreNing',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Builds the confirmation code input section.
+  Widget _buildConfirmationInput() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const Text(
+          'Please enter your confirmation code',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 16),
+        AuthTextfield(
+          controller: confirmController,
+          labelText: 'Confirmation Code',
+          obscureText: false,
+        ),
+      ],
+    );
   }
 }

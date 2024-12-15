@@ -14,9 +14,7 @@ class Authenticated extends AuthState {
 
 class Unauthenticated extends AuthState {}
 
-class AuthOnRegister extends AuthState {
-  AuthOnRegister();
-}
+class AuthOnRegister extends AuthState {}
 
 class AuthRegisterSuccess extends AuthState {}
 

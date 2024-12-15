@@ -2,10 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../plan/presention/plan_state.dart';
 import '../../presention/alarm_cubit.dart';
 import '../../../../utils/ringtone_array.dart';
-import '../../../plan/presention/plan_cubit.dart';
 import '../components/add_edit_alarm_app_bar.dart';
 import '../components/plans_picker.dart';
 import '../components/time_picker.dart';
@@ -34,8 +32,8 @@ class AddEditAlarmViewState extends State<AddEditAlarmView> {
   @override
   void initState() {
     super.initState();
-    final planCubit = context.read<PlanCubit>();
-    planCubit.loadPlan();
+    // final planCubit = context.read<PlanCubit>();
+    // planCubit.loadPlan();
 
     _selectedTime =
         widget.alarm?.time ?? DateTime.now().add(const Duration(minutes: 1));
@@ -44,14 +42,14 @@ class AddEditAlarmViewState extends State<AddEditAlarmView> {
     _ringtone = widget.alarm?.ringtone ?? RingtoneArray.ringtones.first;
 
     _planId = widget.alarm?.planId ?? "";
-    if (_planId.isEmpty) {
-      if (planCubit.state is PlanLoaded) {
-        final plans = (planCubit.state as PlanLoaded).plans;
-        if (plans.isNotEmpty) {
-          _planId = plans.first.label;
-        }
-      }
-    }
+    // if (_planId.isEmpty) {
+    //   if (planCubit.state is PlanLoaded) {
+    //     final plans = (planCubit.state as PlanLoaded).plans;
+    //     if (plans.isNotEmpty) {
+    //       _planId = plans.first.label;
+    //     }
+    //   }
+    // }
   }
 
   void _onTimeChanged(DateTime time) {

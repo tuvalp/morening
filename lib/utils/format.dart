@@ -50,7 +50,8 @@ class Format {
     final match = regex.firstMatch(error);
     if (match != null && match.groupCount > 0) {
       return match.group(1)!;
+    } else {
+      return error;
     }
-    return "An unknown error occurred";
   }
 }

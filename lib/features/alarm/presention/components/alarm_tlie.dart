@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../features/alarm/presention/alarm_cubit.dart';
 import '../../../../features/alarm/presention/page/add_edit_alarm_view.dart';
@@ -15,53 +15,72 @@ class AlarmTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-        child: Card(
-          elevation: 0,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    Format.formatAlarmTime(alarm.time),
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.w400,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                  Text(
-                    alarm.label == ''
-                        ? Format.formatPlanLabel(alarm.planId)
-                        : "${alarm.label} | ${Format.formatPlanLabel(alarm.planId)}",
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.tertiary,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              CupertinoSwitch(
-                activeColor: Theme.of(context).colorScheme.primary,
-                value: alarm.isActive,
-                onChanged: (value) {
-                  final AlarmCubit alarmRepo = context.read<AlarmCubit>();
-                  alarmRepo.toggleAlarmActive(alarm);
-                },
-              ),
-            ],
+      onTap: () => _navigateToEditAlarm(context),
+      child: Card(
+        elevation: 0,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _buildAlarmDetails(context),
+            const Spacer(),
+            _buildAlarmSwitch(context),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Builds the alarm time and label display.
+  Widget _buildAlarmDetails(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          Format.formatAlarmTime(alarm.time),
+          style: TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.w400,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddEditAlarmView(alarm: alarm),
-            ),
-          );
-        });
+        Text(
+          alarm.label.isEmpty
+              ? Format.formatPlanLabel(alarm.planId)
+              : "${alarm.label} | ${Format.formatPlanLabel(alarm.planId)}",
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.tertiary,
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Builds the CupertinoSwitch for toggling the alarm.
+  Widget _buildAlarmSwitch(BuildContext context) {
+    return CupertinoSwitch(
+      activeColor: Theme.of(context).colorScheme.primary,
+      value: alarm.isActive,
+      onChanged: (value) {
+        _toggleAlarm(context, value);
+      },
+    );
+  }
+
+  /// Toggles the alarm's active state using AlarmCubit.
+  void _toggleAlarm(BuildContext context, bool value) {
+    final alarmCubit = context.read<AlarmCubit>();
+    alarmCubit.toggleAlarmActive(alarm);
+  }
+
+  /// Navigates to the Add/Edit Alarm screen.
+  void _navigateToEditAlarm(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddEditAlarmView(alarm: alarm),
+      ),
+    );
   }
 }

@@ -3,7 +3,14 @@ import 'dart:async';
 import 'package:alarm/alarm.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class AlarmPermissions {
+class PermissionService {
+  static Future<void> checkPermissions() async {
+    await checkNotificationPermission();
+    if (Alarm.android) {
+      await checkAndroidScheduleExactAlarmPermission();
+    }
+  }
+
   static Future<void> checkNotificationPermission() async {
     final status = await Permission.notification.status;
     if (status.isDenied) {
