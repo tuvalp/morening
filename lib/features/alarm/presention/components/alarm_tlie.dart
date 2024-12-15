@@ -44,7 +44,7 @@ class AlarmTile extends StatelessWidget {
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
-        alarm.label.isEmpty
+        alarm.label.isNotEmpty
             ? Text(
                 alarm.label,
                 style: TextStyle(
