@@ -15,7 +15,11 @@ class AlarmService {
   Future<void> initialize() async {
     _ringSubscription?.cancel();
     _ringSubscription = _broadcastStream.listen((alarm) {
-      context.read<AlarmCubit>().onAlarmRing(alarm);
+      if (!context.mounted) {
+        return;
+      } else {
+        context.read<AlarmCubit>().onAlarmRing(alarm);
+      }
     });
   }
 

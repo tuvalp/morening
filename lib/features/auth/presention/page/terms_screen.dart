@@ -5,9 +5,18 @@ import '../components/auth_button.dart';
 import 'confirm_screen.dart';
 
 class TermsScreen extends StatefulWidget {
+  final String id;
   final String email;
+  final String name;
+  final String password;
 
-  const TermsScreen({super.key, required this.email});
+  const TermsScreen({
+    super.key,
+    required this.id,
+    required this.email,
+    required this.name,
+    required this.password,
+  });
 
   @override
   State<TermsScreen> createState() => _TermsScreenState();
@@ -41,7 +50,12 @@ class _TermsScreenState extends State<TermsScreen> {
   /// Handles the navigation to the confirmation screen.
   void _navigateToConfirmScreen() {
     NavigationService.navigateTo(
-      ConfirmScreen(email: widget.email),
+      ConfirmScreen(
+        id: widget.id,
+        email: widget.email,
+        name: widget.name,
+        password: widget.password,
+      ),
       replace: true,
     );
   }

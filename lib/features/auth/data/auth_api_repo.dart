@@ -3,9 +3,13 @@ import '/features/auth/domain/models/app_user.dart';
 import 'dart:convert';
 
 class AuthApiRepo {
-  Future<void> register(String id, String email, String name) {
-    AppUser newUser = AppUser(id: id, email: email, name: name);
-    return ApiService.post("add_user", newUser.toJson());
+  Future<void> register(String id, String email, String name, String answers) {
+    return ApiService.post("add_user", {
+      "id": id,
+      "email": email,
+      "name": name,
+      "wake_up_profile": answers,
+    });
   }
 
   Future<AppUser> getUser(String id) {

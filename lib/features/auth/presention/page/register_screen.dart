@@ -65,7 +65,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
       listener: (context, state) {
         if (state is AuthOnRegister) {
           NavigationService.navigateTo(
-            TermsScreen(email: emailController.text),
+            TermsScreen(
+              id: state.userId,
+              email: emailController.text,
+              name: nameController.text,
+              password: passwordController.text,
+            ),
             replace: true,
           );
         } else if (state is AuthError) {

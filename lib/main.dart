@@ -2,8 +2,12 @@ import 'package:alarm/alarm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:morening_2/features/alarm/presention/page/alarm_ring.dart';
 import 'config/cognito_config.dart';
 
+import 'features/alarm/presention/alarm_state.dart';
+import 'features/auth/presention/auth_state.dart';
+import 'features/auth/presention/page/login_screen.dart';
 import 'services/navigation_service.dart';
 import 'theme/theme.dart';
 
@@ -58,12 +62,27 @@ class MyApp extends StatelessWidget {
           lazy: false,
         ),
       ],
-      child: MaterialApp(
-        navigatorKey: NavigationService.navigatorKey,
-        debugShowCheckedModeBanner: false,
-        title: 'MoreNing',
-        theme: theme(),
-        home: const AppView(),
+      child: BlocListener<AlarmCubit, AlarmState>(
+        listener: (context, state) {
+          if (state is AlarmRingingState) {
+            NavigationService.navigateTo(AlarmRingView(alarm: state.alarm));
+          }
+        },
+        child: BlocBuilder<AuthCubit, AuthState>(
+          buildWhen: (previous, current) =>
+              current is Authenticated || current is Unauthenticated,
+          builder: (context, state) {
+            return MaterialApp(
+              navigatorKey: NavigationService.navigatorKey,
+              debugShowCheckedModeBanner: false,
+              title: 'MoreNing',
+              theme: theme(),
+              home: state is Authenticated
+                  ? const AppView()
+                  : const LoginScreen(),
+            );
+          },
+        ),
       ),
     );
   }

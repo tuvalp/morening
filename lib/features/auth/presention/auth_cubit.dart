@@ -22,6 +22,13 @@ class AuthCubit extends Cubit<AuthState> {
       }
 
       final user = await _apiRepo.getUser(userID);
+
+      if (user.email.isEmpty) {
+        await _authRepo.logout();
+        emit(Unauthenticated());
+        return;
+      }
+
       emit(Authenticated(user));
     } catch (e) {
       emit(AuthError("Failed to fetch user: ${e.toString()}"));
@@ -44,8 +51,7 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthLoading());
     try {
       final userId = await _authRepo.register(email, password, name);
-      await _apiRepo.register(userId!, email, name);
-      emit(AuthOnRegister());
+      emit(AuthOnRegister(userId!));
     } catch (e) {
       emit(AuthError("Registration failed: ${e.toString()}"));
     }
@@ -56,9 +62,20 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthLoading());
     try {
       await _authRepo.confirmUser(confirmationCode, email);
-      emit(AuthRegisterSuccess());
+      emit(AuthOnConfirm());
     } catch (e) {
       emit(AuthError("Confirmation failed: ${e.toString()}"));
+    }
+  }
+
+  Future<void> registerUser(String id, String email, String name,
+      String password, String answers) async {
+    emit(AuthLoading());
+    try {
+      await _apiRepo.register(id, email, name, answers);
+      await _authRepo.login(email, password);
+    } catch (e) {
+      emit(AuthError("Registration failed: ${e.toString()}"));
     }
   }
 

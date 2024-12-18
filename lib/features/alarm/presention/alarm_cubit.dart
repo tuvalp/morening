@@ -59,7 +59,6 @@ class AlarmCubit extends Cubit<AlarmState> {
 
   Future<void> updateAlarm(Alarm alarm) async {
     try {
-      emit(AlarmLoading());
       final now = DateTime.now();
       final adjustedAlarm = await _getAdjustedAlarm(alarm, now);
 
@@ -119,24 +118,27 @@ class AlarmCubit extends Cubit<AlarmState> {
   }
 
   Future<Alarm> _getAdjustedAlarm(Alarm alarm, DateTime now) async {
-    now.copyWith(second: 0, millisecond: 0);
+    final adjustedNow = now.copyWith(second: 0, millisecond: 0);
     if (alarm.days.isEmpty) {
       // If no days are specified, schedule for tomorrow if time has passed
-      final nextAlarmTime = alarm.time.isBefore(now)
-          ? alarm.time.add(const Duration(days: 1))
+      final nextAlarmTime = alarm.time.isBefore(adjustedNow)
+          ? DateTime(now.year, now.month, now.day + 1, alarm.time.hour,
+              alarm.time.minute)
           : alarm.time;
       return alarm.copyWith(time: nextAlarmTime);
-    } else if (alarm.days.contains(now.weekday)) {
+    } else if (alarm.days.contains(adjustedNow.weekday)) {
       // If today is in the alarm days, but the time has passed
-      if (alarm.time.isBefore(now)) {
-        final nextDay = _getNextDay(alarm.days, now.weekday);
-        final nextAlarmTime = _getNextDateForDay(now, nextDay, alarm.time);
+      if (alarm.time.isBefore(adjustedNow)) {
+        final nextDay = _getNextDay(alarm.days, adjustedNow.weekday);
+        final nextAlarmTime =
+            _getNextDateForDay(adjustedNow, nextDay, alarm.time);
         return alarm.copyWith(time: nextAlarmTime, id: alarm.id + nextDay);
       }
     } else {
       // If today is not in alarm.days, find the next valid day
-      final nextDay = _getNextDay(alarm.days, now.weekday);
-      final nextAlarmTime = _getNextDateForDay(now, nextDay, alarm.time);
+      final nextDay = _getNextDay(alarm.days, adjustedNow.weekday);
+      final nextAlarmTime =
+          _getNextDateForDay(adjustedNow, nextDay, alarm.time);
       return alarm.copyWith(time: nextAlarmTime, id: alarm.id + nextDay);
     }
     return alarm; // Return unchanged if no adjustments are needed

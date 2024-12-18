@@ -14,7 +14,13 @@ class Authenticated extends AuthState {
 
 class Unauthenticated extends AuthState {}
 
-class AuthOnRegister extends AuthState {}
+class AuthOnRegister extends AuthState {
+  final String userId;
+
+  AuthOnRegister(this.userId);
+}
+
+class AuthOnConfirm extends AuthState {}
 
 class AuthRegisterSuccess extends AuthState {}
 
