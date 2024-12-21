@@ -15,6 +15,22 @@ class AuthCognitoRepo implements AuthRepo {
     }
   }
 
+  Future<bool> isUserConfirmed() async {
+    try {
+      final result = await Amplify.Auth.fetchUserAttributes();
+      final emailVerified = result.firstWhere(
+          (attr) => attr.userAttributeKey == AuthUserAttributeKey.emailVerified,
+          orElse: () => AuthUserAttribute(
+              userAttributeKey: AuthUserAttributeKey.emailVerified,
+              value: 'false'));
+
+      return emailVerified.value == 'true';
+    } on AuthException catch (e) {
+      print('Error fetching user attributes: ${e.message}');
+      return false;
+    }
+  }
+
   @override
   Future<void> login(String email, String password) async {
     try {

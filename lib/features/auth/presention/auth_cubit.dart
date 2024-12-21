@@ -21,13 +21,13 @@ class AuthCubit extends Cubit<AuthState> {
         return;
       }
 
-      final user = await _apiRepo.getUser(userID);
-
-      if (user.email.isEmpty) {
-        await _authRepo.logout();
-        emit(Unauthenticated());
+      final isConfirmed = await _authRepo.isUserConfirmed();
+      if (!isConfirmed) {
+        emit(Unconfirmed());
         return;
       }
+
+      final user = await _apiRepo.getUser(userID);
 
       emit(Authenticated(user));
     } catch (e) {

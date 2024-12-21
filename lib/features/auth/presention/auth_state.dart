@@ -22,6 +22,8 @@ class AuthOnRegister extends AuthState {
 
 class AuthOnConfirm extends AuthState {}
 
+class Unconfirmed extends AuthState {}
+
 class AuthRegisterSuccess extends AuthState {}
 
 class AuthError extends AuthState {

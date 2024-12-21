@@ -14,10 +14,15 @@ class AlarmTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: () => _navigateToEditAlarm(context),
-      child: Card(
-        elevation: 0,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        margin: const EdgeInsets.only(bottom: 8),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(16),
+        ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -39,21 +44,23 @@ class AlarmTile extends StatelessWidget {
         Text(
           Format.formatAlarmTime(alarm.time),
           style: TextStyle(
-            fontSize: 30,
-            fontWeight: FontWeight.w400,
-            color: Theme.of(context).colorScheme.onSurface,
+            fontSize: 24,
+            fontWeight: FontWeight.w500,
+            color: alarm.isActive
+                ? Theme.of(context).colorScheme.onSurface
+                : Theme.of(context).colorScheme.onTertiary,
           ),
         ),
-        alarm.label.isNotEmpty
-            ? Text(
-                alarm.label,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.tertiary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                ),
-              )
-            : Container(),
+        Text(
+          alarm.label.isNotEmpty ? alarm.label : "alarm",
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w300,
+            color: alarm.isActive
+                ? Theme.of(context).colorScheme.onSurface
+                : Theme.of(context).colorScheme.onTertiary,
+          ),
+        )
       ],
     );
   }
