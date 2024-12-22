@@ -4,4 +4,5 @@ abstract class AuthRepo {
   Future<void> register(String email, String password, String name);
   Future<void> confirmUser(String confirmationCode, String email);
   Future<void> logout();
+  Future<void> deleteUser();
 }

@@ -6,8 +6,8 @@ ThemeData darkTheme() {
     fontFamily: 'OpenSans',
     scaffoldBackgroundColor: const Color(0xFF1E1E1E),
     colorScheme: const ColorScheme.light(
-      primary: Color(0xFF003049),
-      secondary: Color(0xFF669bbc),
+      primary: Color(0xFF6d8196),
+      secondary: Color(0xFFadcced),
       onPrimary: Color(0xFFFFFFFF),
       surface: Color(0xFF121212),
       onSurface: Color(0xFFFFFFFF),

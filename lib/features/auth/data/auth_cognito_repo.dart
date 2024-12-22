@@ -93,6 +93,16 @@ class AuthCognitoRepo implements AuthRepo {
   }
 
   @override
+  Future<void> deleteUser() async {
+    try {
+      await Amplify.Auth.deleteUser();
+    } catch (e) {
+      print('Error during deletion: $e');
+      rethrow;
+    }
+  }
+
+  @override
   Future<void> logout() async {
     try {
       // Sign out the current user

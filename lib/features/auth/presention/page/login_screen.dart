@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../app.dart';
+import '../../../home/pages/home_view.dart';
 import '../auth_cubit.dart';
-import '../auth_state.dart';
 import '../components/auth_button.dart';
 import '../components/auth_textfield.dart';
 import '/../services/navigation_service.dart';
@@ -37,87 +36,78 @@ class _LoginScreenState extends State<LoginScreen> {
       context.showErrorSnackBar("Please fill all the fields");
       return;
     }
+    showLoadingDialog();
 
-    context.read<AuthCubit>().login(email, password);
+    context.read<AuthCubit>().login(email, password).then((success) {
+      if (success) {
+        Navigator.of(context).pop();
+        NavigationService.navigateTo(const HomeView(), replace: true);
+      } else {
+        Navigator.of(context).pop();
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocConsumer<AuthCubit, AuthState>(
-        listenWhen: (previous, current) =>
-            current is AuthError ||
-            current is AuthLoading ||
-            current is Authenticated,
-        listener: (context, state) {
-          if (state is AuthLoading) {
-            setState(() => _isLoading = true);
-          } else if (state is AuthError) {
-            setState(() => _isLoading = false);
-            context.showErrorSnackBar(state.error);
-          } else if (state is Authenticated) {
-            setState(() => _isLoading = false);
-            NavigationService.navigateTo(const AppView(), replace: true);
-          }
-        },
-        buildWhen: (previous, current) => current is AuthLoading,
-        builder: (context, state) {
-          return SafeArea(
-            child: Stack(
-              children: [
-                SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const SizedBox(height: 62),
-                        _buildHeader(context),
-                        const SizedBox(height: 62),
-                        _buildInputFields(),
-                        const SizedBox(height: 32),
-                        AuthButton(
-                          text: 'Login',
-                          onPressed: _isLoading ? null : _login,
-                        ),
-                        const SizedBox(height: 32),
-                        _buildRegisterLink(context),
-                        const SizedBox(height: 62),
-                      ],
-                    ),
-                  ),
-                ),
-                if (_isLoading)
-                  Container(
-                    color: Colors.black26,
-                    child: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  ),
-              ],
-            ),
-          );
-        },
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 76),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildHeader(),
+            _buildInputFields(),
+            _buildRegisterLink(context),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  void showLoadingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Dialog.fullscreen(
+        backgroundColor: Colors.black.withOpacity(0.3),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Morning',
+                style: TextStyle(
+                  fontSize: 38,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              const SizedBox(height: 16),
+              const CircularProgressIndicator(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
     return Column(
       children: [
         Text(
-          'MoreNing',
-          style: TextStyle(
-            fontSize: 54,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
-        const Text(
-          'Welcome to MoreNing',
+          'Welcome to',
           style: TextStyle(
             fontSize: 16,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
+        Text(
+          'Morning',
+          style: TextStyle(
+            fontSize: 38,
             fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.primary,
           ),
         ),
       ],
@@ -132,11 +122,22 @@ class _LoginScreenState extends State<LoginScreen> {
           obscureText: false,
           labelText: 'Email',
         ),
-        const SizedBox(height: 16),
         AuthTextfield(
           controller: passwordController,
           obscureText: true,
           labelText: 'Password',
+        ),
+        const SizedBox(height: 16),
+        AuthButton(
+          text: 'Login',
+          onPressed: _isLoading ? null : _login,
+        ),
+        const SizedBox(height: 16),
+        GestureDetector(
+          onTap: () {
+            //NavigationService.navigateTo(const ForgotPasswordScreen(), replace: true);
+          },
+          child: const Text('Forgot Password?'),
         ),
       ],
     );

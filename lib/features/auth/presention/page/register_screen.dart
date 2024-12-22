@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../services/navigation_service.dart';
 import '/utils/snackbar_extension.dart';
-import '/features/auth/presention/page/terms_screen.dart';
 
 import '../auth_cubit.dart';
-import '../auth_state.dart';
 import '../components/auth_button.dart';
 import '../components/auth_textfield.dart';
 import 'login_screen.dart';
+import 'terms_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -23,15 +22,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
-
-  @override
-  void dispose() {
-    nameController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
-    confirmPasswordController.dispose();
-    super.dispose();
-  }
 
   void _register() {
     final name = nameController.text.trim();
@@ -52,7 +42,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
-    context.read<AuthCubit>().register(email, password, name);
+    showLoadingDialog();
+
+    context.read<AuthCubit>().register(email, password, name).then((id) {
+      if (id != null) {
+        Navigator.of(context).pop();
+        NavigationService.navigateTo(
+          TermsScreen(
+            id: id,
+            email: email,
+            name: name,
+            password: password,
+          ),
+          replace: true,
+        );
+      } else {
+        Navigator.of(context).pop();
+      }
+    });
   }
 
   void _navigateToLogin() {
@@ -61,76 +68,64 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthCubit, AuthState>(
-      listener: (context, state) {
-        if (state is AuthOnRegister) {
-          NavigationService.navigateTo(
-            TermsScreen(
-              id: state.userId,
-              email: emailController.text,
-              name: nameController.text,
-              password: passwordController.text,
-            ),
-            replace: true,
-          );
-        } else if (state is AuthError) {
-          if (Navigator.of(context, rootNavigator: true).canPop()) {
-            Navigator.of(context, rootNavigator: true).pop();
-          }
-          context.showErrorSnackBar(state.error);
-        } else if (state is AuthLoading) {
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => const Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        }
-      },
-      child: Scaffold(
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(height: 62),
-                _buildHeader(context),
-                const SizedBox(height: 62),
-                _buildInputFields(),
-                const SizedBox(height: 32),
-                AuthButton(
-                  text: 'Register',
-                  onPressed: _register,
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 76.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildHeader(),
+            _buildInputFields(),
+            _buildLoginLink(context),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void showLoadingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Dialog.fullscreen(
+        backgroundColor: Colors.black.withOpacity(0.3),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Morning',
+                style: TextStyle(
+                  fontSize: 38,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
-                const SizedBox(height: 32),
-                _buildLoginLink(context),
-                const SizedBox(height: 62),
-              ],
-            ),
+              ),
+              const SizedBox(height: 16),
+              const CircularProgressIndicator(),
+            ],
           ),
         ),
       ),
     );
   }
 
-  /// Builds the header with the title and subtitle.
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader() {
     return Column(
       children: [
         Text(
-          'MoreNing',
-          style: TextStyle(
-            fontSize: 54,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
-        const Text(
-          'Let\'s get started',
+          'Welcome to',
           style: TextStyle(
             fontSize: 16,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
+        Text(
+          'Morning',
+          style: TextStyle(
+            fontSize: 38,
             fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.primary,
           ),
         ),
       ],
@@ -161,11 +156,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
           obscureText: true,
           labelText: 'Confirm Password',
         ),
+        const SizedBox(height: 16),
+        AuthButton(
+          text: 'Register',
+          onPressed: _register,
+        ),
       ],
     );
   }
 
-  /// Builds the login link at the bottom.
   Widget _buildLoginLink(BuildContext context) {
     return GestureDetector(
       onTap: _navigateToLogin,
@@ -179,7 +178,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: 6),
           Text(
             "Login",
             style: TextStyle(

@@ -87,11 +87,12 @@ class _MyAppState extends State<MyApp> {
         child: BlocBuilder<ProfileCubit, Settings>(
           builder: (context, settings) {
             return MaterialApp(
-                navigatorKey: NavigationService.navigatorKey,
-                debugShowCheckedModeBanner: false,
-                title: 'MoreNing',
-                theme: AppTheme.getTheme(context),
-                home: const AppView());
+              navigatorKey: NavigationService.navigatorKey,
+              debugShowCheckedModeBanner: false,
+              title: 'MoreNing',
+              theme: AppTheme.getTheme(context),
+              home: const AppView(),
+            );
           },
         ),
       ),

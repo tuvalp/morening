@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:morening_2/features/auth/presention/page/wake_up_qustion.dart';
+import 'package:morening_2/features/home/pages/home_view.dart';
 
-import '/services/navigation_service.dart';
+import '../../../../services/navigation_service.dart';
 import '/utils/snackbar_extension.dart';
 import '/features/auth/presention/components/auth_textfield.dart';
 import '../auth_cubit.dart';
-import '../auth_state.dart';
 import '../components/auth_button.dart';
 
 class ConfirmScreen extends StatefulWidget {
@@ -44,76 +43,89 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
       context.showErrorSnackBar("Please enter your confirmation code");
       return;
     }
+    showLoadingDialog();
 
-    context.read<AuthCubit>().confirmUser(confirmationCode, widget.email);
+    context
+        .read<AuthCubit>()
+        .confirmUser(
+          confirmationCode,
+          widget.id,
+          widget.email,
+          widget.password,
+          widget.name,
+        )
+        .then((success) {
+      if (success == true) {
+        Navigator.of(context).pop();
+        NavigationService.navigateTo(const HomeView(), replace: true);
+      }
+      Navigator.of(context).pop();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthCubit, AuthState>(
-      listener: (context, state) {
-        if (state is AuthOnConfirm) {
-          NavigationService.navigateTo(
-            WakeUpQuestionScreen(
-              id: widget.id,
-              email: widget.email,
-              name: widget.name,
-              password: widget.password,
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 76.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildHeader(),
+            _buildConfirmationInput(),
+            AuthButton(
+              text: 'Continue',
+              onPressed: _confirm,
             ),
-            replace: true,
-          );
-        } else if (state is AuthLoading) {
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => const Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        }
-      },
-      child: Scaffold(
-        body: SafeArea(
-          child: GestureDetector(
-            onTap: () => FocusScope.of(context).unfocus(),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(height: 62),
-                _buildHeader(context),
-                const SizedBox(height: 62),
-                _buildConfirmationInput(),
-                const SizedBox(height: 32),
-                AuthButton(
-                  text: 'Continue',
-                  onPressed: _confirm,
+          ],
+        ),
+      ),
+    );
+  }
+
+  void showLoadingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Dialog.fullscreen(
+        backgroundColor: Colors.black.withOpacity(0.3),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Morning',
+                style: TextStyle(
+                  fontSize: 38,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
-                const SizedBox(height: 62),
-              ],
-            ),
+              ),
+              const SizedBox(height: 16),
+              const CircularProgressIndicator(),
+            ],
           ),
         ),
       ),
     );
   }
 
-  /// Builds the header with the app name and welcome message.
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader() {
     return Column(
       children: [
         Text(
-          'MoreNing',
-          style: TextStyle(
-            fontSize: 54,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
-        const Text(
-          'Welcome to MoreNing',
+          'Welcome to',
           style: TextStyle(
             fontSize: 16,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
+        Text(
+          'Morning',
+          style: TextStyle(
+            fontSize: 38,
             fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.primary,
           ),
         ),
       ],

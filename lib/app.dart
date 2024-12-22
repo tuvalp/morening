@@ -8,7 +8,6 @@ import '/services/permission_service.dart';
 import 'features/auth/presention/auth_cubit.dart';
 import 'features/auth/presention/auth_state.dart';
 import 'features/auth/presention/page/login_screen.dart';
-import 'features/auth/presention/page/confirm_screen.dart';
 import 'features/home/pages/home_view.dart';
 import 'services/alarm_service.dart';
 

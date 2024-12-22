@@ -15,14 +15,16 @@ class AlarmView extends StatelessWidget {
         if (state is AlarmLoaded) {
           final alarms = state.alarms;
 
-          return Container(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-            child: ListView.builder(
-              itemCount: alarms.length,
-              itemBuilder: (context, index) {
-                final alarm = alarms[index];
-                return AlarmTile(alarm: alarm);
-              },
+          return Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+              child: ListView.builder(
+                itemCount: alarms.length,
+                itemBuilder: (context, index) {
+                  final alarm = alarms[index];
+                  return AlarmTile(alarm: alarm);
+                },
+              ),
             ),
           );
         } else {

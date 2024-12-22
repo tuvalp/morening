@@ -2,11 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:morening_2/app.dart';
-
-import '../../../../services/navigation_service.dart';
 import '../auth_cubit.dart';
-import '../auth_state.dart';
 
 class Question {
   final String question;
@@ -58,6 +54,7 @@ class WakeUpQuestionScreen extends StatefulWidget {
 
 class _WakeUpQuestionScreenState extends State<WakeUpQuestionScreen> {
   int currentQuestionIndex = 0;
+  Answer? currentAnswer;
   List<Answer> answers = [];
 
   List<Question> questions = [
@@ -93,8 +90,9 @@ class _WakeUpQuestionScreenState extends State<WakeUpQuestionScreen> {
 
   void _handleAnswer(String question, String answer, int points) {
     setState(() {
-      answers.add(Answer(question, answer, points));
+      currentAnswer = Answer(question, answer, points);
 
+      answers.add(currentAnswer!);
       if (currentQuestionIndex < questions.length - 1) {
         currentQuestionIndex++;
       } else {
@@ -108,64 +106,23 @@ class _WakeUpQuestionScreenState extends State<WakeUpQuestionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
-      if (state is AuthLoading) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      }
-      if (state is Authenticated) {
-        NavigationService.navigateTo(
-          const AppView(),
-          replace: true,
-        );
-      }
-      return Scaffold(
-        body: Stack(
-          children: [
-            SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 62),
-                  _buildHeader(context),
-                  const SizedBox(height: 124),
-                  _buildSection(context, questions[currentQuestionIndex]),
-                  const SizedBox(height: 32),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-    });
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          'MoreNing',
-          style: TextStyle(
-            fontSize: 54,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
-        const Text(
-          'Welcome to MoreNing',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(height: 124),
+          _buildSection(context, questions[currentQuestionIndex]),
+          const SizedBox(height: 32),
+        ],
+      ),
     );
   }
 
   Widget _buildSection(BuildContext context, Question question) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         _buildQuestion(context, question.question),
         const SizedBox(height: 16),
@@ -199,8 +156,12 @@ class _WakeUpQuestionScreenState extends State<WakeUpQuestionScreen> {
             margin: const EdgeInsets.symmetric(horizontal: 16),
             width: double.infinity,
             decoration: BoxDecoration(
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.secondary,
+                  width: 2,
+                ),
                 borderRadius: BorderRadius.circular(100),
-                color: Theme.of(context).colorScheme.onSurfaceVariant),
+                color: Theme.of(context).colorScheme.surface),
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
             child: Center(
               child: Text(

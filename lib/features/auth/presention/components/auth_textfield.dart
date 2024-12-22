@@ -15,7 +15,7 @@ class AuthTextfield extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(8.0),
       child: TextField(
         controller: controller,
         obscureText: obscureText,
@@ -24,21 +24,21 @@ class AuthTextfield extends StatelessWidget {
           hintStyle: TextStyle(color: Theme.of(context).colorScheme.tertiary),
           contentPadding: const EdgeInsets.all(16),
           filled: true,
-          fillColor: Theme.of(context).colorScheme.onSurfaceVariant,
+          fillColor: Theme.of(context).colorScheme.surface,
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(18),
             borderSide: BorderSide(
-              width: 0.5,
+              width: 1,
               style: BorderStyle.solid,
               color: Theme.of(context).colorScheme.primary,
             ),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(18),
             borderSide: BorderSide(
-              width: 0.5,
+              width: 1,
               style: BorderStyle.solid,
-              color: Theme.of(context).colorScheme.onSecondary,
+              color: Theme.of(context).colorScheme.secondary,
             ),
           ),
           hintText: labelText,
