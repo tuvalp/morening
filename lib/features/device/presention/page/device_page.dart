@@ -8,9 +8,26 @@ class DevicePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Device'),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
-      body: const Center(
-        child: Text('Device'),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('You Have No Devices Connected'),
+            TextButton(
+              onPressed: () {},
+              child: Text(
+                'Connect Device',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

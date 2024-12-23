@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 ThemeData lightTheme() {
   return ThemeData(
     brightness: Brightness.light,
-    fontFamily: 'OpenSans',
+    fontFamily: 'Inter',
     scaffoldBackgroundColor: const Color(0xFFF5F5F5),
     colorScheme: const ColorScheme.light(
-      primary: Color(0xFF6d8196),
-      secondary: Color(0xFFadcced),
+      primary: Color(0xFF3EB489),
+      secondary: Color(0xFF76C7C0),
       onPrimary: Color(0xFFFFFFFF),
       surface: Color(0xFFFFFFFF),
       onSurface: Color(0xFF212121),

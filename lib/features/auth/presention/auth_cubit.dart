@@ -30,13 +30,13 @@ class AuthCubit extends Cubit<AuthState> {
 
       final user = await _apiRepo.getUser(userID);
 
-      // if (user.email.isEmpty) {
-      //   print("user.email is empty");
-      //   await _authRepo.logout();
-      //   emit(Unauthenticated());
+      if (user.email.isEmpty) {
+        print("user.email is empty");
+        await _authRepo.logout();
+        emit(Unauthenticated());
 
-      //   return false;
-      // }
+        return false;
+      }
 
       emit(Authenticated(user));
       return true;

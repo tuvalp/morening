@@ -38,7 +38,7 @@ class RepeatDayPicker extends StatelessWidget {
                         color: Theme.of(context)
                             .colorScheme
                             .secondary
-                            .withOpacity(0.5),
+                            .withOpacity(0.3),
                         spreadRadius: 1,
                         blurRadius: 2,
                         offset: const Offset(0, 1),
@@ -51,7 +51,7 @@ class RepeatDayPicker extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13.5,
                 color: isSelected
-                    ? Theme.of(context).colorScheme.onPrimary
+                    ? Theme.of(context).colorScheme.onSecondary
                     : Theme.of(context).colorScheme.secondary,
               ),
             ),
@@ -84,7 +84,7 @@ class RepeatDayPicker extends StatelessWidget {
                         color: Theme.of(context)
                             .colorScheme
                             .secondary
-                            .withOpacity(0.5),
+                            .withOpacity(0.3),
                         spreadRadius: 1,
                         blurRadius: 2,
                         offset: const Offset(0, 1),
@@ -97,7 +97,7 @@ class RepeatDayPicker extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13.5,
                 color: DaysArray.days.length == selectedDays.length
-                    ? Theme.of(context).colorScheme.onPrimary
+                    ? Theme.of(context).colorScheme.onSecondary
                     : Theme.of(context).colorScheme.secondary,
               ),
             ),

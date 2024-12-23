@@ -8,7 +8,7 @@ class AuthApiRepo {
       "id": id,
       "email": email,
       "name": name,
-      "wake_up_profile": "",
+      "wake_up_profile": "{}R",
     });
   }
 

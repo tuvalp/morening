@@ -19,16 +19,16 @@ class HomeView extends StatelessWidget {
         children: [
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             color: Theme.of(context).scaffoldBackgroundColor,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Welcome back',
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface,
-                      fontSize: 12,
+                      color: Theme.of(context).colorScheme.onSecondary,
+                      fontSize: 14,
                       fontWeight: FontWeight.w300,
                     )),
                 BlocBuilder<AuthCubit, AuthState>(
@@ -37,9 +37,9 @@ class HomeView extends StatelessWidget {
                       return Text(
                         state.user.name,
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: 28,
-                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).colorScheme.onSurface,
+                          fontSize: 32,
+                          fontWeight: FontWeight.w600,
                         ),
                       );
                     } else {
