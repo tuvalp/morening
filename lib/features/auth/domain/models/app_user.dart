@@ -3,12 +3,14 @@ class AppUser {
   final String email;
   final String name;
   final String? deviceId;
-
-  AppUser(
-      {required this.id,
-      required this.email,
-      required this.name,
-      this.deviceId});
+  final String? wakeUpProfile;
+  AppUser({
+    required this.id,
+    required this.email,
+    required this.name,
+    this.deviceId,
+    this.wakeUpProfile = "{}",
+  });
 
   factory AppUser.fromJson(Map<String, dynamic> json) {
     return AppUser(
@@ -16,6 +18,7 @@ class AppUser {
       email: json['email'] ?? "",
       name: json['name'] ?? "",
       deviceId: json['deviceId'] ?? "",
+      wakeUpProfile: json['wake_up_profile'][''] ?? "{}",
     );
   }
 
@@ -25,6 +28,7 @@ class AppUser {
       'email': email,
       'name': name,
       'deviceId': deviceId,
+      'wake_up_profile': wakeUpProfile ?? "{}",
     };
   }
 }

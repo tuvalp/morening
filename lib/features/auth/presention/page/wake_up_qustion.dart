@@ -1,8 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../auth_cubit.dart';
 
 class Question {
   final String question;
@@ -98,8 +96,8 @@ class _WakeUpQuestionScreenState extends State<WakeUpQuestionScreen> {
       } else {
         final answersJson = jsonEncode(answers.map((e) => e.toJson()).toList());
 
-        context.read<AuthCubit>().registerUser(
-            widget.id, widget.email, widget.name, widget.password, answersJson);
+        // context.read<AuthCubit>().registerUser(
+        //     widget.id, widget.email, widget.name, widget.password, answersJson);
       }
     });
   }

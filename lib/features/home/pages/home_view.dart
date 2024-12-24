@@ -34,6 +34,8 @@ class HomeView extends StatelessWidget {
                 BlocBuilder<AuthCubit, AuthState>(
                   builder: (context, state) {
                     if (state is Authenticated) {
+                      //print(state.user.wakeUpProfile);
+
                       return Text(
                         state.user.name,
                         style: TextStyle(
