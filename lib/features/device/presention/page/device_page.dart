@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:morening_2/features/device/presention/components/connect_deivce.dart';
 
 class DevicePage extends StatelessWidget {
   const DevicePage({super.key});
@@ -15,17 +16,8 @@ class DevicePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text('You Have No Devices Connected'),
-            TextButton(
-              onPressed: () {},
-              child: Text(
-                'Connect Device',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            )
+            const SizedBox(height: 8),
+            ConnectDeivce(),
           ],
         ),
       ),

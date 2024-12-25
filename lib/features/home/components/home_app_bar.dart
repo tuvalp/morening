@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../services/navigation_service.dart';
-import '../../device/presention/components/wifi_conect.dart';
 import '../../device/presention/page/device_page.dart';
 import '../../profile/presention/pages/profile_screen.dart';
 
@@ -30,7 +29,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         IconButton(
           icon: const Icon(Icons.wifi),
           onPressed: () {
-            NavigationService.navigateTo(WifiListScreen());
+            NavigationService.navigateTo(const DevicePage());
           },
         ),
       ],
