@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wifi_iot/wifi_iot.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class WifiListScreen extends StatefulWidget {
   @override
@@ -7,64 +8,51 @@ class WifiListScreen extends StatefulWidget {
 }
 
 class _WifiListScreenState extends State<WifiListScreen> {
-  List<WifiNetwork> _wifiList = [];
+  List<WifiNetwork> _wifiNetworks = [];
 
   @override
   void initState() {
     super.initState();
-    _loadWifiNetworks();
+    _loadWifiList();
   }
 
-  Future<void> _loadWifiNetworks() async {
-    final wifiList = await WiFiForIoTPlugin.loadWifiList();
-    setState(() {
-      _wifiList = wifiList;
-    });
-  }
-
-  void _connectToWifi(String ssid, String password) async {
-    final success = await WiFiForIoTPlugin.connect(ssid, password: password);
-    if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Connected to $ssid")),
-      );
+  Future<void> _loadWifiList() async {
+    // Request location permission if needed
+    if (await Permission.location.request().isGranted) {
+      try {
+        final List<WifiNetwork>? networks =
+            await WiFiForIoTPlugin.loadWifiList();
+        if (networks != null) {
+          setState(() {
+            _wifiNetworks = networks;
+          });
+        }
+      } catch (e) {
+        print('Error loading Wi-Fi list: $e');
+      }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to connect to $ssid")),
-      );
+      print('Location permission not granted');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Available Wi-Fi Networks")),
-      body: ListView.builder(
-        itemCount: _wifiList.length,
-        itemBuilder: (context, index) {
-          final wifi = _wifiList[index];
-          return ListTile(
-            title: Text(wifi.ssid ?? 'Unknown Network'),
-            onTap: () {
-              // Prompt for password and connect
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text("Connect to ${wifi.ssid}"),
-                  content: TextField(
-                    decoration: InputDecoration(labelText: "Password"),
-                    obscureText: true,
-                    onSubmitted: (password) {
-                      Navigator.of(context).pop();
-                      _connectToWifi(wifi.ssid!, password);
-                    },
-                  ),
-                ),
-              );
-            },
-          );
-        },
+      appBar: AppBar(
+        title: Text('Available Wi-Fi Networks'),
       ),
+      body: _wifiNetworks.isEmpty
+          ? Center(child: Text('No Wi-Fi networks found.'))
+          : ListView.builder(
+              itemCount: _wifiNetworks.length,
+              itemBuilder: (context, index) {
+                final network = _wifiNetworks[index];
+                return ListTile(
+                  title: Text(network.ssid ?? 'Unknown'),
+                  subtitle: Text('Signal Strength: ${network.level}'),
+                );
+              },
+            ),
     );
   }
 }

@@ -12,16 +12,16 @@ dependencies:
     sdk: flutter
 
   shared_preferences: ^2.3.3
-  cupertino_icons: ^1.0.8
+  flutter_fgbg: ^0.6.0
   flutter_bloc: ^8.1.6
+  cupertino_icons: ^1.0.8
   audioplayers: ^6.1.0
   permission_handler: ^11.3.1
   amplify_flutter: ^1.8.0
   amplify_auth_cognito: ^1.7.0
-  amplify_secure_storage: ^0.4.3
   intl: ^0.20.0
-  wifi_iot: ^0.3.19+1
   alarm: ^4.1.1
+  wifi_iot: ^0.3.19+1
 
 dev_dependencies:
   flutter_test:

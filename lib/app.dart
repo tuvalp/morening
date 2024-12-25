@@ -53,26 +53,4 @@ class _AppViewState extends State<AppView> {
       child: const HomeView(),
     );
   }
-
-  Widget _buildSplashScreen() {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'MoreNing',
-              style: TextStyle(
-                fontSize: 54,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ),
-            const SizedBox(height: 20),
-            const CircularProgressIndicator(),
-          ],
-        ),
-      ),
-    );
-  }
 }

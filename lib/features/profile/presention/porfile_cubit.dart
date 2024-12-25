@@ -6,7 +6,9 @@ import '../domain/repository/settings_repo.dart';
 class ProfileCubit extends Cubit<Settings> {
   final SettingsRepo settingsRepo;
 
-  ProfileCubit(this.settingsRepo) : super(Settings());
+  ProfileCubit(this.settingsRepo) : super(Settings()) {
+    getSettings(); // Automatically fetch settings on cubit initialization
+  }
 
   Future<void> getSettings() async {
     final settings = await settingsRepo.getSettings();

@@ -25,6 +25,8 @@ PODS:
     - FlutterMacOS
   - wifi_iot (0.0.1):
     - Flutter
+  - wifi_scan (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - alarm (from `.symlinks/plugins/alarm/ios`)
@@ -39,6 +41,7 @@ DEPENDENCIES:
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - wifi_iot (from `.symlinks/plugins/wifi_iot/ios`)
+  - wifi_scan (from `.symlinks/plugins/wifi_scan/ios`)
 
 EXTERNAL SOURCES:
   alarm:
@@ -65,6 +68,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   wifi_iot:
     :path: ".symlinks/plugins/wifi_iot/ios"
+  wifi_scan:
+    :path: ".symlinks/plugins/wifi_scan/ios"
 
 SPEC CHECKSUMS:
   alarm: 6c1f6a9688f94cd6bf8f104c67cc26e78c9d8d13
@@ -79,7 +84,8 @@ SPEC CHECKSUMS:
   permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
   wifi_iot: b5aafd6f9b52f8a357383a1deabab45f31cd602d
+  wifi_scan: 6d20b3b4f59bbad1ddcf3e241560f3acd62f6cbe
 
-PODFILE CHECKSUM: 7f82fbd51e12184fb10d6e252c9375d0f458d52f
+PODFILE CHECKSUM: 68db11b1fd7accb4ce896c1085b069646926e849
 
 COCOAPODS: 1.16.2
