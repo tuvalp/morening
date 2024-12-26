@@ -64,7 +64,7 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
         joinOnce: true,
       );
 
-      _loadWifiList();
+      await _loadWifiList();
 
       setState(() {
         _isConnected = isConnected;
