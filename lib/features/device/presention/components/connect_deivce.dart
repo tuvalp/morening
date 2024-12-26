@@ -65,8 +65,6 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
         joinOnce: true,
       );
 
-      _loadWifiList();
-
       setState(() {
         _isConnected = isConnected;
         _connectionStatus =
@@ -143,6 +141,7 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
   }
 
   Widget _selectNetwork() {
+    _loadWifiList();
     if (_ssidList.isEmpty) {
       return Center(
         child: Column(
