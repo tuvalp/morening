@@ -83,7 +83,7 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
       ApiService.deivcePost("network/scan", {}).then((value) {
         if (value.statusCode == 200) {
           setState(() {
-            _ssidList = jsonDecode(value.body)["data"]["ssids"];
+            _ssidList = jsonDecode(value.body)["data"].map((e) => e["ssid"]);
             print(_ssidList);
           });
         }
@@ -138,7 +138,7 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
               for (ssid in _ssidList!)
                 ListTile(
                   leading: Icon(Icons.wifi),
-                  title: Text(ssid),
+                  title: Text(ssid ?? 'Unknown'),
                   onTap: () {
                     selectSsid(ssid);
                   },
