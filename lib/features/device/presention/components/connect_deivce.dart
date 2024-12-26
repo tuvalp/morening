@@ -61,6 +61,7 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
       bool isConnected = await WiFiForIoTPlugin.connect(
         "morening",
         password: "12345678",
+        security: NetworkSecurity.NONE,
         joinOnce: true,
       );
 
