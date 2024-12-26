@@ -83,6 +83,7 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
 
       if (response.statusCode == 200) {
         final List<dynamic> ssidList = jsonDecode(response.body)["ssids"];
+        print(ssidList);
         setState(() {
           _ssidList =
               ssidList.cast<String>().where((ssid) => ssid.isNotEmpty).toList();
@@ -124,12 +125,9 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            "Search for Nearby Morning Device",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 50),
-          const CircularProgressIndicator(),
+          CircularProgressIndicator(),
+          SizedBox(height: 16),
+          Text("Search for Nearby Morning Device"),
         ],
       ),
     );
