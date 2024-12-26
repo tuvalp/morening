@@ -65,7 +65,7 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
         joinOnce: true,
       );
 
-      await _loadWifiList();
+      _loadWifiList();
 
       setState(() {
         _isConnected = isConnected;
@@ -81,24 +81,31 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
 
   Future<void> _loadWifiList() async {
     try {
-      final response = await ApiService.deivceGet("network/scan");
-      print(response.body);
+      // Send GET request to fetch Wi-Fi list
+      final response = await ApiService.deviceGet("network/scan");
 
       if (response.statusCode == 200) {
-        final List<dynamic> ssidList = jsonDecode(response.body)["ssids"];
+        // Decode the response body
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        final List<dynamic> ssidList = data["ssids"] ?? [];
+
+        // Update state with the fetched SSID list
         setState(() {
           _ssidList =
               ssidList.cast<String>().where((ssid) => ssid.isNotEmpty).toList();
+          _connectionStatus = null; // Clear previous error messages
         });
       } else {
+        // Handle non-200 HTTP responses
         setState(() {
           _connectionStatus =
-              "Failed to load Wi-Fi list: ${response.statusCode}";
+              "Failed to load Wi-Fi list: HTTP ${response.statusCode}";
         });
       }
     } catch (e) {
+      // Handle exceptions like network errors or JSON parsing issues
       setState(() {
-        _connectionStatus = "Error loading Wi-Fi list: $e";
+        _connectionStatus = "Error loading Wi-Fi list: ${e.toString()}";
       });
     }
   }

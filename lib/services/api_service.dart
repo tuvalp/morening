@@ -20,12 +20,12 @@ class ApiService {
     );
   }
 
-  static Future<http.Response> deivceGet(String endpoint) async {
+  static Future<http.Response> deviceGet(String endpoint) async {
     final uri = Uri.parse("${ApiConfig.deviceUrl}$endpoint");
     return await http.get(uri);
   }
 
-  static Future<http.Response> deivcePost(
+  static Future<http.Response> devicePost(
       String endpoint, Map<String, dynamic> data) async {
     final uri = Uri.parse("${ApiConfig.deviceUrl}$endpoint");
     return await http.post(
