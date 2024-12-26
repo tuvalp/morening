@@ -40,7 +40,8 @@ class ConnectDeivceSheet extends StatefulWidget {
 }
 
 class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
-  final bool isConected = false;
+  bool _isConnected = false;
+  String? _connectionStatus;
 
   final TextEditingController passwordController = TextEditingController();
   String ssid = "";
@@ -51,14 +52,24 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
     });
   }
 
-  void connectToMorningDevice() async {
-    if (await Permission.location.request().isGranted) {
-      try {
-        WiFiForIoTPlugin.connect("morenning", password: "12345678")
-            .then((value) => print(value));
-      } catch (e) {
-        print('Error loading Wi-Fi list: $e');
-      }
+  Future<void> connectToMorningDevice() async {
+    try {
+      bool isConnected = await WiFiForIoTPlugin.connect(
+        "morenning",
+        password: "12345678",
+        security: NetworkSecurity.WPA,
+        joinOnce: true,
+      );
+
+      setState(() {
+        _isConnected = isConnected;
+        _connectionStatus =
+            isConnected ? "Connected to $ssid" : "Failed to connect to $ssid";
+      });
+    } catch (e) {
+      setState(() {
+        _connectionStatus = "Error: $e";
+      });
     }
   }
 
@@ -73,7 +84,7 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
     return Container(
       height: 400,
       padding: const EdgeInsets.all(24),
-      child: ssid.isEmpty ? _selectNetwork() : _setNetworkPassword(),
+      child: _isConnected ? _connectMoreningDevice() : _selectNetwork(),
     );
   }
 
