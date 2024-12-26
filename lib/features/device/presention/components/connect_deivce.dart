@@ -50,9 +50,15 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
     });
   }
 
-  void connectToMorningDevice() {
-    WiFiForIoTPlugin.connect("morenning", password: "12345678")
-        .then((value) => print(value));
+  void connectToMorningDevice() async {
+    if (await Permission.location.request().isGranted) {
+      try {
+        WiFiForIoTPlugin.connect("morenning", password: "12345678")
+            .then((value) => print(value));
+      } catch (e) {
+        print('Error loading Wi-Fi list: $e');
+      }
+    }
   }
 
   @override
