@@ -44,7 +44,7 @@ class ConnectDeivceSheet extends StatefulWidget {
 class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
   bool _isConnected = false;
   String? _connectionStatus;
-  List? _ssidList;
+  List<String> _ssidList = [];
 
   final TextEditingController passwordController = TextEditingController();
   String ssid = "";
@@ -110,7 +110,11 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
     return Container(
       height: 400,
       padding: const EdgeInsets.all(24),
-      child: !_isConnected ? _connectMoreningDevice() : _selectNetwork(),
+      child: !_isConnected
+          ? _connectMoreningDevice()
+          : ssid.isEmpty
+              ? _selectNetwork()
+              : _setNetworkPassword(),
     );
   }
 
@@ -141,10 +145,10 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
         Expanded(
           child: ListView(
             children: [
-              for (ssid in _ssidList!)
+              for (ssid in _ssidList)
                 ListTile(
                   leading: Icon(Icons.wifi),
-                  title: Text(ssid ?? 'Unknown'),
+                  title: Text(ssid.isEmpty ? 'Unknown' : ssid),
                   onTap: () {
                     selectSsid(ssid);
                   },
