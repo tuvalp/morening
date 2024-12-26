@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 import '/features/auth/presention/components/auth_button.dart';
 import '/features/auth/presention/components/auth_textfield.dart';
@@ -55,7 +54,7 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
   Future<void> connectToMorningDevice() async {
     try {
       bool isConnected = await WiFiForIoTPlugin.connect(
-        "morenning",
+        "morening",
         password: "12345678",
         security: NetworkSecurity.WPA,
         joinOnce: true,
@@ -84,7 +83,7 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
     return Container(
       height: 400,
       padding: const EdgeInsets.all(24),
-      child: _isConnected ? _connectMoreningDevice() : _selectNetwork(),
+      child: !_isConnected ? _connectMoreningDevice() : _selectNetwork(),
     );
   }
 
