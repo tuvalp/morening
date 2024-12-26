@@ -19,4 +19,13 @@ class ApiService {
       body: jsonEncode(data),
     );
   }
+
+  static Future<http.Response> deivcePost(
+      String endpoint, Map<String, dynamic> data) async {
+    final uri = Uri.parse("${ApiConfig.baseUrl}$endpoint");
+    return await http.post(
+      uri,
+      body: jsonEncode(data),
+    );
+  }
 }

@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:morening_2/services/api_service.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 import '/features/auth/presention/components/auth_button.dart';
 import '/features/auth/presention/components/auth_textfield.dart';
@@ -41,6 +44,7 @@ class ConnectDeivceSheet extends StatefulWidget {
 class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
   bool _isConnected = false;
   String? _connectionStatus;
+  List? _ssidList;
 
   final TextEditingController passwordController = TextEditingController();
   String ssid = "";
@@ -60,6 +64,8 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
         joinOnce: true,
       );
 
+      _loadWifiList();
+
       setState(() {
         _isConnected = isConnected;
         _connectionStatus =
@@ -69,6 +75,21 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
       setState(() {
         _connectionStatus = "Error: $e";
       });
+    }
+  }
+
+  Future<void> _loadWifiList() async {
+    try {
+      ApiService.deivcePost("network/scan", {}).then((value) {
+        if (value.statusCode == 200) {
+          setState(() {
+            _ssidList = jsonDecode(value.body)["data"]["ssids"];
+            print(_ssidList);
+          });
+        }
+      });
+    } catch (e) {
+      print('Error loading Wi-Fi list: $e');
     }
   }
 
@@ -114,12 +135,12 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
         Expanded(
           child: ListView(
             children: [
-              for (int i = 0; i < 8; i++)
+              for (ssid in _ssidList!)
                 ListTile(
                   leading: Icon(Icons.wifi),
-                  title: Text("Network $i"),
+                  title: Text(ssid),
                   onTap: () {
-                    selectSsid("Network $i");
+                    selectSsid(ssid);
                   },
                 )
             ],

@@ -4,4 +4,6 @@ class ApiConfig {
     "Content-Type": "application/json",
     "Accept": "application/json",
   };
+
+  static const String deviceUrl = "http://10.42.0.1:5000/";
 }
