@@ -65,11 +65,11 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
       );
 
       setState(() {
+        _loadWifiList();
         _isConnected = isConnected;
         _connectionStatus =
             isConnected ? "Connected to $ssid" : "Failed to connect to $ssid";
       });
-      _loadWifiList();
     } catch (e) {
       setState(() {
         _connectionStatus = "Error: $e";
