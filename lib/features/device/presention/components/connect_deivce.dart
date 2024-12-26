@@ -64,13 +64,12 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
         joinOnce: true,
       );
 
-      await _loadWifiList();
-
       setState(() {
         _isConnected = isConnected;
         _connectionStatus =
             isConnected ? "Connected to $ssid" : "Failed to connect to $ssid";
       });
+      _loadWifiList();
     } catch (e) {
       setState(() {
         _connectionStatus = "Error: $e";
@@ -84,18 +83,20 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
 
       if (response.statusCode == 200) {
         final List<dynamic> ssidList = jsonDecode(response.body)["ssids"];
-
         setState(() {
           _ssidList =
               ssidList.cast<String>().where((ssid) => ssid.isNotEmpty).toList();
         });
-
-        print('Loaded Wi-Fi list: $_ssidList');
       } else {
-        print('Failed to load Wi-Fi list: ${response.statusCode}');
+        setState(() {
+          _connectionStatus =
+              "Failed to load Wi-Fi list: ${response.statusCode}";
+        });
       }
     } catch (e) {
-      print('Error loading Wi-Fi list: $e');
+      setState(() {
+        _connectionStatus = "Error loading Wi-Fi list: $e";
+      });
     }
   }
 
@@ -135,25 +136,46 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
   }
 
   Widget _selectNetwork() {
+    if (_ssidList.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text("Scanning for available networks..."),
+          ],
+        ),
+      );
+    }
+
+    if (_connectionStatus != null) {
+      return Center(
+        child: Text(
+          _connectionStatus!,
+          style: TextStyle(color: Colors.red, fontSize: 16),
+        ),
+      );
+    }
+
     return Column(
       children: [
         Text(
-          "Connect The Deivce To Your Home Network",
+          "Connect The Device To Your Home Network",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 50),
         Expanded(
           child: ListView(
-            children: [
-              for (ssid in _ssidList)
-                ListTile(
-                  leading: Icon(Icons.wifi),
-                  title: Text(ssid.isEmpty ? 'Unknown' : ssid),
-                  onTap: () {
-                    selectSsid(ssid);
-                  },
+            children: _ssidList
+                .map(
+                  (network) => ListTile(
+                    leading: const Icon(Icons.wifi),
+                    title: Text(network.isEmpty ? 'Unknown' : network),
+                    onTap: () => selectSsid(network),
+                  ),
                 )
-            ],
+                .toList(),
           ),
         ),
       ],
