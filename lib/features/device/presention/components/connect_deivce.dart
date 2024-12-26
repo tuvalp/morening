@@ -67,8 +67,6 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
 
       setState(() {
         _isConnected = isConnected;
-        _connectionStatus =
-            isConnected ? "Connected to $ssid" : "Failed to connect to $ssid";
       });
     } catch (e) {
       setState(() {
