@@ -65,8 +65,9 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
         joinOnce: true,
       );
 
+      await _loadWifiList();
+
       setState(() {
-        _loadWifiList();
         _isConnected = isConnected;
         _connectionStatus =
             isConnected ? "Connected to $ssid" : "Failed to connect to $ssid";
@@ -81,7 +82,7 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
   Future<void> _loadWifiList() async {
     try {
       final response = await ApiService.deivceGet("network/scan");
-      log(response.body);
+      print(response.body);
 
       if (response.statusCode == 200) {
         final List<dynamic> ssidList = jsonDecode(response.body)["ssids"];
