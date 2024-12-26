@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:morening_2/features/questionnaire/presention/pages/set_up_questionaire.dart';
+import 'package:morening_2/services/navigation_service.dart';
 import '../data/auth_api_repo.dart';
 import '../data/auth_cognito_repo.dart';
 import 'auth_state.dart';
@@ -21,13 +23,6 @@ class AuthCubit extends Cubit<AuthState> {
         return false;
       }
 
-      // final isConfirmed = await _authRepo.isUserConfirmed();
-      // if (!isConfirmed) {
-      //   print("isConfirmed is false");
-      //   emit(Unconfirmed());
-      //   return;
-      // }
-
       final user = await _apiRepo.getUser(userID);
 
       if (user.email.isEmpty) {
@@ -36,6 +31,15 @@ class AuthCubit extends Cubit<AuthState> {
         emit(Unauthenticated());
 
         return false;
+      }
+
+      if (user.wakeUpProfile == "") {
+        print("user.wakeUpProfile is empty");
+        emit(Authenticated(user)); // Emit state before navigation
+        NavigationService.navigateTo(
+          SetUpQuestionaire(userID: userID),
+          replace: true,
+        );
       }
 
       emit(Authenticated(user));

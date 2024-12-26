@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:morening_2/features/auth/presention/components/auth_button.dart';
-import 'package:morening_2/features/auth/presention/components/auth_textfield.dart';
+import 'package:wifi_iot/wifi_iot.dart';
+import '/features/auth/presention/components/auth_button.dart';
+import '/features/auth/presention/components/auth_textfield.dart';
 
 class ConnectDeivce extends StatelessWidget {
   const ConnectDeivce({super.key});
@@ -47,6 +48,16 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
     setState(() {
       ssid = selectedSsid;
     });
+  }
+
+  void connectToMorningDevice() {
+    WiFiForIoTPlugin.connect("morenning").then((value) => print(value));
+  }
+
+  @override
+  void initState() {
+    connectToMorningDevice();
+    super.initState();
   }
 
   @override

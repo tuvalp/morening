@@ -1,15 +1,18 @@
+import 'answer.dart';
+
 class AppUser {
   final String id;
   final String email;
   final String name;
   final String? deviceId;
-  final String? wakeUpProfile;
+  final List<Answer>? wakeUpProfile;
+
   AppUser({
     required this.id,
     required this.email,
     required this.name,
     this.deviceId,
-    this.wakeUpProfile = "{}",
+    this.wakeUpProfile,
   });
 
   factory AppUser.fromJson(Map<String, dynamic> json) {
@@ -17,18 +20,20 @@ class AppUser {
       id: json['user_id'] ?? "",
       email: json['email'] ?? "",
       name: json['name'] ?? "",
-      deviceId: json['deviceId'] ?? "",
-      wakeUpProfile: json['wake_up_profile'][''] ?? "{}",
+      deviceId: json['paired_device_id'], // Matching the key in JSON
+      wakeUpProfile: (json['wake_up_profile'] as List<dynamic>?)
+          ?.map((e) => Answer.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      'user_id': id,
       'email': email,
       'name': name,
-      'deviceId': deviceId,
-      'wake_up_profile': wakeUpProfile ?? "{}",
+      'paired_device_id': deviceId,
+      'wake_up_profile': wakeUpProfile?.map((e) => e.toJson()).toList(),
     };
   }
 }

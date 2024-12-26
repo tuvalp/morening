@@ -51,6 +51,12 @@ class RegisterOnQuestion extends AuthState {
 
 class AuthOnRegisterSuccess extends AuthState {}
 
+class wakeUpProfileMiss extends AuthState {
+  final AppUser user;
+
+  wakeUpProfileMiss(this.user);
+}
+
 class AuthError extends AuthState {
   final String error;
 
