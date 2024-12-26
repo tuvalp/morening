@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:morening_2/services/api_service.dart';
@@ -80,7 +81,7 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
   Future<void> _loadWifiList() async {
     try {
       final response = await ApiService.deivceGet("network/scan");
-      print(response.body);
+      log(response.body);
 
       if (response.statusCode == 200) {
         final List<dynamic> ssidList = jsonDecode(response.body)["ssids"];
