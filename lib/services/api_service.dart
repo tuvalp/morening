@@ -22,7 +22,7 @@ class ApiService {
 
   static Future<http.Response> deivceGet(String endpoint) async {
     final uri = Uri.parse("${ApiConfig.deviceUrl}$endpoint");
-    return await http.get(uri);
+    return await http.get(uri, headers: ApiConfig.defaultHeaders);
   }
 
   static Future<http.Response> deivcePost(
@@ -30,6 +30,7 @@ class ApiService {
     final uri = Uri.parse("${ApiConfig.deviceUrl}$endpoint");
     return await http.post(
       uri,
+      headers: ApiConfig.defaultHeaders,
       body: jsonEncode(data),
     );
   }
