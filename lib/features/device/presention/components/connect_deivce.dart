@@ -80,10 +80,10 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
   Future<void> _loadWifiList() async {
     try {
       final response = await ApiService.deivceGet("network/scan");
+      print(response.body);
 
       if (response.statusCode == 200) {
         final List<dynamic> ssidList = jsonDecode(response.body)["ssids"];
-        print(ssidList);
         setState(() {
           _ssidList =
               ssidList.cast<String>().where((ssid) => ssid.isNotEmpty).toList();
