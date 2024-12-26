@@ -80,14 +80,20 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
 
   Future<void> _loadWifiList() async {
     try {
-      ApiService.deivcePost("network/scan", {}).then((value) {
-        if (value.statusCode == 200) {
-          setState(() {
-            _ssidList = jsonDecode(value.body)["data"].map((e) => e["ssid"]);
-            print(_ssidList);
-          });
-        }
-      });
+      final response = await ApiService.deivceGet("network/scan");
+
+      if (response.statusCode == 200) {
+        final List<dynamic> ssidList = jsonDecode(response.body)["ssids"];
+
+        setState(() {
+          _ssidList =
+              ssidList.cast<String>().where((ssid) => ssid.isNotEmpty).toList();
+        });
+
+        print('Loaded Wi-Fi list: $_ssidList');
+      } else {
+        print('Failed to load Wi-Fi list: ${response.statusCode}');
+      }
     } catch (e) {
       print('Error loading Wi-Fi list: $e');
     }

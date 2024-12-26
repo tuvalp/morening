@@ -20,6 +20,11 @@ class ApiService {
     );
   }
 
+  static Future<http.Response> deivceGet(String endpoint) async {
+    final uri = Uri.parse("${ApiConfig.baseUrl}$endpoint");
+    return await http.get(uri);
+  }
+
   static Future<http.Response> deivcePost(
       String endpoint, Map<String, dynamic> data) async {
     final uri = Uri.parse("${ApiConfig.baseUrl}$endpoint");
