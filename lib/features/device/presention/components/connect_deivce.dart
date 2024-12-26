@@ -88,11 +88,15 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
         final List<dynamic> ssidList = data["ssids"] ?? [];
 
         // Update state with the fetched SSID list
-        setState(() {
-          _ssidList =
-              ssidList.cast<String>().where((ssid) => ssid.isNotEmpty).toList();
-          _connectionStatus = null; // Clear previous error messages
-        });
+        if (mounted) {
+          setState(() {
+            _ssidList = ssidList
+                .cast<String>()
+                .where((ssid) => ssid.isNotEmpty)
+                .toList();
+            _connectionStatus = null;
+          });
+        }
       } else {
         // Handle non-200 HTTP responses
         setState(() {
@@ -142,18 +146,18 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
 
   Widget _selectNetwork() {
     _loadWifiList();
-    if (_ssidList.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 16),
-            Text("Scanning for available networks..."),
-          ],
-        ),
-      );
-    }
+    // if (_ssidList.isEmpty) {
+    //   return Center(
+    //     child: Column(
+    //       mainAxisAlignment: MainAxisAlignment.center,
+    //       children: [
+    //         CircularProgressIndicator(),
+    //         SizedBox(height: 16),
+    //         Text("Scanning for available networks..."),
+    //       ],
+    //     ),
+    //   );
+    // }
 
     if (_connectionStatus != null) {
       return Center(
