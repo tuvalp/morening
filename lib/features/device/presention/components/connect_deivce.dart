@@ -51,7 +51,8 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
   }
 
   void connectToMorningDevice() {
-    WiFiForIoTPlugin.connect("morenning").then((value) => print(value));
+    WiFiForIoTPlugin.connect("morenning", password: "12345678")
+        .then((value) => print(value));
   }
 
   @override
