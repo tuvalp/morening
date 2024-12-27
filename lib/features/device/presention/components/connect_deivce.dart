@@ -1,7 +1,7 @@
-import 'dart:convert';
-
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:morening_2/services/api_service.dart';
+import 'package:wifi_connector/wifi_connector.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 import '/features/auth/presention/components/auth_button.dart';
 import '/features/auth/presention/components/auth_textfield.dart';
@@ -42,7 +42,9 @@ class ConnectDeviceSheet extends StatefulWidget {
 }
 
 class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
-  bool _isConnected = true;
+  final Dio _dio = Dio();
+
+  bool _isConnected = false;
   String? _connectionStatus;
   List<String> _ssidList = [];
 
@@ -52,8 +54,7 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   @override
   void initState() {
     super.initState();
-    //connectToMorningDevice();
-    _loadWifiList();
+    connectToMorningDevice();
   }
 
   @override
@@ -64,12 +65,8 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
 
   Future<void> connectToMorningDevice() async {
     try {
-      bool isConnected = await WiFiForIoTPlugin.connect(
-        "morening",
-        password: "12345678",
-        joinOnce: true,
-        security: NetworkSecurity.WPA,
-      );
+      bool isConnected = await WifiConnector.connectToWifi(
+          ssid: "morening", password: "12345678");
 
       if (isConnected) {
         await _loadWifiList();
@@ -86,15 +83,15 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   }
 
   Future<void> _loadWifiList() async {
-    print("Start");
+    const url = "http://10.42.0.1:5000/network/scan";
+
     try {
-      final response = await ApiService().deviceGet("network/scan");
+      final response = await _dio.get(url);
       print(response.data);
 
       if (response.statusCode == 200) {
-        print(response.data);
-        final data = jsonDecode(response.data) as Map<String, dynamic>;
-        final ssidList = data["ssids"] ?? [];
+        final data = response.data as Map<String, dynamic>;
+        final ssidList = data['ssids'] ?? [];
 
         setState(() {
           _ssidList = (ssidList as List)
@@ -117,7 +114,6 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   }
 
   Future<void> sendNetworkCredentials() async {
-    // Send selected SSID and password to the device
     try {
       final response = await ApiService().devicePost(
         "network/connect",

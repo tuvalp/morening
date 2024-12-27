@@ -77,5 +77,9 @@
 	<string>App requires location access to scan Wi-Fi networks.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>App requires location access to scan Wi-Fi networks.</string>
+	<key>com.apple.developer.networking.wifi-info</key>
+    <true/>
+	<key>com.apple.developer.networking.HotspotConfiguration</key>
+    <true/>
 </dict>
 </plist>

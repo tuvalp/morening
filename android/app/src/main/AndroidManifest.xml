@@ -20,6 +20,7 @@
 
 
 
+
     <application
         android:label="MoreNing"
         android:name="${applicationName}"
