@@ -77,6 +77,7 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
       }
 
       if (isConnected) {
+        print("Connected to Morning Device");
         await _loadWifiList();
       }
 
