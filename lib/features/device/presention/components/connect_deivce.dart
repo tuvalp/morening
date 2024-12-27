@@ -1,7 +1,9 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:morening_2/services/api_service.dart';
-import 'package:wifi_connector/wifi_connector.dart';
+import 'package:wifi_iot/wifi_iot.dart';
 import '/features/auth/presention/components/auth_button.dart';
 import '/features/auth/presention/components/auth_textfield.dart';
 
@@ -64,8 +66,15 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
 
   Future<void> connectToMorningDevice() async {
     try {
-      bool isConnected = await WifiConnector.connectToWifi(
-          ssid: "morening", password: "12345678");
+      late bool isConnected;
+
+      if (Platform.isAndroid) {
+        isConnected = await WiFiForIoTPlugin.findAndConnect("morening",
+            password: "12345678");
+      } else {
+        isConnected =
+            await WiFiForIoTPlugin.connect("morening", password: "12345678");
+      }
 
       if (isConnected) {
         await _loadWifiList();
