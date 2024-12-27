@@ -70,7 +70,9 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
       );
 
       if (isConnected) {
-        await _loadWifiList();
+        if (WiFiForIoTPlugin.getWiFiAPSSID() == "morening") {
+          await _loadWifiList();
+        }
       }
 
       setState(() {
@@ -88,14 +90,15 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
       final response = await ApiService.deviceGet("network/scan");
 
       if (response.statusCode == 200) {
+        print(response.body);
         final data = jsonDecode(response.body) as Map<String, dynamic>;
-        final ssidList = data["ssids"] ?? [];
+        //final ssidList = data["ssids"] ?? [];
 
         setState(() {
-          _ssidList = (ssidList as List)
-              .cast<String>()
-              .where((ssid) => ssid.isNotEmpty)
-              .toList();
+          // _ssidList = (ssidList as List)
+          //     .cast<String>()
+          //     .where((ssid) => ssid.isNotEmpty)
+          //     .toList();
           _connectionStatus = null;
         });
       } else {
