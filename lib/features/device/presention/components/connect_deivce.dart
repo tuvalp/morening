@@ -6,8 +6,8 @@ import 'package:wifi_iot/wifi_iot.dart';
 import '/features/auth/presention/components/auth_button.dart';
 import '/features/auth/presention/components/auth_textfield.dart';
 
-class ConnectDeivce extends StatelessWidget {
-  const ConnectDeivce({super.key});
+class ConnectDevice extends StatelessWidget {
+  const ConnectDevice({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class ConnectDeivce extends StatelessWidget {
       onPressed: () {
         showModalBottomSheet(
           context: context,
-          builder: (context) => const ConnectDeivceSheet(),
+          builder: (context) => const ConnectDeviceSheet(),
           backgroundColor: Theme.of(context).colorScheme.surface,
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
@@ -34,14 +34,14 @@ class ConnectDeivce extends StatelessWidget {
   }
 }
 
-class ConnectDeivceSheet extends StatefulWidget {
-  const ConnectDeivceSheet({super.key});
+class ConnectDeviceSheet extends StatefulWidget {
+  const ConnectDeviceSheet({super.key});
 
   @override
-  State<ConnectDeivceSheet> createState() => _ConnectDeivceSheetState();
+  State<ConnectDeviceSheet> createState() => _ConnectDeviceSheetState();
 }
 
-class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
+class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   bool _isConnected = false;
   String? _connectionStatus;
   List<String> _ssidList = [];
@@ -49,10 +49,16 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
   final TextEditingController passwordController = TextEditingController();
   String ssid = "";
 
-  selectSsid(String selectedSsid) {
-    setState(() {
-      ssid = selectedSsid;
-    });
+  @override
+  void initState() {
+    super.initState();
+    connectToMorningDevice();
+  }
+
+  @override
+  void dispose() {
+    passwordController.dispose();
+    super.dispose();
   }
 
   Future<void> connectToMorningDevice() async {
@@ -61,14 +67,11 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
         "morening",
         password: "12345678",
         joinOnce: true,
-      ).then((success) {
-        if (success) {
-          _loadWifiList();
-          return true;
-        } else {
-          return false;
-        }
-      });
+      );
+
+      if (isConnected) {
+        await _loadWifiList();
+      }
 
       setState(() {
         _isConnected = isConnected;
@@ -82,43 +85,58 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
 
   Future<void> _loadWifiList() async {
     try {
-      // Send GET request to fetch Wi-Fi list
       final response = await ApiService.deviceGet("network/scan");
 
       if (response.statusCode == 200) {
-        // Decode the response body
-        final Map<String, dynamic> data = jsonDecode(response.body);
-        final List<dynamic> ssidList = data["ssids"] ?? [];
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
+        final ssidList = data["ssids"] ?? [];
 
-        // Update state with the fetched SSID list
-        if (mounted) {
-          setState(() {
-            _ssidList = ssidList
-                .cast<String>()
-                .where((ssid) => ssid.isNotEmpty)
-                .toList();
-            _connectionStatus = null;
-          });
-        }
+        setState(() {
+          _ssidList = (ssidList as List)
+              .cast<String>()
+              .where((ssid) => ssid.isNotEmpty)
+              .toList();
+          _connectionStatus = null;
+        });
       } else {
-        // Handle non-200 HTTP responses
         setState(() {
           _connectionStatus =
               "Failed to load Wi-Fi list: HTTP ${response.statusCode}";
         });
       }
     } catch (e) {
-      // Handle exceptions like network errors or JSON parsing issues
       setState(() {
         _connectionStatus = "Error loading Wi-Fi list: ${e.toString()}";
       });
     }
   }
 
-  @override
-  void initState() {
-    connectToMorningDevice();
-    super.initState();
+  Future<void> sendNetworkCredentials() async {
+    // Send selected SSID and password to the device
+    try {
+      final response = await ApiService.devicePost(
+        "network/connect",
+        {
+          "ssid": ssid,
+          "password": passwordController.text,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _isConnected = true;
+          ssid = "";
+        });
+      } else {
+        setState(() {
+          _connectionStatus = "Failed to connect: HTTP ${response.statusCode}";
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _connectionStatus = "Error: $e";
+      });
+    }
   }
 
   @override
@@ -127,53 +145,52 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
       height: 400,
       padding: const EdgeInsets.all(24),
       child: !_isConnected
-          ? _connectMoreningDevice()
+          ? _connectMorningDevice()
           : ssid.isEmpty
               ? _selectNetwork()
               : _setNetworkPassword(),
     );
   }
 
-  Widget _connectMoreningDevice() {
+  Widget _connectMorningDevice() {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+        children: const [
           CircularProgressIndicator(),
           SizedBox(height: 16),
-          Text("Search for Nearby Morning Device"),
+          Text("Searching for Nearby Morning Device..."),
         ],
       ),
     );
   }
 
   Widget _selectNetwork() {
-    _loadWifiList();
-    // if (_ssidList.isEmpty) {
-    //   return Center(
-    //     child: Column(
-    //       mainAxisAlignment: MainAxisAlignment.center,
-    //       children: [
-    //         CircularProgressIndicator(),
-    //         SizedBox(height: 16),
-    //         Text("Scanning for available networks..."),
-    //       ],
-    //     ),
-    //   );
-    // }
-
     if (_connectionStatus != null) {
       return Center(
         child: Text(
           _connectionStatus!,
-          style: TextStyle(color: Colors.red, fontSize: 16),
+          style: const TextStyle(color: Colors.red, fontSize: 16),
+        ),
+      );
+    }
+
+    if (_ssidList.isEmpty) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text("Scanning for available networks..."),
+          ],
         ),
       );
     }
 
     return Column(
       children: [
-        Text(
+        const Text(
           "Connect The Device To Your Home Network",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
@@ -185,7 +202,7 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
                   (network) => ListTile(
                     leading: const Icon(Icons.wifi),
                     title: Text(network.isEmpty ? 'Unknown' : network),
-                    onTap: () => selectSsid(network),
+                    onTap: () => setState(() => ssid = network),
                   ),
                 )
                 .toList(),
@@ -199,8 +216,8 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          "Connect The Deivce To Your Home Network",
+        const Text(
+          "Enter Password for the Network",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         AuthTextfield(
@@ -210,7 +227,7 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
         ),
         Column(
           children: [
-            AuthButton(text: "Connect", onPressed: () {}),
+            AuthButton(text: "Connect", onPressed: sendNetworkCredentials),
             const SizedBox(height: 16),
             TextButton(
               onPressed: () {
@@ -221,28 +238,8 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
               child: const Text("Select Another Network"),
             )
           ],
-        )
+        ),
       ],
-    );
-  }
-
-  Widget _connectSuccess() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "Morning Device Connected",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 50),
-          Icon(
-            Icons.check_circle_outline,
-            size: 100,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ],
-      ),
     );
   }
 }
