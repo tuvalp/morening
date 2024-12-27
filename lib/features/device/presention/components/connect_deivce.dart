@@ -52,7 +52,8 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   @override
   void initState() {
     super.initState();
-    connectToMorningDevice();
+    //connectToMorningDevice();
+    _loadWifiList();
   }
 
   @override
