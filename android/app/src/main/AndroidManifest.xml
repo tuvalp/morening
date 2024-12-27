@@ -23,8 +23,9 @@
     <application
         android:label="MoreNing"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
-          
+        android:icon="@mipmap/ic_launcher"
+        android:enableOnBackInvokedCallback="true">
+
         <service android:name="com.gdelataillade.alarm.services.NotificationOnKillService" />
 
         <activity
