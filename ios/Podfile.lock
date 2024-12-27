@@ -23,6 +23,8 @@ PODS:
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
+  - wifi_connector (0.0.1):
+    - Flutter
   - wifi_iot (0.0.1):
     - Flutter
 
@@ -38,6 +40,7 @@ DEPENDENCIES:
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
+  - wifi_connector (from `.symlinks/plugins/wifi_connector/ios`)
   - wifi_iot (from `.symlinks/plugins/wifi_iot/ios`)
 
 EXTERNAL SOURCES:
@@ -63,6 +66,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
+  wifi_connector:
+    :path: ".symlinks/plugins/wifi_connector/ios"
   wifi_iot:
     :path: ".symlinks/plugins/wifi_iot/ios"
 
@@ -78,6 +83,7 @@ SPEC CHECKSUMS:
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
+  wifi_connector: aa1fed85d30fbe52eb39d1aefe761a36032a581f
   wifi_iot: b5aafd6f9b52f8a357383a1deabab45f31cd602d
 
 PODFILE CHECKSUM: 68db11b1fd7accb4ce896c1085b069646926e849
