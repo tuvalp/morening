@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:morening_2/services/api_service.dart';
@@ -66,24 +64,16 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
 
   Future<void> connectToMorningDevice() async {
     try {
-      late bool isConnected;
-
-      if (Platform.isAndroid) {
-        isConnected = await WiFiForIoTPlugin.findAndConnect("morening",
-            password: "12345678");
-      } else {
-        isConnected =
-            await WiFiForIoTPlugin.connect("morening", password: "12345678");
-      }
+      bool isConnected = await WiFiForIoTPlugin.connect("morening",
+          password: "12345678", security: NetworkSecurity.WPA);
 
       if (isConnected) {
-        print("Connected to Morning Device");
+        setState(() {
+          _isConnected = isConnected;
+        });
+
         await _loadWifiList();
       }
-
-      setState(() {
-        _isConnected = isConnected;
-      });
     } catch (e) {
       setState(() {
         _connectionStatus = "Error: $e";
@@ -95,8 +85,7 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
     const url = "http://10.42.0.1:5000/network/scan";
 
     try {
-      final response =
-          await _dio.get(url, options: Options(followRedirects: false));
+      final response = await _dio.get(url);
       print(response.data);
 
       if (response.statusCode == 200) {
