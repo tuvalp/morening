@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:morening_2/services/api_service.dart';
@@ -61,9 +60,15 @@ class _ConnectDeivceSheetState extends State<ConnectDeivceSheet> {
       bool isConnected = await WiFiForIoTPlugin.connect(
         "morening",
         password: "12345678",
-        security: NetworkSecurity.WPA,
         joinOnce: true,
-      );
+      ).then((success) {
+        if (success) {
+          _loadWifiList();
+          return true;
+        } else {
+          return false;
+        }
+      });
 
       setState(() {
         _isConnected = isConnected;
