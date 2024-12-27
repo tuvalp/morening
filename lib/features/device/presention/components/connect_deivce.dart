@@ -64,16 +64,29 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
 
   Future<void> connectToMorningDevice() async {
     try {
-      bool isConnected = await WiFiForIoTPlugin.connect("morening",
-          password: "12345678", security: NetworkSecurity.WPA);
+      bool isConnected = false;
+
+      // Attempt to connect to the existing network
+
+      isConnected = await WiFiForIoTPlugin.connect(
+        "MEA",
+        password: "12345678",
+        security: NetworkSecurity.WPA,
+        joinOnce: true,
+      );
 
       if (isConnected) {
-        setState(() {
-          _isConnected = isConnected;
-        });
-
+        print("Connected to Morning Device");
         await _loadWifiList();
+      } else {
+        setState(() {
+          _connectionStatus = "Error: Unable to connect to 'morening'.";
+        });
       }
+
+      setState(() {
+        _isConnected = isConnected;
+      });
     } catch (e) {
       setState(() {
         _connectionStatus = "Error: $e";
