@@ -71,9 +71,7 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
       );
 
       if (isConnected) {
-        if (WiFiForIoTPlugin.getWiFiAPSSID() == "morening") {
-          await _loadWifiList();
-        }
+        await _loadWifiList();
       }
 
       setState(() {
