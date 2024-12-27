@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:morening_2/services/api_service.dart';
 import 'package:wifi_iot/wifi_iot.dart';
@@ -88,8 +87,7 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   Future<void> _loadWifiList() async {
     print("Start");
     try {
-      //final response = await ApiService.deviceGet("network/scan");
-      final response = await Dio().get("http://10.42.0.1:5000/network/scan");
+      final response = await ApiService().deviceGet("network/scan");
       print(response.data);
 
       if (response.statusCode == 200) {
@@ -120,7 +118,7 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   Future<void> sendNetworkCredentials() async {
     // Send selected SSID and password to the device
     try {
-      final response = await ApiService.devicePost(
+      final response = await ApiService().devicePost(
         "network/connect",
         {
           "ssid": ssid,

@@ -52,7 +52,7 @@ class _SetUpQuestionaireState extends State<SetUpQuestionaire> {
 
     print(answersJson);
 
-    ApiService.post("update_wake_up_profile", {
+    ApiService().post("update_wake_up_profile", {
       "user_id": widget.userID,
       "wake_up_profile": answersJson,
     });

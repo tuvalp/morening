@@ -4,7 +4,7 @@ import 'dart:convert';
 
 class AuthApiRepo {
   Future<void> register(String id, String email, String name) {
-    return ApiService.post("add_user", {
+    return ApiService().post("add_user", {
       "id": id,
       "email": email,
       "name": name,
@@ -13,7 +13,7 @@ class AuthApiRepo {
   }
 
   Future<AppUser> getUser(String id) {
-    return ApiService.post("get_user", {"id": id})
-        .then((value) => AppUser.fromJson(jsonDecode(value.body)));
+    return ApiService().post("get_user", {"id": id}).then(
+        (value) => AppUser.fromJson(jsonDecode(value.data)));
   }
 }

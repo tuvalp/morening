@@ -1,18 +1,32 @@
 import 'dart:convert';
-import 'dart:io';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import '../config/api_config.dart';
 
 class ApiService {
+  final Dio dio;
+  final Dio deviceDio;
+
+  ApiService()
+      : dio = Dio(BaseOptions(
+          baseUrl: ApiConfig.baseUrl,
+          connectTimeout: Duration(seconds: 10),
+          receiveTimeout: Duration(seconds: 10),
+          headers: ApiConfig.defaultHeaders,
+        )),
+        deviceDio = Dio(BaseOptions(
+          baseUrl: ApiConfig.deviceUrl,
+          connectTimeout: Duration(seconds: 10),
+          receiveTimeout: Duration(seconds: 10),
+          headers: ApiConfig.defaultHeaders,
+        ));
+
   // GET request
-  static Future<http.Response> get(String endpoint) async {
+  Future<Response> get(String endpoint) async {
     try {
-      final uri =
-          Uri.parse("${ApiConfig.baseUrl}${sanitizeEndpoint(endpoint)}");
-      final response = await http
-          .get(uri, headers: ApiConfig.defaultHeaders)
-          .timeout(const Duration(seconds: 10));
-      _logRequest("GET", uri.toString(), null, response);
+      final sanitizedEndpoint = sanitizeEndpoint(endpoint);
+      final response = await dio.get(sanitizedEndpoint);
+      _logRequest(
+          "GET", "${ApiConfig.baseUrl}$sanitizedEndpoint", null, response);
       return _handleResponse(response);
     } catch (e) {
       throw Exception("GET request failed: $e");
@@ -20,19 +34,12 @@ class ApiService {
   }
 
   // POST request
-  static Future<http.Response> post(
-      String endpoint, Map<String, dynamic> data) async {
+  Future<Response> post(String endpoint, Map<String, dynamic> data) async {
     try {
-      final uri =
-          Uri.parse("${ApiConfig.baseUrl}${sanitizeEndpoint(endpoint)}");
-      final response = await http
-          .post(
-            uri,
-            headers: ApiConfig.defaultHeaders,
-            body: jsonEncode(data),
-          )
-          .timeout(const Duration(seconds: 10));
-      _logRequest("POST", uri.toString(), data, response);
+      final sanitizedEndpoint = sanitizeEndpoint(endpoint);
+      final response = await dio.post(sanitizedEndpoint, data: data);
+      _logRequest(
+          "POST", "${ApiConfig.baseUrl}$sanitizedEndpoint", data, response);
       return _handleResponse(response);
     } catch (e) {
       throw Exception("POST request failed: $e");
@@ -40,14 +47,12 @@ class ApiService {
   }
 
   // Device GET request
-  static Future<http.Response> deviceGet(String endpoint) async {
+  Future<Response> deviceGet(String endpoint) async {
     try {
-      final uri =
-          Uri.parse("${ApiConfig.deviceUrl}${sanitizeEndpoint(endpoint)}");
-      final response = await http
-          .get(uri, headers: ApiConfig.defaultHeaders)
-          .timeout(const Duration(seconds: 10));
-      _logRequest("GET (Device)", uri.toString(), null, response);
+      final sanitizedEndpoint = sanitizeEndpoint(endpoint);
+      final response = await deviceDio.get(sanitizedEndpoint);
+      _logRequest("GET (Device)", "${ApiConfig.deviceUrl}$sanitizedEndpoint",
+          null, response);
       return _handleResponse(response);
     } catch (e) {
       throw Exception("Device GET request failed: $e");
@@ -55,19 +60,13 @@ class ApiService {
   }
 
   // Device POST request
-  static Future<http.Response> devicePost(
+  Future<Response> devicePost(
       String endpoint, Map<String, dynamic> data) async {
     try {
-      final uri =
-          Uri.parse("${ApiConfig.deviceUrl}${sanitizeEndpoint(endpoint)}");
-      final response = await http
-          .post(
-            uri,
-            headers: ApiConfig.defaultHeaders,
-            body: jsonEncode(data),
-          )
-          .timeout(const Duration(seconds: 10));
-      _logRequest("POST (Device)", uri.toString(), data, response);
+      final sanitizedEndpoint = sanitizeEndpoint(endpoint);
+      final response = await deviceDio.post(sanitizedEndpoint, data: data);
+      _logRequest("POST (Device)", "${ApiConfig.deviceUrl}$sanitizedEndpoint",
+          data, response);
       return _handleResponse(response);
     } catch (e) {
       throw Exception("Device POST request failed: $e");
@@ -80,21 +79,24 @@ class ApiService {
   }
 
   // Log request and response details (useful for debugging)
-  static void _logRequest(String method, String url, Map<String, dynamic>? data,
-      http.Response response) {
+  void _logRequest(String method, String url, Map<String, dynamic>? data,
+      Response response) {
     print("[$method] Request: $url");
     if (data != null) print("Payload: ${jsonEncode(data)}");
-    print("Response: ${response.statusCode} - ${response.body}");
+    print("Response: ${response.statusCode} - ${response.data}");
   }
 
   // Handle response status
-  static http.Response _handleResponse(http.Response response) {
-    if (response.statusCode >= 200 && response.statusCode < 300) {
+  Response _handleResponse(Response response) {
+    if (response.statusCode != null &&
+        response.statusCode! >= 200 &&
+        response.statusCode! < 300) {
       return response;
     } else {
-      throw HttpException(
-        "HTTP ${response.statusCode}: ${response.body}",
-        uri: Uri.parse(response.request!.url.toString()),
+      throw DioError(
+        requestOptions: response.requestOptions,
+        response: response,
+        error: "HTTP ${response.statusCode}: ${response.data}",
       );
     }
   }
