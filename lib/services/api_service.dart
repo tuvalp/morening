@@ -38,9 +38,7 @@ class ApiService {
     try {
       final sanitizedEndpoint = sanitizeEndpoint(endpoint);
       final response = await dio.post(sanitizedEndpoint, data: data);
-      _logRequest(
-          "POST", "${ApiConfig.baseUrl}$sanitizedEndpoint", data, response);
-      return _handleResponse(response);
+      return response;
     } catch (e) {
       throw Exception("POST request failed: $e");
     }

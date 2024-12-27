@@ -17,13 +17,15 @@ class AppUser {
 
   factory AppUser.fromJson(Map<String, dynamic> json) {
     return AppUser(
-      id: json['user_id'] ?? "",
-      email: json['email'] ?? "",
-      name: json['name'] ?? "",
-      deviceId: json['paired_device_id'], // Matching the key in JSON
+      id: json['user_id'] ?? "", // Ensure a fallback if null
+      email: json['email'] ?? "", // Ensure a fallback if null
+      name: json['name'] ?? "", // Ensure a fallback if null
+      deviceId: json['paired_device_id'], // Nullable
       wakeUpProfile: (json['wake_up_profile'] as List<dynamic>?)
-          ?.map((e) => Answer.fromJson(e as Map<String, dynamic>))
-          .toList(),
+          ?.map(
+            (e) => Answer.fromJson(e as Map<String, dynamic>),
+          )
+          .toList(), // Deserialize `wake_up_profile` list
     );
   }
 
