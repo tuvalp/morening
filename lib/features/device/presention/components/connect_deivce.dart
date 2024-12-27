@@ -42,7 +42,7 @@ class ConnectDeviceSheet extends StatefulWidget {
 }
 
 class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
-  bool _isConnected = false;
+  bool _isConnected = true;
   String? _connectionStatus;
   List<String> _ssidList = [];
 
@@ -52,7 +52,8 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   @override
   void initState() {
     super.initState();
-    connectToMorningDevice();
+    //connectToMorningDevice();
+    _loadWifiList();
   }
 
   @override
