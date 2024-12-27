@@ -5,5 +5,7 @@ class ApiConfig {
   static const Map<String, String> defaultHeaders = {
     "Content-Type": "application/json",
     "Accept": "application/json",
+    "Connection": "keep-alive",
+    "Host": "com.morening.app",
   };
 }
