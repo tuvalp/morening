@@ -71,6 +71,7 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
       if (await Permission.locationWhenInUse.request().isGranted) {
         isConnected = await WiFiForIoTPlugin.connect(
           "morening",
+          bssid: "morening",
           password: "12345678",
           joinOnce: true,
         );
