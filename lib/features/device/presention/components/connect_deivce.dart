@@ -67,6 +67,7 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
         "morening",
         password: "12345678",
         joinOnce: true,
+        security: NetworkSecurity.WPA,
       );
 
       if (isConnected) {
