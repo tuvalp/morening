@@ -69,7 +69,7 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
       // Attempt to connect to the existing network
 
       isConnected = await WiFiForIoTPlugin.connect(
-        "MEA",
+        "morening",
         password: "12345678",
         security: NetworkSecurity.WPA,
         joinOnce: true,
