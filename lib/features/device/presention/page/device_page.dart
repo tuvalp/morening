@@ -17,7 +17,7 @@ class DevicePage extends StatelessWidget {
           children: [
             Text('You Have No Devices Connected'),
             const SizedBox(height: 8),
-            ConnectDeivce(),
+            ConnectDevice(),
           ],
         ),
       ),
