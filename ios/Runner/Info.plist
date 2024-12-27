@@ -71,5 +71,11 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>App requires location access to scan Wi-Fi networks.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>App requires location access to scan Wi-Fi networks.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>App requires location access to scan Wi-Fi networks.</string>
 </dict>
 </plist>
