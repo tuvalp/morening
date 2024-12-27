@@ -21,7 +21,6 @@ dependencies:
   amplify_auth_cognito: ^1.7.0
   intl: ^0.20.0
   alarm: ^4.1.1
-  wifi_iot: ^0.3.19+1
   dio: ^5.7.0
   wifi_connector: ^2.0.0
 
