@@ -86,33 +86,33 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   }
 
   Future<void> _loadWifiList() async {
-    //try {
-    final response = await ApiService.deviceGet("network/scan");
-    print(response.body);
+    try {
+      final response = await ApiService.deviceGet("network/scan");
+      print(response.body);
 
-    //   if (response.statusCode == 200) {
-    //     print(response.body);
-    //     final data = jsonDecode(response.body) as Map<String, dynamic>;
-    //     //final ssidList = data["ssids"] ?? [];
+      if (response.statusCode == 200) {
+        print(response.body);
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
+        final ssidList = data["ssids"] ?? [];
 
-    //     setState(() {
-    //       // _ssidList = (ssidList as List)
-    //       //     .cast<String>()
-    //       //     .where((ssid) => ssid.isNotEmpty)
-    //       //     .toList();
-    //       _connectionStatus = null;
-    //     });
-    //   } else {
-    //     setState(() {
-    //       _connectionStatus =
-    //           "Failed to load Wi-Fi list: HTTP ${response.statusCode}";
-    //     });
-    //   }
-    // } catch (e) {
-    //   setState(() {
-    //     _connectionStatus = "Error loading Wi-Fi list: ${e.toString()}";
-    //   });
-    // }
+        setState(() {
+          _ssidList = (ssidList as List)
+              .cast<String>()
+              .where((ssid) => ssid.isNotEmpty)
+              .toList();
+          _connectionStatus = null;
+        });
+      } else {
+        setState(() {
+          _connectionStatus =
+              "Failed to load Wi-Fi list: HTTP ${response.statusCode}";
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _connectionStatus = "Error loading Wi-Fi list: ${e.toString()}";
+      });
+    }
   }
 
   Future<void> sendNetworkCredentials() async {
