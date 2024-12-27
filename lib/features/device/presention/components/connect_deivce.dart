@@ -89,7 +89,7 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
     print("Start");
     try {
       //final response = await ApiService.deviceGet("network/scan");
-      final response = await Dio().get("network/scan");
+      final response = await Dio().get("http://10.42.0.1:5000/network/scan");
       print(response.data);
 
       if (response.statusCode == 200) {
