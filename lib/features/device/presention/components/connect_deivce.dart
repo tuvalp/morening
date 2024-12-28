@@ -73,6 +73,7 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
           isConnected = await WiFiForIoTPlugin.connect(
             "morening",
             password: "12345678",
+            withInternet: true,
             security: NetworkSecurity.WPA,
           );
         }
