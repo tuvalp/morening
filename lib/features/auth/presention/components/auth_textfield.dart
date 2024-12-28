@@ -4,11 +4,13 @@ class AuthTextfield extends StatelessWidget {
   final TextEditingController controller;
   final String labelText;
   final bool obscureText;
+  final IconButton? suffixIcon;
 
   const AuthTextfield({
     required this.controller,
     required this.labelText,
     required this.obscureText,
+    this.suffixIcon,
     super.key,
   });
 
@@ -21,6 +23,7 @@ class AuthTextfield extends StatelessWidget {
         obscureText: obscureText,
         style: TextStyle(color: Theme.of(context).colorScheme.primary),
         decoration: InputDecoration(
+          suffixIcon: suffixIcon,
           hintStyle: TextStyle(color: Theme.of(context).colorScheme.tertiary),
           contentPadding: const EdgeInsets.all(16),
           filled: true,

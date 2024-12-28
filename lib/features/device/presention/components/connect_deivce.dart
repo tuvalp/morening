@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-
 import 'package:dio/dio.dart';
 import 'package:wifi_iot/wifi_iot.dart';
-
 import '../../../../services/api_service.dart';
 import '/features/auth/presention/components/auth_button.dart';
 import '/features/auth/presention/components/auth_textfield.dart';
@@ -44,21 +42,19 @@ class ConnectDeviceSheet extends StatefulWidget {
 
 class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   final Dio _dio = Dio();
-
   bool _isConnected = false;
   String? _connectionStatus;
   List<String> _ssidList = [];
-
   final TextEditingController passwordController = TextEditingController();
+  bool _isPasswordHidden = true;
   String ssid = "";
 
   @override
   void initState() {
     super.initState();
-
     _dio.options = BaseOptions(
-      connectTimeout: Duration(seconds: 5), // 5 seconds
-      receiveTimeout: Duration(seconds: 5), // 3 seconds
+      connectTimeout: Duration(seconds: 5),
+      receiveTimeout: Duration(seconds: 5),
     );
     connectToMorningDevice();
   }
@@ -71,17 +67,18 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
 
   Future<void> connectToMorningDevice() async {
     try {
+      String? currentSSID;
       bool isConnected = false;
 
       try {
-        String? currentSSID = await WiFiForIoTPlugin.getSSID();
-        print(currentSSID);
+        currentSSID = await WiFiForIoTPlugin.getSSID();
         if (currentSSID == "morening") {
           isConnected = true;
         } else {
           isConnected = await WiFiForIoTPlugin.connect(
             "morening",
             password: "12345678",
+            security: NetworkSecurity.WPA,
           );
         }
       } catch (e) {
@@ -94,7 +91,6 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
         setState(() {
           _isConnected = isConnected;
         });
-
         await _loadWifiList();
       } else {
         setState(() {
@@ -114,7 +110,6 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
     try {
       final response = await _dio.get(url,
           options: Options(responseType: ResponseType.json));
-      print(response.data);
 
       if (response.statusCode == 200) {
         final data = response.data as Map<String, dynamic>;
@@ -123,6 +118,7 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
         setState(() {
           _ssidList = (ssidList as List)
               .cast<String>()
+              .toSet()
               .where((ssid) => ssid.isNotEmpty)
               .toList();
           _connectionStatus = null;
@@ -143,6 +139,13 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   Future<void> sendNetworkCredentials() async {
     try {
       if (ssid.isNotEmpty && passwordController.text.isNotEmpty) {
+        if (!_isValidPassword(passwordController.text)) {
+          setState(() {
+            _connectionStatus = "Password must be at least 8 characters.";
+          });
+          return;
+        }
+
         final response = await ApiService().devicePost(
           "network/connect",
           {
@@ -154,7 +157,7 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
         if (response.statusCode == 200) {
           setState(() {
             ssid = "";
-            _connectionStatus = response.toString();
+            _connectionStatus = "Connected successfully!";
           });
         } else {
           setState(() {
@@ -168,6 +171,10 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
         _connectionStatus = "Error: $e";
       });
     }
+  }
+
+  bool _isValidPassword(String password) {
+    return password.length >= 8;
   }
 
   @override
@@ -187,10 +194,19 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
-          CircularProgressIndicator(),
-          SizedBox(height: 16),
-          Text("Searching for Nearby Morning Device..."),
+        children: [
+          const CircularProgressIndicator(),
+          const SizedBox(height: 16),
+          Text(
+            _connectionStatus ?? "Searching for Nearby Morning Device...",
+            style: TextStyle(
+                color: _connectionStatus == null ? Colors.black : Colors.red),
+          ),
+          if (_connectionStatus != null)
+            ElevatedButton(
+              onPressed: connectToMorningDevice,
+              child: const Text("Retry"),
+            ),
         ],
       ),
     );
@@ -254,7 +270,16 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
         AuthTextfield(
           controller: passwordController,
           labelText: "Password",
-          obscureText: true,
+          obscureText: _isPasswordHidden,
+          suffixIcon: IconButton(
+            icon: Icon(
+                _isPasswordHidden ? Icons.visibility : Icons.visibility_off),
+            onPressed: () {
+              setState(() {
+                _isPasswordHidden = !_isPasswordHidden;
+              });
+            },
+          ),
         ),
         Column(
           children: [
