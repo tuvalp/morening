@@ -22,8 +22,7 @@ dependencies:
   intl: ^0.20.0
   alarm: ^4.1.1
   dio: ^5.7.0
-  wifi_iot: ^0.3.19+1
-  plugin_wifi_connect: ^1.0.3
+  wifi_connector: ^2.0.0
 
 dev_dependencies:
   flutter_test:
