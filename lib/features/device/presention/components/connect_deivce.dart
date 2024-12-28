@@ -69,14 +69,16 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
     try {
       bool isConnected = false;
 
-      // Attempt to connect to the existing network
-      if (await Permission.locationWhenInUse.request().isGranted) {
+      if (WiFiForIoTPlugin.getSSID().toString() == "morening") {
+        isConnected = true;
+      } else {
         isConnected = await WiFiForIoTPlugin.connect(
           "morening",
           password: "12345678",
           security: NetworkSecurity.WPA,
         );
       }
+
       if (isConnected) {
         setState(() {
           _isConnected = isConnected;
