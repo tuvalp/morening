@@ -56,7 +56,6 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   @override
   void initState() {
     super.initState();
-    bindToDeviceWiFi();
     connectToDeviceWiFi();
   }
 
@@ -66,10 +65,14 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
     super.dispose();
   }
 
-  /// Connect to the device's Wi-Fi
   Future<void> connectToDeviceWiFi() async {
     bool isConnected = false;
     WiFiAccessPoint? morningNetwork;
+
+    setState(() {
+      _connectionError = null;
+      _connectionSuccess = false;
+    });
 
     try {
       final permissionStatus = await WiFiScan.instance.canStartScan();
@@ -218,15 +221,20 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
           )
         : Column(
             children: [
-              Text("Connnect your device to your home networks."),
-              ListView(
-                children: _ssidList.map((network) {
-                  return ListTile(
-                    leading: const Icon(Icons.wifi),
-                    title: Text(network),
-                    onTap: () => setState(() => ssid = network),
-                  );
-                }).toList(),
+              Text(
+                "Connnect your device to your home networks",
+                style: TextStyle(fontSize: 16),
+              ),
+              Expanded(
+                child: ListView(
+                  children: _ssidList.map((network) {
+                    return ListTile(
+                      leading: const Icon(Icons.wifi),
+                      title: Text(network),
+                      onTap: () => setState(() => ssid = network),
+                    );
+                  }).toList(),
+                ),
               ),
             ],
           );
