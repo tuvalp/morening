@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wifi_iot/wifi_iot.dart';
+import 'package:wifi_scan/wifi_scan.dart';
+
 import '../../../../services/api_service.dart';
 import '/features/auth/presention/components/auth_button.dart';
 import '/features/auth/presention/components/auth_textfield.dart';
@@ -66,20 +68,70 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
     try {
       bool isConnected = false;
 
+      // Step 1: Request permission for Wi-Fi scanning
+      final permissionStatus = await WiFiScan.instance.canStartScan();
+
+      if (permissionStatus != CanStartScan.yes) {
+        setState(() {
+          _connectionStatus = "Permission denied for Wi-Fi scanning.";
+        });
+        return;
+      }
+
+      // Step 2: Start scanning for Wi-Fi networks
+      try {
+        await WiFiScan.instance.startScan();
+        await Future.delayed(
+            const Duration(seconds: 2)); // Allow time for the scan to complete
+      } catch (e) {
+        setState(() {
+          _connectionStatus = "Error starting Wi-Fi scan: $e";
+        });
+        return;
+      }
+
+      // Step 3: Fetch scanned results
+      List<WiFiAccessPoint> accessPoints;
+      try {
+        accessPoints = await WiFiScan.instance.getScannedResults();
+      } catch (e) {
+        setState(() {
+          _connectionStatus = "Error fetching Wi-Fi scan results: $e";
+        });
+        return;
+      }
+
+      // Step 4: Find the "morening" network
+      final morningNetwork = accessPoints.firstWhere(
+        (ap) => ap.ssid == "morening",
+        orElse: () => WiFiAccessPoint(ssid: ""),
+      );
+
+      if (morningNetwork.ssid.isEmpty) {
+        setState(() {
+          _connectionStatus = "Error: 'morening' network not found.";
+        });
+        return;
+      }
+
+      // Step 5: Connect to the "morening" network
       try {
         isConnected = await WiFiForIoTPlugin.connect(
-          "morening",
+          morningNetwork.ssid,
           password: "12345678",
         );
       } catch (e) {
         setState(() {
           _connectionStatus = "Error while connecting to 'morening': $e";
         });
+        return;
       }
 
+      // Step 6: Update connection status
       if (isConnected) {
         setState(() {
-          _isConnected = isConnected;
+          _isConnected = true;
+          _connectionStatus = "Connected to 'morening'.";
         });
         await _loadWifiList();
       } else {
@@ -89,8 +141,7 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
       }
     } catch (e) {
       setState(() {
-        _connectionStatus = "Error: $e";
-        print(e.toString());
+        _connectionStatus = "Unexpected error: $e";
       });
     }
   }
