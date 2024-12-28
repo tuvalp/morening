@@ -114,10 +114,8 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
 
       // Step 5: Connect to the "morening" network
       try {
-        isConnected = await WiFiForIoTPlugin.connect(
-          morningNetwork.ssid,
-          password: "12345678",
-        );
+        isConnected = await WiFiForIoTPlugin.connect(morningNetwork.ssid,
+            password: "12345678", security: NetworkSecurity.WPA);
       } catch (e) {
         setState(() {
           _connectionStatus = "Error while connecting to 'morening': $e";
