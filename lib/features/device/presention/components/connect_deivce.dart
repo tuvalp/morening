@@ -193,12 +193,16 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
           const SizedBox(height: 16),
           Text(
             _connectionStatus ?? "Searching for Nearby Morning Device...",
-            style: TextStyle(
-                color: _connectionStatus == null ? Colors.black : Colors.red),
+            style: const TextStyle(fontSize: 16),
           ),
           if (_connectionStatus != null)
             ElevatedButton(
-              onPressed: connectToMorningDevice,
+              onPressed: () => {
+                setState(() {
+                  _connectionStatus = null;
+                }),
+                connectToMorningDevice()
+              },
               child: const Text("Retry"),
             ),
         ],
