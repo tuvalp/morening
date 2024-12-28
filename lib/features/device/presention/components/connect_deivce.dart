@@ -104,9 +104,7 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
       // Step 4: Find the "morening" network
       final morningNetwork = accessPoints.firstWhere(
         (ap) => ap.ssid == "morening",
-        orElse: () => WiFiAccessPoint(ssid: ""),
       );
-
       if (morningNetwork.ssid.isEmpty) {
         setState(() {
           _connectionStatus = "Error: 'morening' network not found.";
