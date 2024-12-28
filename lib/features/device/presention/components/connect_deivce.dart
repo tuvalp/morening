@@ -71,10 +71,10 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
 
       // Attempt to connect to the existing network
       if (await Permission.locationWhenInUse.request().isGranted) {
-        WiFiForIoTPlugin.showWritePermissionSettings(true);
         isConnected = await WiFiForIoTPlugin.connect(
           "morening",
           password: "12345678",
+          security: NetworkSecurity.WPA,
         );
       }
       if (isConnected) {
