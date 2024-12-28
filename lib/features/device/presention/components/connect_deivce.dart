@@ -55,6 +55,11 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   @override
   void initState() {
     super.initState();
+
+    _dio.options = BaseOptions(
+      connectTimeout: Duration(seconds: 5), // 5 seconds
+      receiveTimeout: Duration(seconds: 5), // 3 seconds
+    );
     connectToMorningDevice();
   }
 
