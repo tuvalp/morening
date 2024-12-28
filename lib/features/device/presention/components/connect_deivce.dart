@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:dio/dio.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 
 import '../../../../services/api_service.dart';
@@ -69,14 +68,22 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
     try {
       bool isConnected = false;
 
-      if (WiFiForIoTPlugin.getSSID().toString() == "morening") {
-        isConnected = true;
-      } else {
-        isConnected = await WiFiForIoTPlugin.connect(
-          "morening",
-          password: "12345678",
-          security: NetworkSecurity.WPA,
-        );
+      try {
+        String? currentSSID = await WiFiForIoTPlugin.getSSID();
+        print(currentSSID);
+        if (currentSSID == "morening") {
+          isConnected = true;
+        } else {
+          isConnected = await WiFiForIoTPlugin.connect(
+            "morening",
+            password: "12345678",
+            security: NetworkSecurity.WPA,
+          );
+        }
+      } catch (e) {
+        setState(() {
+          _connectionStatus = "Error while connecting to 'morening': $e";
+        });
       }
 
       if (isConnected) {
@@ -131,23 +138,26 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
 
   Future<void> sendNetworkCredentials() async {
     try {
-      final response = await ApiService().devicePost(
-        "network/connect",
-        {
-          "ssid": ssid,
-          "password": passwordController.text,
-        },
-      );
+      if (ssid.isNotEmpty && passwordController.text.isNotEmpty) {
+        final response = await ApiService().devicePost(
+          "network/connect",
+          {
+            "ssid": ssid,
+            "password": passwordController.text,
+          },
+        );
 
-      if (response.statusCode == 200) {
-        setState(() {
-          _isConnected = true;
-          ssid = "";
-        });
-      } else {
-        setState(() {
-          _connectionStatus = "Failed to connect: HTTP ${response.statusCode}";
-        });
+        if (response.statusCode == 200) {
+          setState(() {
+            ssid = "";
+            _connectionStatus = response.toString();
+          });
+        } else {
+          setState(() {
+            _connectionStatus =
+                "Failed to connect: HTTP ${response.statusCode}";
+          });
+        }
       }
     } catch (e) {
       setState(() {
