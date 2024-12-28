@@ -100,6 +100,7 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
     } catch (e) {
       setState(() {
         _connectionStatus = "Error: $e";
+        print(e.toString());
       });
     }
   }
@@ -132,6 +133,7 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
     } catch (e) {
       setState(() {
         _connectionStatus = "Error loading Wi-Fi list: ${e.toString()}";
+        print(e.toString());
       });
     }
   }
