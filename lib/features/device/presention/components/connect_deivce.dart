@@ -1,8 +1,11 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:morening_2/services/api_service.dart';
-import 'package:permission_handler/permission_handler.dart';
+
+import 'package:dio/dio.dart';
 import 'package:wifi_iot/wifi_iot.dart';
+import 'package:plugin_wifi_connect/plugin_wifi_connect.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+import '../../../../services/api_service.dart';
 import '/features/auth/presention/components/auth_button.dart';
 import '/features/auth/presention/components/auth_textfield.dart';
 
@@ -69,12 +72,13 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
 
       // Attempt to connect to the existing network
       if (await Permission.locationWhenInUse.request().isGranted) {
-        isConnected = await WiFiForIoTPlugin.connect(
-          "morening",
-          bssid: "morening",
-          password: "12345678",
-          joinOnce: true,
-        );
+        isConnected = await PluginWifiConnect.connect("morening") ?? false;
+        // isConnected = await WiFiForIoTPlugin.connect(
+        //   "morening",
+        //   bssid: "morening",
+        //   password: "12345678",
+        //   joinOnce: true,
+        // );
       }
       if (isConnected) {
         setState(() {
