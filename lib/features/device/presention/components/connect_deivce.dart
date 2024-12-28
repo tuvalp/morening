@@ -57,6 +57,8 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   @override
   void dispose() {
     passwordController.dispose();
+    _connectionStatus = null;
+    _isConnected = false;
     super.dispose();
   }
 
@@ -68,8 +70,6 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
         isConnected = await WiFiForIoTPlugin.connect(
           "morening",
           password: "12345678",
-          withInternet: true,
-          security: NetworkSecurity.WPA,
         );
       } catch (e) {
         setState(() {
