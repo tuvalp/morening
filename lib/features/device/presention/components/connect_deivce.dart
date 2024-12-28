@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:morening_2/features/auth/presention/components/auth_button.dart';
+import 'package:morening_2/features/auth/presention/components/auth_textfield.dart';
+import 'package:morening_2/utils/snackbar_extension.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 import 'package:wifi_scan/wifi_scan.dart';
 
@@ -41,8 +44,10 @@ class ConnectDeviceSheet extends StatefulWidget {
 
 class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   final _apiService = ApiService();
+
   bool _isConnected = false;
-  String? _connectionStatus;
+  String? _connectionError;
+  bool _connectionSuccess = false;
   List<String> _ssidList = [];
   final TextEditingController passwordController = TextEditingController();
   bool _isPasswordHidden = true;
@@ -51,6 +56,7 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   @override
   void initState() {
     super.initState();
+    bindToDeviceWiFi();
     connectToDeviceWiFi();
   }
 
@@ -66,10 +72,9 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
     WiFiAccessPoint? morningNetwork;
 
     try {
-      setState(() => _connectionStatus = "Searching for Morening' Device...");
       final permissionStatus = await WiFiScan.instance.canStartScan();
       if (permissionStatus != CanStartScan.yes) {
-        setState(() => _connectionStatus = "Wi-Fi scanning permission denied.");
+        setState(() => _connectionError = "Wi-Fi scanning permission denied.");
         return;
       }
 
@@ -86,14 +91,14 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
       }
 
       if (morningNetwork == null) {
-        setState(() => _connectionStatus = "'Morening Device not found.");
+        setState(() => _connectionError = "'Morening Device not found.");
         return;
       }
 
       isConnected = await WiFiForIoTPlugin.connect(
         morningNetwork.ssid,
         password: "12345678",
-        security: NetworkSecurity.WEP,
+        security: NetworkSecurity.WPA,
       );
 
       if (isConnected) {
@@ -101,17 +106,16 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
         await bindToDeviceWiFi();
         await fetchNetworkList();
       } else {
-        setState(() => _connectionStatus = "Failed to connect to device.");
+        setState(() => _connectionError = "Failed to connect to device.");
       }
     } catch (e) {
-      setState(() => _connectionStatus = "Error: $e");
+      setState(() => _connectionError = "Error: $e");
     }
   }
 
   Future<void> bindToDeviceWiFi() async {
     try {
       await WiFiForIoTPlugin.forceWifiUsage(true);
-      print('Successfully bound to device Wi-Fi.');
     } catch (e) {
       print('Error binding to device Wi-Fi: $e');
     }
@@ -124,22 +128,22 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
         final ssidList = List<String>.from(response.data['ssids'] ?? []);
         setState(() => _ssidList = ssidList);
       } else {
-        setState(() => _connectionStatus =
+        setState(() => _connectionError =
             "Failed to fetch networks: HTTP ${response.statusCode}");
       }
     } catch (e) {
-      setState(() => _connectionStatus = "Error fetching networks: $e");
+      setState(() => _connectionError = "Error fetching networks: $e");
     }
   }
 
   Future<void> sendNetworkCredentials() async {
     if (ssid.isEmpty || passwordController.text.isEmpty) {
-      setState(() => _connectionStatus = "SSID or password is empty.");
+      context.showErrorSnackBar('Please enter both SSID and password.');
       return;
     }
     if (passwordController.text.length < 8) {
-      setState(
-          () => _connectionStatus = "Password must be at least 8 characters.");
+      context.showErrorSnackBar('Password must be at least 8 characters.');
+
       return;
     }
 
@@ -150,13 +154,13 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
       );
 
       if (response.statusCode == 200) {
-        setState(() => _connectionStatus = "Connected to $ssid!");
+        setState(() => _connectionSuccess = true);
       } else {
-        setState(() => _connectionStatus =
+        context.showErrorSnackBar(
             "Failed to connect: HTTP ${response.statusCode}");
       }
     } catch (e) {
-      setState(() => _connectionStatus = "Error: $e");
+      context.showErrorSnackBar(e.toString());
     }
   }
 
@@ -165,11 +169,13 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
     return Container(
       height: 400,
       padding: const EdgeInsets.all(24),
-      child: !_isConnected
-          ? _buildConnectingUI()
-          : ssid.isEmpty
-              ? _buildNetworkSelectionUI()
-              : _buildPasswordInputUI(),
+      child: _connectionSuccess
+          ? _buildConnectionSuccessUI()
+          : !_isConnected
+              ? _buildConnectingUI()
+              : ssid.isEmpty
+                  ? _buildNetworkSelectionUI()
+                  : _buildPasswordInputUI(),
     );
   }
 
@@ -178,18 +184,18 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const CircularProgressIndicator(),
+          if (_connectionError == null) const CircularProgressIndicator(),
           const SizedBox(height: 16),
           Text(
-            _connectionStatus ?? "Connecting to Morening Device...",
+            _connectionError ?? "Connecting to Morening Device...",
             style: const TextStyle(fontSize: 16),
           ),
-          _connectionStatus != null
-              ? ElevatedButton(
-                  onPressed: connectToDeviceWiFi,
-                  child: const Text("Retry"),
-                )
-              : CircularProgressIndicator(),
+          const SizedBox(height: 16),
+          if (_connectionError != null)
+            TextButton(
+              onPressed: connectToDeviceWiFi,
+              child: const Text("Retry"),
+            )
         ],
       ),
     );
@@ -204,49 +210,79 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
                 const CircularProgressIndicator(),
                 const SizedBox(height: 16),
                 Text(
-                  _connectionStatus ?? "Scanning for networks...",
+                  _connectionError ?? "Scanning for networks...",
                   style: const TextStyle(fontSize: 16),
                 ),
               ],
             ),
           )
-        : ListView(
-            children: _ssidList.map((network) {
-              return ListTile(
-                leading: const Icon(Icons.wifi),
-                title: Text(network),
-                onTap: () => setState(() => ssid = network),
-              );
-            }).toList(),
+        : Column(
+            children: [
+              Text("Connnect your device to your home networks."),
+              ListView(
+                children: _ssidList.map((network) {
+                  return ListTile(
+                    leading: const Icon(Icons.wifi),
+                    title: Text(network),
+                    onTap: () => setState(() => ssid = network),
+                  );
+                }).toList(),
+              ),
+            ],
           );
   }
 
   Widget _buildPasswordInputUI() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        TextField(
+        AuthTextfield(
           controller: passwordController,
           obscureText: _isPasswordHidden,
-          decoration: InputDecoration(
-            labelText: "Password",
-            suffixIcon: IconButton(
-              icon: Icon(
-                _isPasswordHidden ? Icons.visibility : Icons.visibility_off,
-              ),
-              onPressed: () =>
-                  setState(() => _isPasswordHidden = !_isPasswordHidden),
+          labelText: 'Password',
+          suffixIcon: IconButton(
+            icon: Icon(
+              _isPasswordHidden ? Icons.visibility : Icons.visibility_off,
             ),
+            onPressed: () =>
+                setState(() => _isPasswordHidden = !_isPasswordHidden),
           ),
         ),
-        ElevatedButton(
+        AuthButton(
           onPressed: sendNetworkCredentials,
-          child: const Text("Connect"),
+          text: "Connect",
         ),
+        SizedBox(height: 16),
         TextButton(
           onPressed: () => setState(() => ssid = ""),
           child: const Text("Select Another Network"),
         ),
       ],
+    );
+  }
+
+  Widget _buildConnectionSuccessUI() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.check_circle,
+            color: Theme.of(context).colorScheme.primary,
+            size: 80,
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            "Connection Successful",
+            style: TextStyle(fontSize: 24),
+          ),
+          const SizedBox(height: 16),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Close"),
+          ),
+        ],
+      ),
     );
   }
 }
