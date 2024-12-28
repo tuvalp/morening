@@ -158,6 +158,7 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
 
       if (response.statusCode == 200) {
         setState(() => _connectionSuccess = true);
+        print(response.data);
       } else {
         context.showErrorSnackBar(
             "Failed to connect: HTTP ${response.statusCode}");
@@ -169,16 +170,18 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 400,
-      padding: const EdgeInsets.all(24),
-      child: _connectionSuccess
-          ? _buildConnectionSuccessUI()
-          : !_isConnected
-              ? _buildConnectingUI()
-              : ssid.isEmpty
-                  ? _buildNetworkSelectionUI()
-                  : _buildPasswordInputUI(),
+    return SafeArea(
+      child: Container(
+        height: 400,
+        padding: const EdgeInsets.all(24),
+        child: _connectionSuccess
+            ? _buildConnectionSuccessUI()
+            : !_isConnected
+                ? _buildConnectingUI()
+                : ssid.isEmpty
+                    ? _buildNetworkSelectionUI()
+                    : _buildPasswordInputUI(),
+      ),
     );
   }
 
@@ -256,6 +259,7 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
                 setState(() => _isPasswordHidden = !_isPasswordHidden),
           ),
         ),
+        const SizedBox(height: 16),
         AuthButton(
           onPressed: sendNetworkCredentials,
           text: "Connect",
