@@ -18,6 +18,7 @@ class ApiService {
           connectTimeout: Duration(seconds: 10),
           receiveTimeout: Duration(seconds: 10),
           headers: ApiConfig.defaultHeaders,
+          followRedirects: false,
         ));
 
   // GET request

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 import '../../../../services/api_service.dart';
 import '/features/auth/presention/components/auth_button.dart';
@@ -41,7 +40,7 @@ class ConnectDeviceSheet extends StatefulWidget {
 }
 
 class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
-  final Dio _dio = Dio();
+  final _apiService = ApiService();
   bool _isConnected = false;
   String? _connectionStatus;
   List<String> _ssidList = [];
@@ -52,10 +51,6 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   @override
   void initState() {
     super.initState();
-    _dio.options = BaseOptions(
-      connectTimeout: Duration(seconds: 10),
-      receiveTimeout: Duration(seconds: 10),
-    );
     connectToMorningDevice();
   }
 
@@ -106,10 +101,8 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   }
 
   Future<void> _loadWifiList() async {
-    const url = "http://10.42.0.1:5000/network/scan";
-
     try {
-      final response = await _dio.get(url);
+      final response = await _apiService.deviceGet("network/scan");
 
       if (response.statusCode == 200) {
         final data = response.data as Map<String, dynamic>;
@@ -147,7 +140,7 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
           return;
         }
 
-        final response = await ApiService().devicePost(
+        final response = await _apiService.devicePost(
           "network/connect",
           {
             "ssid": ssid,
