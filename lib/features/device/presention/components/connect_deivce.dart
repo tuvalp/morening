@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:dio/dio.dart';
-import 'package:wifi_connector/wifi_connector.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:wifi_iot/wifi_iot.dart';
 
 import '../../../../services/api_service.dart';
 import '/features/auth/presention/components/auth_button.dart';
@@ -71,8 +71,9 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
 
       // Attempt to connect to the existing network
       if (await Permission.locationWhenInUse.request().isGranted) {
-        isConnected = await WifiConnector.connectToWifi(
-          ssid: "morening",
+        WiFiForIoTPlugin.showWritePermissionSettings(true);
+        isConnected = await WiFiForIoTPlugin.connect(
+          "morening",
           password: "12345678",
         );
       }

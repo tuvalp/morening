@@ -893,14 +893,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.5.1"
-  wifi_connector:
+  wifi_iot:
     dependency: "direct main"
     description:
-      name: wifi_connector
-      sha256: "77bce2f58b2a371595d14afba9684bd28a34cad1129ad6fc22cb6c3dd0fec236"
+      name: wifi_iot
+      sha256: "4a3301f71663a908bb50ffe6d9dc9e8b8383fab48368accf978409bde96e9aca"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.0"
+    version: "0.3.19+1"
   win32:
     dependency: transitive
     description:
