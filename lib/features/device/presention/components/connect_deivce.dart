@@ -53,8 +53,8 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   void initState() {
     super.initState();
     _dio.options = BaseOptions(
-      connectTimeout: Duration(seconds: 5),
-      receiveTimeout: Duration(seconds: 5),
+      connectTimeout: Duration(seconds: 10),
+      receiveTimeout: Duration(seconds: 10),
     );
     connectToMorningDevice();
   }
@@ -109,8 +109,7 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
     const url = "http://10.42.0.1:5000/network/scan";
 
     try {
-      final response = await _dio.get(url,
-          options: Options(responseType: ResponseType.json));
+      final response = await _dio.get(url);
 
       if (response.statusCode == 200) {
         final data = response.data as Map<String, dynamic>;
