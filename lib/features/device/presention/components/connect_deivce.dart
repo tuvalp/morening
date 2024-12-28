@@ -62,7 +62,6 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
 
   Future<void> connectToMorningDevice() async {
     try {
-      String? currentSSID;
       bool isConnected = false;
 
       try {
