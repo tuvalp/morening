@@ -112,8 +112,8 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
     const url = "http://10.42.0.1:5000/network/scan";
 
     try {
-      final response =
-          await _dio.get(url, options: Options(followRedirects: false));
+      final response = await _dio.get(url,
+          options: Options(responseType: ResponseType.json));
       print(response.data);
 
       if (response.statusCode == 200) {
