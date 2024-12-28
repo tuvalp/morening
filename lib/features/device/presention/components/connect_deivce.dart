@@ -66,17 +66,12 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
       bool isConnected = false;
 
       try {
-        currentSSID = await WiFiForIoTPlugin.getSSID();
-        if (currentSSID == "morening") {
-          isConnected = true;
-        } else {
-          isConnected = await WiFiForIoTPlugin.connect(
-            "morening",
-            password: "12345678",
-            withInternet: true,
-            security: NetworkSecurity.WPA,
-          );
-        }
+        isConnected = await WiFiForIoTPlugin.connect(
+          "morening",
+          password: "12345678",
+          withInternet: true,
+          security: NetworkSecurity.WPA,
+        );
       } catch (e) {
         setState(() {
           _connectionStatus = "Error while connecting to 'morening': $e";
