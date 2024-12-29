@@ -18,7 +18,6 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       final userID = await _authRepo.getUser();
       if (userID == null) {
-        await _authRepo.logout();
         print("userID is null");
         emit(Unauthenticated());
         return false;

@@ -10,10 +10,8 @@ class AlarmCubit extends Cubit<AlarmState> {
   final AlarmRepo alarmRepo;
   final AlarmNativeRepo alarmNativeRepo;
   final AlarmApiRepo alarmApiRepo;
-  final String? userID;
 
-  AlarmCubit(
-      this.alarmRepo, this.alarmNativeRepo, this.alarmApiRepo, this.userID)
+  AlarmCubit(this.alarmRepo, this.alarmNativeRepo, this.alarmApiRepo)
       : super(const AlarmInitial()) {
     loadAlarms();
   }
@@ -33,7 +31,7 @@ class AlarmCubit extends Cubit<AlarmState> {
     }
   }
 
-  Future<void> addAlarm(Alarm alarm) async {
+  Future<void> addAlarm(Alarm alarm, String? userID) async {
     try {
       emit(AlarmLoading());
       final now = DateTime.now();

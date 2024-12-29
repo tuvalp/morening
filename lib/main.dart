@@ -70,13 +70,8 @@ class _MyAppState extends State<MyApp> {
           lazy: false,
         ),
         BlocProvider<AlarmCubit>(
-          create: (context) => AlarmCubit(
-              AlarmStoreRepo(),
-              AlarmNativeRepo(),
-              AlarmApiRepo(),
-              context.read<AuthCubit>().state is Authenticated
-                  ? context.read<Authenticated>().user.id
-                  : null),
+          create: (context) =>
+              AlarmCubit(AlarmStoreRepo(), AlarmNativeRepo(), AlarmApiRepo()),
           lazy: false,
         ),
         BlocProvider<ProfileCubit>(
@@ -91,14 +86,8 @@ class _MyAppState extends State<MyApp> {
               authState is Authenticated; // Replace with your actual state
           final userId = isAuthenticated ? authState.user.id : null;
 
-          return MultiBlocProvider(
-            providers: [
-              if (isAuthenticated)
-                BlocProvider<DeviceCubit>(
-                  create: (_) => DeviceCubit(userId!),
-                  lazy: false,
-                ),
-            ],
+          return BlocProvider(
+            create: (_) => DeviceCubit(userId!),
             child: BlocListener<AlarmCubit, AlarmState>(
               listener: (context, state) {
                 if (state is AlarmRingingState) {

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:morening_2/features/auth/presention/auth_state.dart';
 
 import '../../../../services/navigation_service.dart';
 import '../../presention/alarm_cubit.dart';
@@ -73,26 +74,31 @@ class AddEditAlarmViewState extends State<AddEditAlarmView> {
 
   void _saveAlarm() {
     final alarmRepo = context.read<AlarmCubit>();
+    final authRepo = context.watch<AuthState>();
 
-    final Alarm alarm = Alarm(
-      id: widget.alarm?.id ?? DateTime.now().millisecondsSinceEpoch % 100000,
-      label: _labelController.text,
-      time: _selectedTime.copyWith(
-        second: 0,
-        millisecond: 0,
-      ),
-      isActive: true,
-      days: _selectedDays,
-      planId: _planId,
-      ringtone: _ringtone,
-    );
+    if (authRepo is Authenticated) {
+      final userid = authRepo.user.id;
 
-    if (widget.alarm == null) {
-      alarmRepo.addAlarm(alarm);
-    } else {
-      alarmRepo.updateAlarm(alarm);
+      final Alarm alarm = Alarm(
+        id: widget.alarm?.id ?? DateTime.now().millisecondsSinceEpoch % 100000,
+        label: _labelController.text,
+        time: _selectedTime.copyWith(
+          second: 0,
+          millisecond: 0,
+        ),
+        isActive: true,
+        days: _selectedDays,
+        planId: _planId,
+        ringtone: _ringtone,
+      );
+
+      if (widget.alarm == null) {
+        alarmRepo.addAlarm(alarm, userid);
+      } else {
+        alarmRepo.updateAlarm(alarm);
+      }
+      NavigationService.pop();
     }
-    NavigationService.pop();
   }
 
   void _deleteAlarm() {

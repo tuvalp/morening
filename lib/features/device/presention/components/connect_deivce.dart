@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:morening_2/features/auth/presention/components/auth_button.dart';
 import 'package:morening_2/features/auth/presention/components/auth_textfield.dart';
-import 'package:morening_2/features/device/data/wifi_utils.dart';
 import 'package:morening_2/features/device/presention/device_cubit.dart';
 import 'package:morening_2/utils/snackbar_extension.dart';
 import 'package:wifi_iot/wifi_iot.dart';
@@ -60,7 +59,6 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   void initState() {
     super.initState();
     connectToDeviceWiFi();
-    WifiUtils().current();
   }
 
   @override
@@ -78,7 +76,9 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
     });
 
     try {
-      isConnected = await WifiUtils().connect("morening", "12345678");
+      //Connected = await WifiUtils().connect("morening", "12345678");
+      isConnected = await WiFiForIoTPlugin.connect("morening",
+          password: "12345678", security: NetworkSecurity.WPA);
 
       if (isConnected) {
         setState(() => _isConnected = true);
