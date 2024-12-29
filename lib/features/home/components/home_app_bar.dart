@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:morening_2/features/auth/domain/models/app_user.dart';
 
 import '../../../services/navigation_service.dart';
+import '../../auth/presention/auth_cubit.dart';
+import '../../auth/presention/auth_state.dart';
 import '../../device/presention/page/device_page.dart';
 import '../../profile/presention/pages/profile_screen.dart';
 
@@ -12,6 +16,9 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    AuthCubit authCubit = context.read<AuthCubit>();
+    AppUser user = (authCubit.state as Authenticated).user;
+
     return AppBar(
       title:
           const Text('Morening', style: TextStyle(fontWeight: FontWeight.w600)),
@@ -27,11 +34,13 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.wifi),
+          icon: user.deviceId != null
+              ? const Icon(Icons.wifi)
+              : const Icon(Icons.devices),
           onPressed: () {
             NavigationService.navigateTo(const DevicePage());
           },
-        ),
+        )
       ],
     );
   }
