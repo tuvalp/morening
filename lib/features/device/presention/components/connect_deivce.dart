@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:morening_2/features/auth/presention/auth_cubit.dart';
 import 'package:morening_2/features/auth/presention/components/auth_button.dart';
 import 'package:morening_2/features/auth/presention/components/auth_textfield.dart';
 import 'package:morening_2/features/device/presention/device_cubit.dart';
@@ -47,6 +48,7 @@ class ConnectDeviceSheet extends StatefulWidget {
 
 class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   final _apiService = ApiService();
+  late DeviceCubit _deviceCubit;
 
   bool _isConnected = false;
   String? _connectionError;
@@ -55,10 +57,18 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   final TextEditingController passwordController = TextEditingController();
   bool _isPasswordHidden = true;
   String ssid = "";
+  String? userID;
 
   @override
   void initState() {
     super.initState();
+    _deviceCubit = context.read<DeviceCubit>();
+    final authState = context.read<AuthCubit>();
+
+    if (authState is Authenticated) {
+      userID = (authState as Authenticated).user.id;
+    }
+
     connectToDeviceWiFi();
   }
 
@@ -130,16 +140,13 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
     try {
       final response = await _apiService.devicePost(
         "network/connect",
-        {"ssid": ssid, "password": passwordController.text},
+        {"ssid": ssid, "password": passwordController.text, "user_id": userID},
       );
 
       if (response.statusCode == 202) {
-        final AuthState _authState = context.watch<AuthState>();
         setState(() => _connectionSuccess = true);
-        if (_authState is Authenticated) {
-          context
-              .read<DeviceCubit>()
-              .updateDeviceId(response.data['device_id'], _authState.user.id);
+        if (userID != null) {
+          _deviceCubit.updateDeviceId(response.data['device_id'], userID!);
         }
         print(response.data);
       } else {

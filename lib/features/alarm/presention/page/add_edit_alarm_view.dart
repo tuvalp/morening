@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:morening_2/features/auth/presention/auth_state.dart';
 
 import '../../../../services/navigation_service.dart';
+import '../../../auth/presention/auth_cubit.dart';
 import '../../presention/alarm_cubit.dart';
 import '../../../../utils/ringtone_array.dart';
 import '../components/add_edit_alarm_app_bar.dart';
@@ -73,11 +74,12 @@ class AddEditAlarmViewState extends State<AddEditAlarmView> {
   }
 
   void _saveAlarm() {
-    final alarmRepo = context.read<AlarmCubit>();
-    final authRepo = context.watch<AuthState>();
+    final alarmCubit = context.read<AlarmCubit>();
+    final authCubit = context.read<AuthCubit>();
 
-    if (authRepo is Authenticated) {
-      final userid = authRepo.user.id;
+    // Check if the user is authenticated
+    if (authCubit.state is Authenticated) {
+      final userId = (authCubit.state as Authenticated).user.id;
 
       final Alarm alarm = Alarm(
         id: widget.alarm?.id ?? DateTime.now().millisecondsSinceEpoch % 100000,
@@ -93,9 +95,9 @@ class AddEditAlarmViewState extends State<AddEditAlarmView> {
       );
 
       if (widget.alarm == null) {
-        alarmRepo.addAlarm(alarm, userid);
+        alarmCubit.addAlarm(alarm, userId);
       } else {
-        alarmRepo.updateAlarm(alarm);
+        alarmCubit.updateAlarm(alarm);
       }
       NavigationService.pop();
     }
