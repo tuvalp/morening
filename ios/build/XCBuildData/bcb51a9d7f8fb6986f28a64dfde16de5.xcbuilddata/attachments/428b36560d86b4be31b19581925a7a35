@@ -1,0 +1,5 @@
+ extern const unsigned char alarmVersionString[];
+ extern const double alarmVersionNumber;
+
+ const unsigned char alarmVersionString[] __attribute__ ((used)) = "@(#)PROGRAM:alarm  PROJECT:Pods-1" "\n";
+ const double alarmVersionNumber __attribute__ ((used)) = (double)1.;

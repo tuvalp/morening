@@ -1,0 +1,15 @@
+{
+  "" : {
+    "const-values" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/wifi_iot.build/Objects-normal/arm64/wifi_iot-master.swiftconstvalues",
+    "dependencies" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/wifi_iot.build/Objects-normal/arm64/wifi_iot-master.d",
+    "diagnostics" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/wifi_iot.build/Objects-normal/arm64/wifi_iot-master.dia",
+    "emit-module-dependencies" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/wifi_iot.build/Objects-normal/arm64/wifi_iot-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/wifi_iot.build/Objects-normal/arm64/wifi_iot-master-emit-module.dia",
+    "swift-dependencies" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/wifi_iot.build/Objects-normal/arm64/wifi_iot-master.swiftdeps"
+  },
+  "/Users/maccomputer/.pub-cache/hosted/pub.dev/wifi_iot-0.3.19+1/ios/Classes/SwiftWifiIotPlugin.swift" : {
+    "index-unit-output-path" : "/Pods.build/Release-iphoneos/wifi_iot.build/Objects-normal/arm64/SwiftWifiIotPlugin.o",
+    "llvm-bc" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/wifi_iot.build/Objects-normal/arm64/SwiftWifiIotPlugin.bc",
+    "object" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/wifi_iot.build/Objects-normal/arm64/SwiftWifiIotPlugin.o"
+  }
+}

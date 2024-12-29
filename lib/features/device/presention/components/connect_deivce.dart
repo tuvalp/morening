@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:morening_2/features/auth/presention/components/auth_button.dart';
 import 'package:morening_2/features/auth/presention/components/auth_textfield.dart';
@@ -75,31 +77,37 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
     });
 
     try {
-      final permissionStatus = await WiFiScan.instance.canStartScan();
-      if (permissionStatus != CanStartScan.yes) {
-        setState(() => _connectionError = "Wi-Fi scanning permission denied.");
-        return;
-      }
+      // if (Platform.isAndroid) {
+      //   final permissionStatus = await WiFiScan.instance.canStartScan();
+      //   if (permissionStatus != CanStartScan.yes) {
+      //     setState(
+      //         () => _connectionError = "Wi-Fi scanning permission denied.");
+      //     return;
+      //   }
 
-      await WiFiScan.instance.startScan();
-      await Future.delayed(const Duration(seconds: 2));
-      final accessPoints = await WiFiScan.instance.getScannedResults();
+      //   await WiFiScan.instance.startScan();
+      //   await Future.delayed(const Duration(seconds: 2));
+      //   final accessPoints = await WiFiScan.instance.getScannedResults();
 
-      try {
-        morningNetwork = accessPoints.firstWhere(
-          (ap) => ap.ssid == "morening",
-        );
-      } catch (e) {
-        morningNetwork = null;
-      }
+      //   try {
+      //     morningNetwork = accessPoints.firstWhere(
+      //       (ap) => ap.ssid == "morening",
+      //     );
+      //   } catch (e) {
+      //     morningNetwork = null;
+      //   }
 
-      if (morningNetwork == null) {
-        setState(() => _connectionError = "'Morening Device not found.");
-        return;
-      }
+      //   if (morningNetwork == null) {
+      //     setState(() => _connectionError = "'Morening Device not found.");
+      //     return;
+      //   }
+      // }else{
+
+      // }
 
       isConnected = await WiFiForIoTPlugin.connect(
-        morningNetwork.ssid,
+        //morningNetwork.ssid,
+        "morening",
         password: "12345678",
         security: NetworkSecurity.WPA,
       );
@@ -170,10 +178,16 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return SingleChildScrollView(
       child: Container(
+        color: Theme.of(context).colorScheme.surface,
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+          top: 32,
+          left: 32,
+          right: 32,
+        ),
         height: 400,
-        padding: const EdgeInsets.all(24),
         child: _connectionSuccess
             ? _buildConnectionSuccessUI()
             : !_isConnected

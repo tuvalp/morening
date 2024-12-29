@@ -1,0 +1,15 @@
+{
+  "" : {
+    "const-values" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/wifi_scan.build/Objects-normal/arm64/wifi_scan-master.swiftconstvalues",
+    "dependencies" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/wifi_scan.build/Objects-normal/arm64/wifi_scan-master.d",
+    "diagnostics" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/wifi_scan.build/Objects-normal/arm64/wifi_scan-master.dia",
+    "emit-module-dependencies" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/wifi_scan.build/Objects-normal/arm64/wifi_scan-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/wifi_scan.build/Objects-normal/arm64/wifi_scan-master-emit-module.dia",
+    "swift-dependencies" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/wifi_scan.build/Objects-normal/arm64/wifi_scan-master.swiftdeps"
+  },
+  "/Users/maccomputer/.pub-cache/hosted/pub.dev/wifi_scan-0.4.1+1/ios/Classes/SwiftWifiScanPlugin.swift" : {
+    "index-unit-output-path" : "/Pods.build/Release-iphoneos/wifi_scan.build/Objects-normal/arm64/SwiftWifiScanPlugin.o",
+    "llvm-bc" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/wifi_scan.build/Objects-normal/arm64/SwiftWifiScanPlugin.bc",
+    "object" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/wifi_scan.build/Objects-normal/arm64/SwiftWifiScanPlugin.o"
+  }
+}

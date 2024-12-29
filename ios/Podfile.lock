@@ -23,9 +23,9 @@ PODS:
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - wifi_connector (0.0.1):
-    - Flutter
   - wifi_iot (0.0.1):
+    - Flutter
+  - wifi_scan (0.0.1):
     - Flutter
 
 DEPENDENCIES:
@@ -40,8 +40,8 @@ DEPENDENCIES:
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
-  - wifi_connector (from `.symlinks/plugins/wifi_connector/ios`)
   - wifi_iot (from `.symlinks/plugins/wifi_iot/ios`)
+  - wifi_scan (from `.symlinks/plugins/wifi_scan/ios`)
 
 EXTERNAL SOURCES:
   alarm:
@@ -66,13 +66,13 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
-  wifi_connector:
-    :path: ".symlinks/plugins/wifi_connector/ios"
   wifi_iot:
     :path: ".symlinks/plugins/wifi_iot/ios"
+  wifi_scan:
+    :path: ".symlinks/plugins/wifi_scan/ios"
 
 SPEC CHECKSUMS:
-  alarm: 6c1f6a9688f94cd6bf8f104c67cc26e78c9d8d13
+  alarm: 708c8dc6129f9e64513cbdd305c7ff134cfbc8c1
   amplify_auth_cognito: 76b5a54f05f66f69966b468b8121a0dd33a32c70
   amplify_secure_storage: be403397a8ba39f5e0f2a05303b3ca03b53b9ee9
   audioplayers_darwin: 877d9a4d06331c5c374595e46e16453ac7eafa40
@@ -83,9 +83,9 @@ SPEC CHECKSUMS:
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
-  wifi_connector: aa1fed85d30fbe52eb39d1aefe761a36032a581f
   wifi_iot: b5aafd6f9b52f8a357383a1deabab45f31cd602d
+  wifi_scan: 6d20b3b4f59bbad1ddcf3e241560f3acd62f6cbe
 
-PODFILE CHECKSUM: 68db11b1fd7accb4ce896c1085b069646926e849
+PODFILE CHECKSUM: 3148705e084fb7ab7c9b6332e85d7daaa147d11d
 
 COCOAPODS: 1.16.2

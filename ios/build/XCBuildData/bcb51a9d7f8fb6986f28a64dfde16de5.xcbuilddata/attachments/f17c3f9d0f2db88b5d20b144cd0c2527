@@ -1,0 +1,23 @@
+{
+  'version': 0,
+  'use-external-names': 'false',
+  'case-sensitive': 'false',
+  'roots': [{
+    'type': 'directory',
+    'name': "/Users/maccomputer/Documents/morening/morening_2/ios/build/Release-iphoneos/amplify_secure_storage/amplify_secure_storage.framework/Modules"
+    'contents': [{
+      'type': 'file',
+      'name': "module.modulemap",
+      'external-contents': "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/amplify_secure_storage.build/unextended-module.modulemap",
+    }]
+    },
+    {
+    'type': 'directory',
+    'name': "/Users/maccomputer/Documents/morening/morening_2/ios/build/Release-iphoneos/amplify_secure_storage/amplify_secure_storage.framework/Headers"
+    'contents': [{
+      'type': 'file',
+      'name': "amplify_secure_storage-Swift.h",
+      'external-contents': "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/amplify_secure_storage.build/unextended-interface-header.h",
+    }]
+    }]
+}

@@ -1,0 +1,10 @@
+framework module alarm {
+  umbrella header "alarm-umbrella.h"
+
+  export *
+  module * { export * }
+}
+
+module alarm.__Swift {
+  exclude header "alarm-Swift.h"
+}

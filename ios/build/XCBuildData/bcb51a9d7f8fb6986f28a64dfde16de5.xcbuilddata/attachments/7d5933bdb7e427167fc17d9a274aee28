@@ -1,0 +1,35 @@
+{
+  "" : {
+    "const-values" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/amplify_auth_cognito.build/Objects-normal/arm64/amplify_auth_cognito-master.swiftconstvalues",
+    "dependencies" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/amplify_auth_cognito.build/Objects-normal/arm64/amplify_auth_cognito-master.d",
+    "diagnostics" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/amplify_auth_cognito.build/Objects-normal/arm64/amplify_auth_cognito-master.dia",
+    "emit-module-dependencies" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/amplify_auth_cognito.build/Objects-normal/arm64/amplify_auth_cognito-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/amplify_auth_cognito.build/Objects-normal/arm64/amplify_auth_cognito-master-emit-module.dia",
+    "swift-dependencies" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/amplify_auth_cognito.build/Objects-normal/arm64/amplify_auth_cognito-master.swiftdeps"
+  },
+  "/Users/maccomputer/.pub-cache/hosted/pub.dev/amplify_auth_cognito-1.8.0/darwin/Classes/AmplifyAuthCognitoPlugin.swift" : {
+    "index-unit-output-path" : "/Pods.build/Release-iphoneos/amplify_auth_cognito.build/Objects-normal/arm64/AmplifyAuthCognitoPlugin.o",
+    "llvm-bc" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/amplify_auth_cognito.build/Objects-normal/arm64/AmplifyAuthCognitoPlugin.bc",
+    "object" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/amplify_auth_cognito.build/Objects-normal/arm64/AmplifyAuthCognitoPlugin.o"
+  },
+  "/Users/maccomputer/.pub-cache/hosted/pub.dev/amplify_auth_cognito-1.8.0/darwin/Classes/Error+FlutterError.swift" : {
+    "index-unit-output-path" : "/Pods.build/Release-iphoneos/amplify_auth_cognito.build/Objects-normal/arm64/Error+FlutterError.o",
+    "llvm-bc" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/amplify_auth_cognito.build/Objects-normal/arm64/Error+FlutterError.bc",
+    "object" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/amplify_auth_cognito.build/Objects-normal/arm64/Error+FlutterError.o"
+  },
+  "/Users/maccomputer/.pub-cache/hosted/pub.dev/amplify_auth_cognito-1.8.0/darwin/Classes/HostedUIError.swift" : {
+    "index-unit-output-path" : "/Pods.build/Release-iphoneos/amplify_auth_cognito.build/Objects-normal/arm64/HostedUIError.o",
+    "llvm-bc" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/amplify_auth_cognito.build/Objects-normal/arm64/HostedUIError.bc",
+    "object" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/amplify_auth_cognito.build/Objects-normal/arm64/HostedUIError.o"
+  },
+  "/Users/maccomputer/.pub-cache/hosted/pub.dev/amplify_auth_cognito-1.8.0/darwin/Classes/HostedUIFlow.swift" : {
+    "index-unit-output-path" : "/Pods.build/Release-iphoneos/amplify_auth_cognito.build/Objects-normal/arm64/HostedUIFlow.o",
+    "llvm-bc" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/amplify_auth_cognito.build/Objects-normal/arm64/HostedUIFlow.bc",
+    "object" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/amplify_auth_cognito.build/Objects-normal/arm64/HostedUIFlow.o"
+  },
+  "/Users/maccomputer/.pub-cache/hosted/pub.dev/amplify_auth_cognito-1.8.0/darwin/Classes/pigeons/messages.g.swift" : {
+    "index-unit-output-path" : "/Pods.build/Release-iphoneos/amplify_auth_cognito.build/Objects-normal/arm64/messages.g.o",
+    "llvm-bc" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/amplify_auth_cognito.build/Objects-normal/arm64/messages.g.bc",
+    "object" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/amplify_auth_cognito.build/Objects-normal/arm64/messages.g.o"
+  }
+}

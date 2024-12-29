@@ -1,0 +1,30 @@
+{
+  "" : {
+    "const-values" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/audioplayers_darwin.build/Objects-normal/arm64/audioplayers_darwin-master.swiftconstvalues",
+    "dependencies" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/audioplayers_darwin.build/Objects-normal/arm64/audioplayers_darwin-master.d",
+    "diagnostics" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/audioplayers_darwin.build/Objects-normal/arm64/audioplayers_darwin-master.dia",
+    "emit-module-dependencies" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/audioplayers_darwin.build/Objects-normal/arm64/audioplayers_darwin-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/audioplayers_darwin.build/Objects-normal/arm64/audioplayers_darwin-master-emit-module.dia",
+    "swift-dependencies" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/audioplayers_darwin.build/Objects-normal/arm64/audioplayers_darwin-master.swiftdeps"
+  },
+  "/Users/maccomputer/.pub-cache/hosted/pub.dev/audioplayers_darwin-6.0.0/ios/Classes/AudioContext.swift" : {
+    "index-unit-output-path" : "/Pods.build/Release-iphoneos/audioplayers_darwin.build/Objects-normal/arm64/AudioContext.o",
+    "llvm-bc" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/audioplayers_darwin.build/Objects-normal/arm64/AudioContext.bc",
+    "object" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/audioplayers_darwin.build/Objects-normal/arm64/AudioContext.o"
+  },
+  "/Users/maccomputer/.pub-cache/hosted/pub.dev/audioplayers_darwin-6.0.0/ios/Classes/SwiftAudioplayersDarwinPlugin.swift" : {
+    "index-unit-output-path" : "/Pods.build/Release-iphoneos/audioplayers_darwin.build/Objects-normal/arm64/SwiftAudioplayersDarwinPlugin.o",
+    "llvm-bc" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/audioplayers_darwin.build/Objects-normal/arm64/SwiftAudioplayersDarwinPlugin.bc",
+    "object" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/audioplayers_darwin.build/Objects-normal/arm64/SwiftAudioplayersDarwinPlugin.o"
+  },
+  "/Users/maccomputer/.pub-cache/hosted/pub.dev/audioplayers_darwin-6.0.0/ios/Classes/Utils.swift" : {
+    "index-unit-output-path" : "/Pods.build/Release-iphoneos/audioplayers_darwin.build/Objects-normal/arm64/Utils.o",
+    "llvm-bc" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/audioplayers_darwin.build/Objects-normal/arm64/Utils.bc",
+    "object" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/audioplayers_darwin.build/Objects-normal/arm64/Utils.o"
+  },
+  "/Users/maccomputer/.pub-cache/hosted/pub.dev/audioplayers_darwin-6.0.0/ios/Classes/WrappedMediaPlayer.swift" : {
+    "index-unit-output-path" : "/Pods.build/Release-iphoneos/audioplayers_darwin.build/Objects-normal/arm64/WrappedMediaPlayer.o",
+    "llvm-bc" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/audioplayers_darwin.build/Objects-normal/arm64/WrappedMediaPlayer.bc",
+    "object" : "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/audioplayers_darwin.build/Objects-normal/arm64/WrappedMediaPlayer.o"
+  }
+}

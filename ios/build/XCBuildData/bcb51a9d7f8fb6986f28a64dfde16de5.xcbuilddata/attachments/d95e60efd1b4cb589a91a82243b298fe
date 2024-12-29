@@ -1,0 +1,10 @@
+framework module wifi_iot {
+  umbrella header "wifi_iot-umbrella.h"
+
+  export *
+  module * { export * }
+}
+
+module wifi_iot.__Swift {
+  exclude header "wifi_iot-Swift.h"
+}

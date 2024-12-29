@@ -1,0 +1,23 @@
+{
+  'version': 0,
+  'use-external-names': 'false',
+  'case-sensitive': 'false',
+  'roots': [{
+    'type': 'directory',
+    'name': "/Users/maccomputer/Documents/morening/morening_2/ios/build/Release-iphoneos/amplify_auth_cognito/amplify_auth_cognito.framework/Modules"
+    'contents': [{
+      'type': 'file',
+      'name': "module.modulemap",
+      'external-contents': "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/amplify_auth_cognito.build/unextended-module.modulemap",
+    }]
+    },
+    {
+    'type': 'directory',
+    'name': "/Users/maccomputer/Documents/morening/morening_2/ios/build/Release-iphoneos/amplify_auth_cognito/amplify_auth_cognito.framework/Headers"
+    'contents': [{
+      'type': 'file',
+      'name': "amplify_auth_cognito-Swift.h",
+      'external-contents': "/Users/maccomputer/Documents/morening/morening_2/ios/build/Pods.build/Release-iphoneos/amplify_auth_cognito.build/unextended-interface-header.h",
+    }]
+    }]
+}
