@@ -350,6 +350,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.0"
+  flutter_iot_wifi:
+    dependency: "direct main"
+    description:
+      name: flutter_iot_wifi
+      sha256: a972d124fc081c4b0324554b01d48f7804d6f31286c2fd5e29f6706974d4a285
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.3"
   flutter_lints:
     dependency: "direct dev"
     description:

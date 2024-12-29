@@ -1,11 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:morening_2/features/auth/presention/components/auth_button.dart';
 import 'package:morening_2/features/auth/presention/components/auth_textfield.dart';
+import 'package:morening_2/features/device/data/wifi_utils.dart';
 import 'package:morening_2/utils/snackbar_extension.dart';
 import 'package:wifi_iot/wifi_iot.dart';
-import 'package:wifi_scan/wifi_scan.dart';
 
 import '../../../../services/api_service.dart';
 
@@ -59,6 +57,7 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   void initState() {
     super.initState();
     connectToDeviceWiFi();
+    WifiUtils().connect("morening", "12345678");
   }
 
   @override
@@ -68,8 +67,7 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   }
 
   Future<void> connectToDeviceWiFi() async {
-    bool isConnected = false;
-    WiFiAccessPoint? morningNetwork;
+    bool isConnected = true;
 
     setState(() {
       _connectionError = null;
@@ -77,40 +75,7 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
     });
 
     try {
-      // if (Platform.isAndroid) {
-      //   final permissionStatus = await WiFiScan.instance.canStartScan();
-      //   if (permissionStatus != CanStartScan.yes) {
-      //     setState(
-      //         () => _connectionError = "Wi-Fi scanning permission denied.");
-      //     return;
-      //   }
-
-      //   await WiFiScan.instance.startScan();
-      //   await Future.delayed(const Duration(seconds: 2));
-      //   final accessPoints = await WiFiScan.instance.getScannedResults();
-
-      //   try {
-      //     morningNetwork = accessPoints.firstWhere(
-      //       (ap) => ap.ssid == "morening",
-      //     );
-      //   } catch (e) {
-      //     morningNetwork = null;
-      //   }
-
-      //   if (morningNetwork == null) {
-      //     setState(() => _connectionError = "'Morening Device not found.");
-      //     return;
-      //   }
-      // }else{
-
-      // }
-
-      isConnected = await WiFiForIoTPlugin.connect(
-        //morningNetwork.ssid,
-        "morening",
-        password: "12345678",
-        security: NetworkSecurity.WPA,
-      );
+      isConnected = await WifiUtils().connect("morening", "12345678");
 
       if (isConnected) {
         setState(() => _isConnected = true);
