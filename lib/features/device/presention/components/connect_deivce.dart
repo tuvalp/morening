@@ -140,11 +140,15 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
     try {
       final response = await _apiService.devicePost(
         "network/connect",
-        {"ssid": ssid, "password": passwordController.text, "user_id": userID},
+        {
+          "ssid": ssid,
+          "password": passwordController.text,
+        },
       );
 
       if (response.statusCode == 202) {
         setState(() => _connectionSuccess = true);
+        await WiFiForIoTPlugin.disconnect();
         if (userID != null) {
           _deviceCubit.updateDeviceId(response.data['device_id'], userID!);
         }
@@ -243,6 +247,14 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        Text(
+          ssid,
+          style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurface),
+        ),
+        const SizedBox(height: 32),
         AuthTextfield(
           controller: passwordController,
           obscureText: _isPasswordHidden,
