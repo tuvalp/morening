@@ -16,8 +16,11 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    AuthCubit authCubit = context.read<AuthCubit>();
-    AppUser user = (authCubit.state as Authenticated).user;
+    AppUser? user;
+    AuthState authCubit = context.watch<AuthState>();
+    if (authCubit is Authenticated) {
+      user = authCubit.user;
+    }
 
     return AppBar(
       title:
@@ -34,7 +37,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         IconButton(
-          icon: user.deviceId != null
+          icon: user!.deviceId != null
               ? const Icon(Icons.wifi)
               : const Icon(Icons.devices),
           onPressed: () {
