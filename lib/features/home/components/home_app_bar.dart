@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:morening_2/features/auth/domain/models/app_user.dart';
+import '../../auth/presention/auth_state.dart';
+import '/features/auth/domain/models/app_user.dart';
 
 import '../../../services/navigation_service.dart';
 import '../../auth/presention/auth_cubit.dart';
-import '../../auth/presention/auth_state.dart';
 import '../../device/presention/page/device_page.dart';
 import '../../profile/presention/pages/profile_screen.dart';
 
@@ -16,10 +16,12 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Access the AuthCubit state
+    final authState = context.watch<AuthCubit>().state;
     AppUser? user;
-    AuthState authCubit = context.watch<AuthState>();
-    if (authCubit is Authenticated) {
-      user = authCubit.user;
+
+    if (authState is Authenticated) {
+      user = authState.user;
     }
 
     return AppBar(
@@ -37,7 +39,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         IconButton(
-          icon: user!.deviceId != null
+          icon: user != null && user.deviceId != null
               ? const Icon(Icons.wifi)
               : const Icon(Icons.devices),
           onPressed: () {
