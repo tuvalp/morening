@@ -78,37 +78,32 @@ class _MyAppState extends State<MyApp> {
           create: (_) => ProfileCubit(SettingsRepoImpl()),
           lazy: false,
         ),
+        BlocProvider<DeviceCubit>(
+          create: (_) => DeviceCubit(),
+          lazy: false,
+        ),
       ],
       child: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, authState) {
-          // Determine if the user is authenticated
-          final isAuthenticated =
-              authState is Authenticated; // Replace with your actual state
-          final userId = isAuthenticated ? authState.user.id : null;
-
-          return BlocProvider(
-            create: (_) => DeviceCubit(userId!),
-            child: BlocListener<AlarmCubit, AlarmState>(
-              listener: (context, state) {
-                if (state is AlarmRingingState) {
-                  NavigationService.navigateTo(
-                      AlarmRingView(alarm: state.alarm));
-                }
-                if (state is AlarmError) {
-                  context.showErrorSnackBar(state.message);
-                }
+          return BlocListener<AlarmCubit, AlarmState>(
+            listener: (context, state) {
+              if (state is AlarmRingingState) {
+                NavigationService.navigateTo(AlarmRingView(alarm: state.alarm));
+              }
+              if (state is AlarmError) {
+                context.showErrorSnackBar(state.message);
+              }
+            },
+            child: BlocBuilder<ProfileCubit, Settings>(
+              builder: (context, settings) {
+                return MaterialApp(
+                  navigatorKey: NavigationService.navigatorKey,
+                  debugShowCheckedModeBanner: false,
+                  title: 'MoreNing',
+                  theme: AppTheme.getTheme(context),
+                  home: const AppView(),
+                );
               },
-              child: BlocBuilder<ProfileCubit, Settings>(
-                builder: (context, settings) {
-                  return MaterialApp(
-                    navigatorKey: NavigationService.navigatorKey,
-                    debugShowCheckedModeBanner: false,
-                    title: 'MoreNing',
-                    theme: AppTheme.getTheme(context),
-                    home: const AppView(),
-                  );
-                },
-              ),
             ),
           );
         },

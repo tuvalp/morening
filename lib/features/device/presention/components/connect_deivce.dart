@@ -7,6 +7,7 @@ import 'package:morening_2/utils/snackbar_extension.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 
 import '../../../../services/api_service.dart';
+import '../../../auth/presention/auth_state.dart';
 
 class ConnectDevice extends StatelessWidget {
   const ConnectDevice({super.key});
@@ -133,8 +134,13 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
       );
 
       if (response.statusCode == 202) {
+        final AuthState _authState = context.watch<AuthState>();
         setState(() => _connectionSuccess = true);
-        context.read<DeviceCubit>().updateDeviceId(response.data['device_id']);
+        if (_authState is Authenticated) {
+          context
+              .read<DeviceCubit>()
+              .updateDeviceId(response.data['device_id'], _authState.user.id);
+        }
         print(response.data);
       } else {
         context.showErrorSnackBar(
