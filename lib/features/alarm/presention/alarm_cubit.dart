@@ -1,5 +1,6 @@
 import 'package:alarm/alarm.dart' show AlarmSettings;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:morening_2/features/alarm/data/repository/alarm_api_repo.dart';
 import '../../alarm/domain/models/alarm.dart';
 import '../data/repository/alarm_native_repo.dart';
 import '../domain/repository/alarm_repo.dart';
@@ -8,8 +9,11 @@ import 'alarm_state.dart';
 class AlarmCubit extends Cubit<AlarmState> {
   final AlarmRepo alarmRepo;
   final AlarmNativeRepo alarmNativeRepo;
+  final AlarmApiRepo alarmApiRepo;
+  final String? userID;
 
-  AlarmCubit(this.alarmRepo, this.alarmNativeRepo)
+  AlarmCubit(
+      this.alarmRepo, this.alarmNativeRepo, this.alarmApiRepo, this.userID)
       : super(const AlarmInitial()) {
     loadAlarms();
   }
@@ -37,6 +41,7 @@ class AlarmCubit extends Cubit<AlarmState> {
 
       await alarmRepo.addAlarm(alarm);
       await alarmNativeRepo.addAlarm(adjustedAlarm);
+      await alarmApiRepo.addAlarm(alarm, userID);
 
       loadAlarms();
     } catch (error) {

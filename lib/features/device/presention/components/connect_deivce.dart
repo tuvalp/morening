@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:morening_2/features/auth/presention/components/auth_button.dart';
 import 'package:morening_2/features/auth/presention/components/auth_textfield.dart';
 import 'package:morening_2/features/device/data/wifi_utils.dart';
+import 'package:morening_2/features/device/presention/device_cubit.dart';
 import 'package:morening_2/utils/snackbar_extension.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 
@@ -16,6 +18,7 @@ class ConnectDevice extends StatelessWidget {
       onPressed: () {
         showModalBottomSheet(
           context: context,
+          isScrollControlled: true,
           builder: (context) => const ConnectDeviceSheet(),
           backgroundColor: Theme.of(context).colorScheme.surface,
           shape: const RoundedRectangleBorder(
@@ -57,7 +60,7 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   void initState() {
     super.initState();
     connectToDeviceWiFi();
-    WifiUtils().connect("morening", "12345678");
+    WifiUtils().current();
   }
 
   @override
@@ -129,8 +132,9 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
         {"ssid": ssid, "password": passwordController.text},
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 202) {
         setState(() => _connectionSuccess = true);
+        context.read<DeviceCubit>().updateDeviceId(response.data['device_id']);
         print(response.data);
       } else {
         context.showErrorSnackBar(
@@ -144,22 +148,22 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Container(
-        color: Theme.of(context).colorScheme.surface,
+      child: Padding(
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
-          top: 32,
-          left: 32,
-          right: 32,
         ),
-        height: 400,
-        child: _connectionSuccess
-            ? _buildConnectionSuccessUI()
-            : !_isConnected
-                ? _buildConnectingUI()
-                : ssid.isEmpty
-                    ? _buildNetworkSelectionUI()
-                    : _buildPasswordInputUI(),
+        child: Container(
+          color: Theme.of(context).colorScheme.surface,
+          padding: EdgeInsets.all(24),
+          height: 400,
+          child: _connectionSuccess
+              ? _buildConnectionSuccessUI()
+              : !_isConnected
+                  ? _buildConnectingUI()
+                  : ssid.isEmpty
+                      ? _buildNetworkSelectionUI()
+                      : _buildPasswordInputUI(),
+        ),
       ),
     );
   }

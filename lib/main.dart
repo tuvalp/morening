@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:morening_2/features/alarm/presention/page/alarm_ring.dart';
+import 'package:morening_2/features/device/presention/device_cubit.dart';
 import 'package:morening_2/services/alarm_service.dart';
 import 'package:morening_2/utils/snackbar_extension.dart';
 import 'config/cognito_config.dart';
 
+import 'features/alarm/data/repository/alarm_api_repo.dart';
 import 'features/alarm/presention/alarm_state.dart';
 
+import 'features/auth/presention/auth_state.dart';
 import 'features/profile/data/settings_repo.dart';
 import 'features/profile/domain/models/settings.dart';
 import 'features/profile/presention/porfile_cubit.dart';
@@ -67,7 +70,13 @@ class _MyAppState extends State<MyApp> {
           lazy: false,
         ),
         BlocProvider<AlarmCubit>(
-          create: (context) => AlarmCubit(AlarmStoreRepo(), AlarmNativeRepo()),
+          create: (context) => AlarmCubit(
+              AlarmStoreRepo(),
+              AlarmNativeRepo(),
+              AlarmApiRepo(),
+              context.read<AuthCubit>().state is Authenticated
+                  ? context.read<Authenticated>().user.id
+                  : null),
           lazy: false,
         ),
         BlocProvider<ProfileCubit>(
@@ -75,26 +84,45 @@ class _MyAppState extends State<MyApp> {
           lazy: false,
         ),
       ],
-      child: BlocListener<AlarmCubit, AlarmState>(
-        listener: (context, state) {
-          if (state is AlarmRingingState) {
-            NavigationService.navigateTo(AlarmRingView(alarm: state.alarm));
-          }
-          if (state is AlarmError) {
-            context.showErrorSnackBar(state.message);
-          }
+      child: BlocBuilder<AuthCubit, AuthState>(
+        builder: (context, authState) {
+          // Determine if the user is authenticated
+          final isAuthenticated =
+              authState is Authenticated; // Replace with your actual state
+          final userId = isAuthenticated ? authState.user.id : null;
+
+          return MultiBlocProvider(
+            providers: [
+              if (isAuthenticated)
+                BlocProvider<DeviceCubit>(
+                  create: (_) => DeviceCubit(userId!),
+                  lazy: false,
+                ),
+            ],
+            child: BlocListener<AlarmCubit, AlarmState>(
+              listener: (context, state) {
+                if (state is AlarmRingingState) {
+                  NavigationService.navigateTo(
+                      AlarmRingView(alarm: state.alarm));
+                }
+                if (state is AlarmError) {
+                  context.showErrorSnackBar(state.message);
+                }
+              },
+              child: BlocBuilder<ProfileCubit, Settings>(
+                builder: (context, settings) {
+                  return MaterialApp(
+                    navigatorKey: NavigationService.navigatorKey,
+                    debugShowCheckedModeBanner: false,
+                    title: 'MoreNing',
+                    theme: AppTheme.getTheme(context),
+                    home: const AppView(),
+                  );
+                },
+              ),
+            ),
+          );
         },
-        child: BlocBuilder<ProfileCubit, Settings>(
-          builder: (context, settings) {
-            return MaterialApp(
-              navigatorKey: NavigationService.navigatorKey,
-              debugShowCheckedModeBanner: false,
-              title: 'MoreNing',
-              theme: AppTheme.getTheme(context),
-              home: const AppView(),
-            );
-          },
-        ),
       ),
     );
   }
