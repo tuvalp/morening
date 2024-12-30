@@ -148,6 +148,8 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
         setState(() => _connectionSuccess = true);
         await WiFiForIoTPlugin.disconnect();
         if (userID != null) {
+          print(userID);
+          print(response.data['device_id']);
           _deviceCubit.updateDeviceId(response.data['device_id'], userID!);
         }
         print(response.data);
