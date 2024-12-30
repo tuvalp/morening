@@ -75,7 +75,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _buildHeader(),
-            _buildInputFields(),
+            SingleChildScrollView(
+              child: _buildInputFields(),
+            ),
             _buildLoginLink(context),
           ],
         ),

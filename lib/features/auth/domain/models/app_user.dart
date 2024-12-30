@@ -21,11 +21,18 @@ class AppUser {
       email: json['email'] ?? "", // Ensure a fallback if null
       name: json['name'] ?? "", // Ensure a fallback if null
       deviceId: json['paired_device_id'], // Nullable
-      wakeUpProfile: (json['wake_up_profile'] as List<dynamic>?)
-          ?.map(
-            (e) => Answer.fromJson(e as Map<String, dynamic>),
-          )
-          .toList(), // Deserialize `wake_up_profile` list
+      wakeUpProfile: (json['wake_up_profile'] is List)
+          ? (json['wake_up_profile'] as List<dynamic>).isNotEmpty
+              ? (json['wake_up_profile'] as List<dynamic>)
+                  .map((e) => Answer.fromJson(e as Map<String, dynamic>))
+                  .toList()
+              : (json['wake_up_profile'] is Map<String, dynamic>)
+                  ? [
+                      Answer.fromJson(
+                          json['wake_up_profile'] as Map<String, dynamic>)
+                    ]
+                  : null
+          : null,
     );
   }
 

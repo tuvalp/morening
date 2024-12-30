@@ -33,7 +33,7 @@ class AuthCubit extends Cubit<AuthState> {
         return false;
       }
 
-      if (user.wakeUpProfile == "") {
+      if (user.wakeUpProfile == null) {
         print("user.wakeUpProfile is empty");
         emit(Authenticated(user)); // Emit state before navigation
         NavigationService.navigateTo(
@@ -45,6 +45,7 @@ class AuthCubit extends Cubit<AuthState> {
       emit(Authenticated(user));
       return true;
     } catch (e) {
+      print("Error getting user: $e");
       emit(Unauthenticated());
       return false;
     }

@@ -25,6 +25,7 @@ class _AppViewState extends State<AppView> {
   void initState() {
     super.initState();
     PermissionService.checkPermissions();
+    context.read<AuthCubit>().getCurrentUser();
     _alarmService.initialize();
   }
 

@@ -55,7 +55,6 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   bool _connectionSuccess = false;
   List<String> _ssidList = [];
   final TextEditingController passwordController = TextEditingController();
-  bool _isPasswordHidden = true;
   String ssid = "";
   String? userID;
 
@@ -87,7 +86,6 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
     });
 
     try {
-      //Connected = await WifiUtils().connect("morening", "12345678");
       isConnected = await WiFiForIoTPlugin.connect("morening",
           password: "12345678", security: NetworkSecurity.WPA);
 
@@ -170,8 +168,14 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
         child: Container(
-          color: Theme.of(context).colorScheme.surface,
           padding: EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(32),
+              topRight: Radius.circular(32),
+            ),
+          ),
           height: 400,
           child: _connectionSuccess
               ? _buildConnectionSuccessUI()
@@ -257,15 +261,8 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
         const SizedBox(height: 32),
         AuthTextfield(
           controller: passwordController,
-          obscureText: _isPasswordHidden,
+          obscureText: true,
           labelText: 'Password',
-          suffixIcon: IconButton(
-            icon: Icon(
-              _isPasswordHidden ? Icons.visibility : Icons.visibility_off,
-            ),
-            onPressed: () =>
-                setState(() => _isPasswordHidden = !_isPasswordHidden),
-          ),
         ),
         const SizedBox(height: 16),
         AuthButton(

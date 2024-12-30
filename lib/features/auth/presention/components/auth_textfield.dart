@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class AuthTextfield extends StatelessWidget {
+class AuthTextfield extends StatefulWidget {
   final TextEditingController controller;
   final String labelText;
   final bool obscureText;
@@ -15,15 +15,41 @@ class AuthTextfield extends StatelessWidget {
   });
 
   @override
+  State<AuthTextfield> createState() => _AuthTextfieldState();
+}
+
+class _AuthTextfieldState extends State<AuthTextfield> {
+  bool _isHidden = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _isHidden = widget.obscureText;
+  }
+
+  void _toggleHidden() {
+    setState(() {
+      _isHidden = !_isHidden;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextField(
-        controller: controller,
-        obscureText: obscureText,
+        controller: widget.controller,
+        obscureText: _isHidden,
         style: TextStyle(color: Theme.of(context).colorScheme.primary),
         decoration: InputDecoration(
-          suffixIcon: suffixIcon,
+          suffixIcon: widget.obscureText
+              ? IconButton(
+                  icon: Icon(
+                    _isHidden ? Icons.visibility : Icons.visibility_off,
+                  ),
+                  onPressed: () => _toggleHidden(),
+                )
+              : null,
           hintStyle: TextStyle(color: Theme.of(context).colorScheme.tertiary),
           contentPadding: const EdgeInsets.all(16),
           filled: true,
@@ -44,7 +70,7 @@ class AuthTextfield extends StatelessWidget {
               color: Theme.of(context).colorScheme.secondary,
             ),
           ),
-          hintText: labelText,
+          hintText: widget.labelText,
         ),
       ),
     );
