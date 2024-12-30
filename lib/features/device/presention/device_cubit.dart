@@ -7,7 +7,7 @@ class DeviceCubit extends Cubit<DeviceState> {
 
   void updateDeviceId(String deviceId, String userId) {
     emit(DeviceState());
-    ApiService().post("/pair_device", {"name": userId, "device_id": deviceId});
+    ApiService().post("pair_device", {"name": userId, "device_id": deviceId});
   }
 }
 
