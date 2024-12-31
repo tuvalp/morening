@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:morening_2/features/auth/presention/auth_cubit.dart';
 import 'package:morening_2/features/auth/presention/components/auth_button.dart';
 import 'package:morening_2/features/auth/presention/components/auth_textfield.dart';
 import 'package:morening_2/features/device/presention/device_cubit.dart';
@@ -62,11 +61,10 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   void initState() {
     super.initState();
     _deviceCubit = context.read<DeviceCubit>();
-    final authState = context.read<AuthCubit>();
+    final authState = context.read<AuthState>();
 
-    if (authState is Authenticated) {
-      userID = (authState as Authenticated).user.id;
-    }
+    userID = (authState as Authenticated).user.id;
+    print(userID);
 
     connectToDeviceWiFi();
   }
