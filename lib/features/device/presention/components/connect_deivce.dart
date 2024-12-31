@@ -134,8 +134,6 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
       return;
     }
 
-    setState(() => _connectionSuccess = true);
-
     try {
       final response = await _apiService.devicePost(
         "network/connect",
@@ -147,6 +145,7 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
 
       if (response.statusCode == 202) {
         await WiFiForIoTPlugin.disconnect();
+        await WiFiForIoTPlugin.forceWifiUsage(false);
 
         await pairDevice(response.data['device_id']);
         print(response.data);
