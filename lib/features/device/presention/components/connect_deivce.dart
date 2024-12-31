@@ -7,6 +7,7 @@ import 'package:morening_2/utils/snackbar_extension.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 
 import '../../../../services/api_service.dart';
+import '../../../auth/presention/auth_cubit.dart';
 import '../../../auth/presention/auth_state.dart';
 
 class ConnectDevice extends StatelessWidget {
@@ -61,9 +62,9 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   void initState() {
     super.initState();
     _deviceCubit = context.read<DeviceCubit>();
-    final authState = context.read<AuthState>();
+    final authState = context.read<AuthCubit>().state as Authenticated;
 
-    userID = (authState as Authenticated).user.id;
+    userID = authState.user.id;
     print(userID);
 
     connectToDeviceWiFi();
@@ -145,10 +146,12 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
       if (response.statusCode == 202) {
         setState(() => _connectionSuccess = true);
         await WiFiForIoTPlugin.disconnect();
-        if (userID != null) {
-          print(userID);
-          print(response.data['device_id']);
-          _deviceCubit.updateDeviceId(response.data['device_id'], userID!);
+
+        try {
+          ApiService().post("pair_device",
+              {"name": userID, "device_id": response.data['device_id']});
+        } catch (e) {
+          print(e);
         }
         print(response.data);
       } else {

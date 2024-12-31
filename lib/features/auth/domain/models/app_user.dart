@@ -17,9 +17,9 @@ class AppUser {
 
   factory AppUser.fromJson(Map<String, dynamic> json) {
     return AppUser(
-      id: json['user_id'] ?? "", // Ensure a fallback if null
-      email: json['email'] ?? "", // Ensure a fallback if null
-      name: json['name'] ?? "", // Ensure a fallback if null
+      id: json['user_id'] ?? "",
+      email: json['email'] ?? "",
+      name: json['name'] ?? "",
       deviceId: json['paired_device_id'], // Nullable
       wakeUpProfile: (json['wake_up_profile'] is List)
           ? (json['wake_up_profile'] as List<dynamic>).isNotEmpty
