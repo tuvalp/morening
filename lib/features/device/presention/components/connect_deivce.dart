@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:morening_2/features/auth/presention/components/auth_button.dart';
 import 'package:morening_2/features/auth/presention/components/auth_textfield.dart';
-import 'package:morening_2/features/device/presention/device_cubit.dart';
 import 'package:morening_2/utils/snackbar_extension.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 
@@ -48,20 +47,21 @@ class ConnectDeviceSheet extends StatefulWidget {
 
 class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   final _apiService = ApiService();
-  late DeviceCubit _deviceCubit;
 
   bool _isConnected = false;
-  String? _connectionError;
   bool _connectionSuccess = false;
+  bool _pairInProgress = false;
+  String? _connectionError;
+
+  String? userID;
   List<String> _ssidList = [];
+
   final TextEditingController passwordController = TextEditingController();
   String ssid = "";
-  String? userID;
 
   @override
   void initState() {
     super.initState();
-    _deviceCubit = context.read<DeviceCubit>();
     final authState = context.read<AuthCubit>().state as Authenticated;
 
     userID = authState.user.id;
@@ -134,6 +134,8 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
       return;
     }
 
+    setState(() => _connectionSuccess = true);
+
     try {
       final response = await _apiService.devicePost(
         "network/connect",
@@ -144,15 +146,9 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
       );
 
       if (response.statusCode == 202) {
-        setState(() => _connectionSuccess = true);
         await WiFiForIoTPlugin.disconnect();
 
-        try {
-          ApiService().post("pair_device",
-              {"name": userID, "device_id": response.data['device_id']});
-        } catch (e) {
-          print(e);
-        }
+        await pairDevice(response.data['device_id']);
         print(response.data);
       } else {
         context.showErrorSnackBar(
@@ -160,6 +156,17 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
       }
     } catch (e) {
       context.showErrorSnackBar(e.toString());
+    }
+  }
+
+  Future<void> pairDevice(String deviceId) async {
+    final apiService = ApiService();
+    try {
+      await apiService
+          .post("pair_device", {"name": userID, "device_id": deviceId});
+      setState(() => _connectionSuccess = true);
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -201,13 +208,16 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
           const SizedBox(height: 16),
           Text(
             _connectionError ?? "Connecting to Morening Device...",
-            style: const TextStyle(fontSize: 16),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           if (_connectionError != null)
             TextButton(
               onPressed: connectToDeviceWiFi,
-              child: const Text("Retry"),
+              child: const Text(
+                "Retry",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
             )
         ],
       ),
@@ -224,7 +234,8 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
                 const SizedBox(height: 16),
                 Text(
                   _connectionError ?? "Scanning for networks...",
-                  style: const TextStyle(fontSize: 16),
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -233,7 +244,8 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
             children: [
               Text(
                 "Connnect your device to your home networks",
-                style: TextStyle(fontSize: 16),
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               Expanded(
                 child: ListView(
@@ -251,34 +263,49 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   }
 
   Widget _buildPasswordInputUI() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          ssid,
-          style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onSurface),
-        ),
-        const SizedBox(height: 32),
-        AuthTextfield(
-          controller: passwordController,
-          obscureText: true,
-          labelText: 'Password',
-        ),
-        const SizedBox(height: 16),
-        AuthButton(
-          onPressed: sendNetworkCredentials,
-          text: "Connect",
-        ),
-        SizedBox(height: 16),
-        TextButton(
-          onPressed: () => setState(() => ssid = ""),
-          child: const Text("Select Another Network"),
-        ),
-      ],
-    );
+    return _pairInProgress
+        ? Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const CircularProgressIndicator(),
+                const SizedBox(height: 16),
+                Text(
+                  _connectionError ?? "Connecting to device...",
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          )
+        : Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                ssid,
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface),
+              ),
+              const SizedBox(height: 32),
+              AuthTextfield(
+                controller: passwordController,
+                obscureText: true,
+                labelText: 'Password',
+              ),
+              const SizedBox(height: 16),
+              AuthButton(
+                onPressed: sendNetworkCredentials,
+                text: "Connect",
+              ),
+              SizedBox(height: 16),
+              TextButton(
+                onPressed: () => setState(() => ssid = ""),
+                child: const Text("Select Another Network"),
+              ),
+            ],
+          );
   }
 
   Widget _buildConnectionSuccessUI() {
