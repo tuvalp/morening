@@ -1,5 +1,0 @@
- extern const unsigned char flutter_fgbgVersionString[];
- extern const double flutter_fgbgVersionNumber;
-
- const unsigned char flutter_fgbgVersionString[] __attribute__ ((used)) = "@(#)PROGRAM:flutter_fgbg  PROJECT:Pods-1" "\n";
- const double flutter_fgbgVersionNumber __attribute__ ((used)) = (double)1.;

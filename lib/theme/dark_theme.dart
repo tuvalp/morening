@@ -7,7 +7,7 @@ ThemeData darkTheme() {
     scaffoldBackgroundColor: const Color(0xFF1E1E1E),
     colorScheme: const ColorScheme.light(
       primary: Color(0xFF3EB489),
-      secondary: Color(0xFF76C7C0),
+      secondary: Color(0xFF409B79),
       onPrimary: Color(0xFFFFFFFF),
       surface: Color(0xFF121212),
       onSurface: Color(0xFFFFFFFF),

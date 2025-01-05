@@ -23,12 +23,15 @@ class AddEditAlarmView extends StatefulWidget {
 }
 
 class AddEditAlarmViewState extends State<AddEditAlarmView> {
+  late AlarmCubit alarmRepo;
+  late Authenticated authCubit;
   late DateTime _selectedTime;
   late TextEditingController _labelController;
   late List<int> _selectedDays;
   late bool _physicalDevice = false;
   late String _ringtone = "";
   late String _planId = "";
+  late String _userID;
 
   @override
   void initState() {
@@ -41,6 +44,11 @@ class AddEditAlarmViewState extends State<AddEditAlarmView> {
     _ringtone = widget.alarm?.ringtone ?? RingtoneArray.ringtones.first;
 
     _planId = widget.alarm?.planId ?? "";
+
+    alarmRepo = context.read<AlarmCubit>();
+    authCubit = context.read<AuthCubit>().state as Authenticated;
+
+    _userID = authCubit.user.id;
   }
 
   void _onTimeChanged(DateTime time) {
@@ -74,39 +82,29 @@ class AddEditAlarmViewState extends State<AddEditAlarmView> {
   }
 
   void _saveAlarm() {
-    final alarmCubit = context.read<AlarmCubit>();
-    final authCubit = context.read<AuthCubit>();
+    final Alarm alarm = Alarm(
+      id: widget.alarm?.id ?? DateTime.now().millisecondsSinceEpoch % 100000,
+      label: _labelController.text,
+      time: _selectedTime.copyWith(
+        second: 0,
+        millisecond: 0,
+      ),
+      isActive: true,
+      days: _selectedDays,
+      planId: _planId,
+      ringtone: _ringtone,
+    );
 
-    // Check if the user is authenticated
-    if (authCubit.state is Authenticated) {
-      final userId = (authCubit.state as Authenticated).user.id;
-
-      final Alarm alarm = Alarm(
-        id: widget.alarm?.id ?? DateTime.now().millisecondsSinceEpoch % 100000,
-        label: _labelController.text,
-        time: _selectedTime.copyWith(
-          second: 0,
-          millisecond: 0,
-        ),
-        isActive: true,
-        days: _selectedDays,
-        planId: _planId,
-        ringtone: _ringtone,
-      );
-
-      if (widget.alarm == null) {
-        alarmCubit.addAlarm(alarm, userId);
-      } else {
-        alarmCubit.updateAlarm(alarm);
-      }
-      NavigationService.pop();
+    if (widget.alarm == null) {
+      alarmRepo.addAlarm(alarm, _userID);
+    } else {
+      alarmRepo.updateAlarm(alarm, _userID);
     }
+    NavigationService.pop();
   }
 
   void _deleteAlarm() {
-    final alarmRepo = context.read<AlarmCubit>();
-
-    alarmRepo.removeAlarm(widget.alarm!);
+    alarmRepo.removeAlarm(widget.alarm!, _userID);
     Navigator.of(context).pop();
   }
 

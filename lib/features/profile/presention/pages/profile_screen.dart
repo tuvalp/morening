@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:morening_2/features/profile/domain/models/settings.dart';
+import '../../../../services/navigation_service.dart';
 import '../../../auth/presention/auth_cubit.dart';
 import '../../../auth/presention/auth_state.dart';
+import '../../../auth/presention/page/login_screen.dart';
 import '../porfile_cubit.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -91,6 +93,7 @@ class ProfileScreen extends StatelessWidget {
                 child: TextButton(
                   onPressed: () {
                     context.read<AuthCubit>().logout();
+                    NavigationService.navigateTo(const LoginScreen());
                   },
                   child: Text(
                     "Logout",

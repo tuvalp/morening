@@ -47,18 +47,19 @@ class AlarmCubit extends Cubit<AlarmState> {
     }
   }
 
-  Future<void> removeAlarm(Alarm alarm) async {
+  Future<void> removeAlarm(Alarm alarm, String? userID) async {
     try {
       emit(AlarmLoading());
       await alarmRepo.removeAlarm(alarm);
       await alarmNativeRepo.removeAlarm(alarm.id);
+      await alarmApiRepo.removeAlarm(alarm, userID);
       loadAlarms();
     } catch (error) {
       emit(AlarmError('Failed to remove alarm: $error'));
     }
   }
 
-  Future<void> updateAlarm(Alarm alarm) async {
+  Future<void> updateAlarm(Alarm alarm, String? userID) async {
     try {
       final now = DateTime.now();
       final adjustedAlarm = await _getAdjustedAlarm(alarm, now);
@@ -66,16 +67,19 @@ class AlarmCubit extends Cubit<AlarmState> {
       await alarmRepo.updateAlarm(alarm);
       await alarmNativeRepo.updateAlarm(adjustedAlarm);
 
+      await alarmApiRepo.removeAlarm(alarm, userID);
+      await alarmApiRepo.addAlarm(alarm, userID);
+
       loadAlarms();
     } catch (error) {
       emit(AlarmError('Failed to update alarm: $error'));
     }
   }
 
-  Future<void> toggleAlarmActive(Alarm alarm) async {
+  Future<void> toggleAlarmActive(Alarm alarm, String? userID) async {
     try {
       final updatedAlarm = alarm.toggleActive();
-      await updateAlarm(updatedAlarm);
+      await updateAlarm(updatedAlarm, userID);
     } catch (error) {
       emit(AlarmError('Failed to toggle alarm: $error'));
     }

@@ -1,0 +1,144 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../auth/presention/components/auth_button.dart';
+import '../../../auth/presention/components/auth_textfield.dart';
+import '/features/device/presention/connect_device_cubit.dart';
+import '/services/api_service.dart';
+
+class ConnectDeviceSheet extends StatelessWidget {
+  const ConnectDeviceSheet({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => ConnectDeviceCubit(ApiService()),
+      child: BlocBuilder<ConnectDeviceCubit, ConnectDeviceState>(
+        builder: (context, state) {
+          if (state is ConnectDeviceInitial) {
+            context.read<ConnectDeviceCubit>().connectToDeviceWiFi();
+            return _buildConnectingUI("Connecting to Morening Device...");
+          } else if (state is ConnectDeviceLoading) {
+            return _buildConnectingUI("Connecting to Morening Device...");
+          } else if (state is ConnectDeviceConnected) {
+            return _buildConnectingUI("Connected. Scanning for networks...");
+          } else if (state is ConnectDeviceFetchingNetworks) {
+            return _buildConnectingUI("Scanning for networks...");
+          } else if (state is ConnectDeviceNetworksFetched) {
+            return _buildNetworkSelectionUI(context, state.ssidList);
+          } else if (state is ConnectDevicePairing) {
+            return _buildConnectingUI("Connecting to network...");
+          } else if (state is ConnectDeviceSuccess) {
+            return _buildConnectionSuccessUI(context);
+          } else if (state is ConnectDeviceError) {
+            return _buildErrorUI(context, state.message);
+          }
+          return Container();
+        },
+      ),
+    );
+  }
+
+  Widget _buildConnectingUI(String message) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const CircularProgressIndicator(),
+          const SizedBox(height: 16),
+          Text(
+            message,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNetworkSelectionUI(BuildContext context, List<String> ssidList) {
+    String selectedSsid = "";
+    final passwordController = TextEditingController();
+
+    return Column(
+      children: [
+        const Text(
+          "Connect your device to your home network",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: ssidList.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                leading: const Icon(Icons.wifi),
+                title: Text(ssidList[index]),
+                onTap: () => selectedSsid = ssidList[index],
+              );
+            },
+          ),
+        ),
+        AuthTextfield(
+          controller: passwordController,
+          obscureText: true,
+          labelText: 'Password',
+        ),
+        const SizedBox(height: 16),
+        AuthButton(
+          onPressed: () {
+            context
+                .read<ConnectDeviceCubit>()
+                .sendNetworkCredentials(selectedSsid, passwordController.text);
+          },
+          text: "Connect",
+        ),
+      ],
+    );
+  }
+
+  Widget _buildConnectionSuccessUI(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.check_circle,
+            color: Theme.of(context).colorScheme.primary,
+            size: 80,
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            "Connection Successful",
+            style: TextStyle(fontSize: 24),
+          ),
+          const SizedBox(height: 16),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Close"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorUI(BuildContext context, String message) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            message,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          TextButton(
+            onPressed: () =>
+                context.read<ConnectDeviceCubit>().connectToDeviceWiFi(),
+            child: const Text(
+              "Retry",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

@@ -3,11 +3,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../services/api_service.dart';
 
 class DeviceCubit extends Cubit<DeviceState> {
-  DeviceCubit() : super(DeviceState());
+  final String userID;
+  DeviceCubit(this.userID) : super(DeviceState());
 
-  void updateDeviceId(String deviceId, String userId) {
+  void updateDeviceId(String deviceId) async {
     emit(DeviceState());
-    ApiService().post("pair_device", {"name": userId, "device_id": deviceId});
+    final apiService = ApiService();
+    try {
+      await apiService
+          .post("pair_device", {"name": userID, "device_id": deviceId});
+    } catch (e) {
+      print(e);
+    }
   }
 }
 

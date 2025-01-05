@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:morening_2/features/device/presention/components/connect_deivce.dart';
+import 'package:morening_2/features/device/presention/components/connect_deivce_old.dart';
 
 class DevicePage extends StatelessWidget {
   const DevicePage({super.key});

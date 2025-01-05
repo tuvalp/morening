@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:morening_2/utils/splash_extension.dart';
 
 import '../../../home/pages/home_view.dart';
 import '../auth_cubit.dart';
+import '../auth_state.dart';
 import '../components/auth_button.dart';
 import '../components/auth_textfield.dart';
 import '/../services/navigation_service.dart';
@@ -36,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
       context.showErrorSnackBar("Please fill all the fields");
       return;
     }
-    showLoadingDialog();
+    context.showSplashDialog(context);
 
     context.read<AuthCubit>().login(email, password).then((success) {
       if (success) {
@@ -50,41 +52,21 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 76),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _buildHeader(),
-            _buildInputFields(),
-            _buildRegisterLink(context),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void showLoadingDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => Dialog.fullscreen(
-        backgroundColor: Colors.black.withOpacity(0.3),
-        child: Center(
+    return BlocListener<AuthCubit, AuthState>(
+      listener: (context, state) {
+        if (state is Authenticated) {
+          NavigationService.navigateTo(const HomeView(), replace: true);
+        }
+      },
+      child: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 76),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Morning',
-                style: TextStyle(
-                  fontSize: 38,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-              const SizedBox(height: 16),
-              const CircularProgressIndicator(),
+              _buildHeader(),
+              _buildInputFields(),
+              _buildRegisterLink(context),
             ],
           ),
         ),

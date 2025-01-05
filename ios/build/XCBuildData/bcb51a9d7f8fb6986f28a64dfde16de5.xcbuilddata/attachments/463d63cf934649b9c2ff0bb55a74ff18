@@ -1,5 +1,0 @@
- extern const unsigned char amplify_secure_storageVersionString[];
- extern const double amplify_secure_storageVersionNumber;
-
- const unsigned char amplify_secure_storageVersionString[] __attribute__ ((used)) = "@(#)PROGRAM:amplify_secure_storage  PROJECT:Pods-1" "\n";
- const double amplify_secure_storageVersionNumber __attribute__ ((used)) = (double)1.;

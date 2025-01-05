@@ -51,10 +51,10 @@ class RegisterOnQuestion extends AuthState {
 
 class AuthOnRegisterSuccess extends AuthState {}
 
-class wakeUpProfileMiss extends AuthState {
+class WakeupUnset extends AuthState {
   final AppUser user;
 
-  wakeUpProfileMiss(this.user);
+  WakeupUnset(this.user);
 }
 
 class AuthError extends AuthState {

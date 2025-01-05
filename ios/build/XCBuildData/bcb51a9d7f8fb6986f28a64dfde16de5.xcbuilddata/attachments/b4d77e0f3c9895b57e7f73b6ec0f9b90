@@ -1,5 +1,0 @@
- extern const unsigned char amplify_auth_cognitoVersionString[];
- extern const double amplify_auth_cognitoVersionNumber;
-
- const unsigned char amplify_auth_cognitoVersionString[] __attribute__ ((used)) = "@(#)PROGRAM:amplify_auth_cognito  PROJECT:Pods-1" "\n";
- const double amplify_auth_cognitoVersionNumber __attribute__ ((used)) = (double)1.;

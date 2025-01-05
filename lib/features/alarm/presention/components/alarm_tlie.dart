@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:morening_2/features/auth/presention/auth_cubit.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../../../../features/alarm/presention/alarm_cubit.dart';
 import '../../../../features/alarm/presention/page/add_edit_alarm_view.dart';
 import '../../../../utils/format.dart';
+import '../../../auth/presention/auth_state.dart';
 import '../../domain/models/alarm.dart';
 
 class AlarmTile extends StatelessWidget {
@@ -14,22 +17,63 @@ class AlarmTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => _navigateToEditAlarm(context),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        margin: const EdgeInsets.only(bottom: 8),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+    return Container(
+      //padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Slidable(
+        endActionPane: ActionPane(
+          motion: const ScrollMotion(),
           children: [
-            _buildAlarmDetails(context),
-            const Spacer(),
-            _buildAlarmSwitch(context),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(16),
+                  bottomRight: Radius.circular(16),
+                ),
+                color: Theme.of(context).colorScheme.error,
+              ),
+              child: IconButton(
+                  onPressed: () => () {},
+                  icon: Icon(
+                    Icons.delete,
+                    color: Theme.of(context).colorScheme.onError,
+                  )),
+            )
+            // SlidableAction(
+            //   borderRadius: BorderRadius.only(
+            //     topRight: Radius.circular(16),
+            //     bottomRight: Radius.circular(16),
+            //   ),
+            //   backgroundColor: Theme.of(context).colorScheme.error,
+            //   icon: Icons.delete,
+            //   foregroundColor: Theme.of(context).colorScheme.onError,
+            //   label: 'Delete',
+            //   onPressed: (context) {
+            //     final alarmCubit = context.read<AlarmCubit>();
+            //     final authCubit =
+            //         context.read<AuthCubit>().state as Authenticated;
+            //     alarmCubit.removeAlarm(alarm, authCubit.user.id);
+            //   },
+            // ),
           ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: InkWell(
+            onTap: () => _navigateToEditAlarm(context),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _buildAlarmDetails(context),
+                const Spacer(),
+                _buildAlarmSwitch(context),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -79,7 +123,8 @@ class AlarmTile extends StatelessWidget {
   /// Toggles the alarm's active state using AlarmCubit.
   void _toggleAlarm(BuildContext context, bool value) {
     final alarmCubit = context.read<AlarmCubit>();
-    alarmCubit.toggleAlarmActive(alarm);
+    final authCubit = context.read<AuthCubit>().state as Authenticated;
+    alarmCubit.toggleAlarmActive(alarm, authCubit.user.id);
   }
 
   /// Navigates to the Add/Edit Alarm screen.

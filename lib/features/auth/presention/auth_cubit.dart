@@ -1,6 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:morening_2/features/questionnaire/presention/pages/set_up_questionaire.dart';
-import 'package:morening_2/services/navigation_service.dart';
 import '../data/auth_api_repo.dart';
 import '../data/auth_cognito_repo.dart';
 import 'auth_state.dart';
@@ -35,11 +33,8 @@ class AuthCubit extends Cubit<AuthState> {
 
       if (user.wakeUpProfile == null) {
         print("user.wakeUpProfile is empty");
-        emit(Authenticated(user)); // Emit state before navigation
-        NavigationService.navigateTo(
-          SetUpQuestionaire(userID: userID),
-          replace: true,
-        );
+        emit(WakeupUnset(user));
+        return true;
       }
 
       emit(Authenticated(user));
@@ -47,6 +42,8 @@ class AuthCubit extends Cubit<AuthState> {
     } catch (e) {
       print("Error getting user: $e");
       emit(Unauthenticated());
+      _authRepo.logout();
+
       return false;
     }
   }
