@@ -1,10 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:morening_2/features/home/pages/home_view.dart';
-import 'package:morening_2/services/api_service.dart';
-import 'package:morening_2/services/navigation_service.dart';
+import '/features/home/pages/home_view.dart';
+import '/services/navigation_service.dart';
+import '/utils/splash_extension.dart';
+import '../../../auth/presention/auth_cubit.dart';
 import '../../domain/models/answer.dart';
 import '/features/auth/presention/components/auth_button.dart';
 import '../../set_up_qustion.dart';
@@ -48,16 +50,25 @@ class _SetUpQuestionaireState extends State<SetUpQuestionaire> {
   }
 
   void _handleDone() {
+    final _authCubit = context.read<AuthCubit>();
     final answersJson = jsonEncode(answers.map((e) => e.toJson()).toList());
+    context.showSplashDialog(context);
 
-    print(answersJson);
-
-    ApiService().post("update_wake_up_profile", {
-      "user_id": widget.userID,
-      "wake_up_profile": answersJson,
+    _authCubit.setWakeupProfile(widget.userID, answersJson).then((success) {
+      if (success) {
+        Navigator.of(context).pop();
+        NavigationService.navigateTo(HomeView(), replace: true);
+      } else {
+        Navigator.of(context).pop();
+      }
     });
 
-    NavigationService.navigateTo(HomeView(), replace: true);
+    // ApiService().post("update_wake_up_profile", {
+    //   "user_id": widget.userID,
+    //   "wake_up_profile": answersJson,
+    // });
+
+    // NavigationService.navigateTo(HomeView(), replace: true);
   }
 
   void _handlePrevious() {

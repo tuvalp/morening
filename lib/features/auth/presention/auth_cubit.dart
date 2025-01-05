@@ -96,6 +96,18 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
+  Future<bool> setWakeupProfile(String userId, String wakeUpProfile) async {
+    emit(AuthLoading());
+    try {
+      await _apiRepo.setWakeupProfile(userId, wakeUpProfile);
+      await getCurrentUser();
+      return true;
+    } catch (e) {
+      emit(AuthError(e.toString()));
+      return false;
+    }
+  }
+
   Future<void> logout() async {
     emit(AuthLoading());
     try {

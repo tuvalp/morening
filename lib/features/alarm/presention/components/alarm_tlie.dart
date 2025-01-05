@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:morening_2/features/auth/presention/auth_cubit.dart';
+import '/features/auth/presention/auth_cubit.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../../../../features/alarm/presention/alarm_cubit.dart';
@@ -18,63 +18,62 @@ class AlarmTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      //padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
       ),
-      child: Slidable(
-        endActionPane: ActionPane(
-          motion: const ScrollMotion(),
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(16),
-                  bottomRight: Radius.circular(16),
-                ),
-                color: Theme.of(context).colorScheme.error,
-              ),
-              child: IconButton(
-                  onPressed: () => () {},
-                  icon: Icon(
-                    Icons.delete,
-                    color: Theme.of(context).colorScheme.onError,
-                  )),
-            )
-            // SlidableAction(
-            //   borderRadius: BorderRadius.only(
-            //     topRight: Radius.circular(16),
-            //     bottomRight: Radius.circular(16),
-            //   ),
-            //   backgroundColor: Theme.of(context).colorScheme.error,
-            //   icon: Icons.delete,
-            //   foregroundColor: Theme.of(context).colorScheme.onError,
-            //   label: 'Delete',
-            //   onPressed: (context) {
-            //     final alarmCubit = context.read<AlarmCubit>();
-            //     final authCubit =
-            //         context.read<AuthCubit>().state as Authenticated;
-            //     alarmCubit.removeAlarm(alarm, authCubit.user.id);
-            //   },
-            // ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: InkWell(
-            onTap: () => _navigateToEditAlarm(context),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+      child: Stack(
+        children: [
+          Slidable(
+            key: Key(alarm.id.toString()),
+            endActionPane: ActionPane(
+              motion: const BehindMotion(),
+              extentRatio: 0.20,
               children: [
-                _buildAlarmDetails(context),
-                const Spacer(),
-                _buildAlarmSwitch(context),
+                SizedBox(
+                  width: 75,
+                  height: double.infinity,
+                  child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(16),
+                          bottomRight: Radius.circular(16),
+                        ),
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                      child: IconButton(
+                          onPressed: () => _deleteAlarm(context),
+                          icon: Icon(
+                            Icons.delete,
+                            color: Theme.of(context).colorScheme.onError,
+                          ))),
+                )
               ],
             ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: InkWell(
+                onTap: () => _navigateToEditAlarm(context),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // _buildAlarmDetails(context),
+                    const Spacer(),
+                    _buildAlarmSwitch(context),
+                  ],
+                ),
+              ),
+            ),
           ),
-        ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: _buildAlarmDetails(context),
+            ),
+          )
+        ],
       ),
     );
   }
@@ -118,6 +117,13 @@ class AlarmTile extends StatelessWidget {
         _toggleAlarm(context, value);
       },
     );
+  }
+
+  /// Deletes the alarm using AlarmCubit.
+  void _deleteAlarm(BuildContext context) {
+    final alarmCubit = context.read<AlarmCubit>();
+    final authCubit = context.read<AuthCubit>().state as Authenticated;
+    alarmCubit.removeAlarm(alarm, authCubit.user.id);
   }
 
   /// Toggles the alarm's active state using AlarmCubit.

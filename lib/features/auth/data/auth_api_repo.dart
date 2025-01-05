@@ -20,4 +20,15 @@ class AuthApiRepo {
       throw Exception("Failed to retrieve user: $e");
     }
   }
+
+  Future<void> setWakeupProfile(String userId, String profile) async {
+    try {
+      await ApiService().post("update_wake_up_profile", {
+        "user_id": userId,
+        "wake_up_profile": profile,
+      });
+    } catch (e) {
+      throw Exception("Failed to set wakeup profile: $e");
+    }
+  }
 }
