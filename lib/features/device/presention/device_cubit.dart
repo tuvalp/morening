@@ -6,14 +6,18 @@ class DeviceCubit extends Cubit<DeviceState> {
   final String userID;
   DeviceCubit(this.userID) : super(DeviceState());
 
-  void updateDeviceId(String deviceId) async {
+  Future<bool> updateDeviceId(String deviceId) async {
     emit(DeviceState());
     final apiService = ApiService();
     try {
-      await apiService
-          .post("pair_device", {"name": userID, "device_id": deviceId});
+      await apiService.post(
+        "users/pair_user_with_device",
+        {"user_id": userID, "device_id": deviceId},
+      );
+      return true;
     } catch (e) {
       print(e);
+      return false;
     }
   }
 }

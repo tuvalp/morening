@@ -1,5 +1,5 @@
 class ApiConfig {
-  static const String baseUrl = "http://16.171.54.94:3250/";
+  static const String baseUrl = "http://16.171.54.94:3250/api/v1/";
   static const String deviceUrl = "http://10.42.0.1:5000/";
 
   static const Map<String, String> defaultHeaders = {

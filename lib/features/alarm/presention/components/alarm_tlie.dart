@@ -17,63 +17,64 @@ class AlarmTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Stack(
-        children: [
-          Slidable(
-            key: Key(alarm.id.toString()),
-            endActionPane: ActionPane(
-              motion: const BehindMotion(),
-              extentRatio: 0.20,
-              children: [
-                SizedBox(
-                  width: 75,
-                  height: double.infinity,
-                  child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(16),
-                          bottomRight: Radius.circular(16),
+    return GestureDetector(
+      onTap: () => _navigateToEditAlarm(context),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 8),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Stack(
+          children: [
+            Slidable(
+              key: Key(alarm.id.toString()),
+              endActionPane: ActionPane(
+                motion: const BehindMotion(),
+                extentRatio: 0.20,
+                children: [
+                  SizedBox(
+                    width: 75,
+                    height: double.infinity,
+                    child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(16),
+                            bottomRight: Radius.circular(16),
+                          ),
+                          color: Theme.of(context).colorScheme.error,
                         ),
-                        color: Theme.of(context).colorScheme.error,
-                      ),
-                      child: IconButton(
-                          onPressed: () => _deleteAlarm(context),
-                          icon: Icon(
-                            Icons.delete,
-                            color: Theme.of(context).colorScheme.onError,
-                          ))),
-                )
-              ],
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: InkWell(
-                onTap: () => _navigateToEditAlarm(context),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // _buildAlarmDetails(context),
-                    const Spacer(),
-                    _buildAlarmSwitch(context),
-                  ],
-                ),
+                        child: IconButton(
+                            onPressed: () => _deleteAlarm(context),
+                            icon: Icon(
+                              Icons.delete,
+                              color: Theme.of(context).colorScheme.onError,
+                            ))),
+                  )
+                ],
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // _buildAlarmDetails(context),
+                  const Spacer(),
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: _buildAlarmSwitch(context),
+                  ),
+                ],
               ),
             ),
-          ),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: _buildAlarmDetails(context),
-            ),
-          )
-        ],
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0, vertical: 12.0),
+                child: _buildAlarmDetails(context),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

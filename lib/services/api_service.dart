@@ -22,12 +22,10 @@ class ApiService {
         ));
 
   // GET request
-  Future<Response> get(String endpoint) async {
+  Future<Response> get(String endpoint, Map<String, dynamic> data) async {
     try {
-      final sanitizedEndpoint = sanitizeEndpoint(endpoint);
-      final response = await dio.get(sanitizedEndpoint);
-      _logRequest(
-          "GET", "${ApiConfig.baseUrl}$sanitizedEndpoint", null, response);
+      final response = await dio.get(endpoint, queryParameters: data);
+      _logRequest("GET", "${ApiConfig.baseUrl}$endpoint", null, response);
       return _handleResponse(response);
     } catch (e) {
       throw Exception("GET request failed: $e");
@@ -37,10 +35,9 @@ class ApiService {
   // POST request
   Future<Response> post(String endpoint, Map<String, dynamic> data) async {
     try {
-      final sanitizedEndpoint = sanitizeEndpoint(endpoint);
-      final response = await dio.post(sanitizedEndpoint, data: data);
-      _logRequest(
-          "POST", "${ApiConfig.baseUrl}$sanitizedEndpoint", data, response);
+      final response =
+          await dio.post(endpoint, data: data, queryParameters: data);
+      _logRequest("POST", "${ApiConfig.baseUrl}$endpoint", data, response);
       return response;
     } catch (e) {
       throw Exception("POST request failed: $e");
@@ -50,10 +47,9 @@ class ApiService {
   // Device GET request
   Future<Response> deviceGet(String endpoint) async {
     try {
-      final sanitizedEndpoint = sanitizeEndpoint(endpoint);
-      final response = await deviceDio.get(sanitizedEndpoint);
-      _logRequest("GET (Device)", "${ApiConfig.deviceUrl}$sanitizedEndpoint",
-          null, response);
+      final response = await deviceDio.get(endpoint);
+      _logRequest(
+          "GET (Device)", "${ApiConfig.deviceUrl}$endpoint", null, response);
       return _handleResponse(response);
     } catch (e) {
       throw Exception("Device GET request failed: $e");
@@ -64,19 +60,13 @@ class ApiService {
   Future<Response> devicePost(
       String endpoint, Map<String, dynamic> data) async {
     try {
-      final sanitizedEndpoint = sanitizeEndpoint(endpoint);
-      final response = await deviceDio.post(sanitizedEndpoint, data: data);
-      _logRequest("POST (Device)", "${ApiConfig.deviceUrl}$sanitizedEndpoint",
-          data, response);
+      final response = await deviceDio.post(endpoint, data: data);
+      _logRequest(
+          "POST (Device)", "${ApiConfig.deviceUrl}$endpoint", data, response);
       return _handleResponse(response);
     } catch (e) {
       throw Exception("Device POST request failed: $e");
     }
-  }
-
-  // Sanitize endpoint to avoid double slashes
-  static String sanitizeEndpoint(String endpoint) {
-    return endpoint.startsWith("/") ? endpoint.substring(1) : endpoint;
   }
 
   // Log request and response details (useful for debugging)

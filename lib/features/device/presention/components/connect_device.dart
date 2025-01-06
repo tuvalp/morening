@@ -2,8 +2,38 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../auth/presention/components/auth_button.dart';
 import '../../../auth/presention/components/auth_textfield.dart';
+import '../device_cubit.dart';
 import '/features/device/presention/connect_device_cubit.dart';
 import '/services/api_service.dart';
+
+class ConnectDevice extends StatelessWidget {
+  const ConnectDevice({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: () {
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          builder: (context) => const ConnectDeviceSheet(),
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+          ),
+        );
+      },
+      child: Text(
+        'Connect Device',
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.primary,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+}
 
 class ConnectDeviceSheet extends StatelessWidget {
   const ConnectDeviceSheet({super.key});
@@ -11,7 +41,8 @@ class ConnectDeviceSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ConnectDeviceCubit(ApiService()),
+      create: (context) => ConnectDeviceCubit(ApiService(),
+          deviceCubit: context.read<DeviceCubit>()),
       child: BlocBuilder<ConnectDeviceCubit, ConnectDeviceState>(
         builder: (context, state) {
           if (state is ConnectDeviceInitial) {

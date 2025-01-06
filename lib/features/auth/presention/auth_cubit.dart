@@ -31,11 +31,11 @@ class AuthCubit extends Cubit<AuthState> {
         return false;
       }
 
-      if (user.wakeUpProfile == null) {
-        print("user.wakeUpProfile is empty");
-        emit(WakeupUnset(user));
-        return true;
-      }
+      // if (user.wakeUpProfile == null) {
+      //   print("user.wakeUpProfile is empty");
+      //   emit(WakeupUnset(user));
+      //   return true;
+      // }
 
       emit(Authenticated(user));
       return true;
@@ -92,6 +92,7 @@ class AuthCubit extends Cubit<AuthState> {
       return true;
     } catch (e) {
       emit(AuthError(e.toString()));
+      print(e.toString());
       return false;
     }
   }

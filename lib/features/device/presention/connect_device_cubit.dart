@@ -1,12 +1,16 @@
 import 'package:bloc/bloc.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 import '../../../../services/api_service.dart';
+import 'device_cubit.dart';
 
 part 'connect_device_state.dart';
 
 class ConnectDeviceCubit extends Cubit<ConnectDeviceState> {
   final ApiService _apiService;
-  ConnectDeviceCubit(this._apiService) : super(ConnectDeviceInitial());
+  final DeviceCubit deviceCubit; // Dependency on DeviceCubit
+
+  ConnectDeviceCubit(this._apiService, {required this.deviceCubit})
+      : super(ConnectDeviceInitial());
 
   Future<void> connectToDeviceWiFi() async {
     emit(ConnectDeviceLoading());
@@ -69,6 +73,8 @@ class ConnectDeviceCubit extends Cubit<ConnectDeviceState> {
       if (response.statusCode == 202) {
         await WiFiForIoTPlugin.disconnect();
         await WiFiForIoTPlugin.forceWifiUsage(false);
+
+        await deviceCubit.updateDeviceId(response.data['device_id']);
 
         emit(ConnectDeviceSuccess());
       } else {

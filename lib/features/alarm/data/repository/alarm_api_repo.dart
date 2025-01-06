@@ -6,7 +6,7 @@ class AlarmApiRepo {
   final ApiService _apiService = ApiService();
 
   Future<void> addAlarm(Alarm alarm, String? userID) {
-    _apiService.post("setAlarm", {
+    _apiService.post("set_alarm", {
       "user_id": userID,
       "uuid": alarm.id,
       "time": DateFormat('yyyy-MM-dd HH:mm:ss').format(alarm.time),
@@ -14,8 +14,18 @@ class AlarmApiRepo {
     return Future.value();
   }
 
+  Future<void> updateAlarm(Alarm alarm, String? userID) {
+    _apiService.post("update_alarm", {
+      "user_id": userID,
+      "uuid": alarm.id,
+      "is_active": alarm.isActive,
+      "time": DateFormat('yyyy-MM-dd HH:mm:ss').format(alarm.time),
+    });
+    return Future.value();
+  }
+
   Future<void> removeAlarm(Alarm alarm, String? userID) {
-    _apiService.post("removeAlarm", {
+    _apiService.post("remove_alarm", {
       "user_id": userID,
       "uuid": alarm.id,
     });
