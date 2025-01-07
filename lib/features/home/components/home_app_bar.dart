@@ -43,7 +43,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               ? const Icon(Icons.wifi)
               : const Icon(Icons.devices),
           onPressed: () {
-            NavigationService.navigateTo(const DevicePage());
+            NavigationService.navigateTo(DevicePage());
           },
         )
       ],

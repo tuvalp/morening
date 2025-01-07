@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../components/connect_device.dart';
+import '../device_cubit.dart';
 
 class DevicePage extends StatelessWidget {
   const DevicePage({super.key});

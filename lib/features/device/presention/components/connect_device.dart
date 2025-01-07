@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../auth/presention/auth_cubit.dart';
+import '../../../auth/presention/auth_state.dart';
 import '../../../auth/presention/components/auth_button.dart';
 import '../../../auth/presention/components/auth_textfield.dart';
-import '../device_cubit.dart';
 import '/features/device/presention/connect_device_cubit.dart';
 import '/services/api_service.dart';
 
@@ -40,9 +41,10 @@ class ConnectDeviceSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ConnectDeviceCubit(ApiService(),
-          deviceCubit: context.read<DeviceCubit>()),
+    return BlocProvider<ConnectDeviceCubit>(
+      create: (_) => ConnectDeviceCubit(
+        ApiService(),
+      ),
       child: BlocBuilder<ConnectDeviceCubit, ConnectDeviceState>(
         builder: (context, state) {
           if (state is ConnectDeviceInitial) {
@@ -115,9 +117,10 @@ class ConnectDeviceSheet extends StatelessWidget {
         const SizedBox(height: 16),
         AuthButton(
           onPressed: () {
-            context
-                .read<ConnectDeviceCubit>()
-                .sendNetworkCredentials(selectedSsid, passwordController.text);
+            final auth = context.read<AuthCubit>().state as Authenticated;
+            final userID = auth.user.id;
+            context.read<ConnectDeviceCubit>().sendNetworkCredentials(
+                selectedSsid, passwordController.text, userID);
           },
           text: "Connect",
         ),

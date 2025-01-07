@@ -1,16 +1,15 @@
 import 'package:bloc/bloc.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 import '../../../../services/api_service.dart';
-import 'device_cubit.dart';
 
 part 'connect_device_state.dart';
 
 class ConnectDeviceCubit extends Cubit<ConnectDeviceState> {
   final ApiService _apiService;
-  final DeviceCubit deviceCubit; // Dependency on DeviceCubit
 
-  ConnectDeviceCubit(this._apiService, {required this.deviceCubit})
-      : super(ConnectDeviceInitial());
+  ConnectDeviceCubit(
+    this._apiService,
+  ) : super(ConnectDeviceInitial());
 
   Future<void> connectToDeviceWiFi() async {
     emit(ConnectDeviceLoading());
@@ -49,7 +48,8 @@ class ConnectDeviceCubit extends Cubit<ConnectDeviceState> {
     }
   }
 
-  Future<void> sendNetworkCredentials(String ssid, String password) async {
+  Future<void> sendNetworkCredentials(
+      String ssid, String password, String userID) async {
     if (ssid.isEmpty || password.isEmpty) {
       emit(ConnectDeviceError('Please enter both SSID and password.'));
       return;
@@ -74,7 +74,7 @@ class ConnectDeviceCubit extends Cubit<ConnectDeviceState> {
         await WiFiForIoTPlugin.disconnect();
         await WiFiForIoTPlugin.forceWifiUsage(false);
 
-        await deviceCubit.updateDeviceId(response.data['device_id']);
+        await updateDeviceId(response.data['device_id'], userID);
 
         emit(ConnectDeviceSuccess());
       } else {
@@ -83,6 +83,19 @@ class ConnectDeviceCubit extends Cubit<ConnectDeviceState> {
       }
     } catch (e) {
       emit(ConnectDeviceError(e.toString()));
+    }
+  }
+
+  Future<bool> updateDeviceId(String deviceId, String userID) async {
+    try {
+      await _apiService.post(
+        "users/pair_user_with_device",
+        {"user_id": userID, "device_id": deviceId},
+      );
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
     }
   }
 }

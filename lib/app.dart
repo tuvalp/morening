@@ -27,7 +27,6 @@ class _AppViewState extends State<AppView> {
   void initState() {
     super.initState();
     PermissionService.checkPermissions();
-    //context.read<AuthCubit>().getCurrentUser();
     _alarmService.initialize();
   }
 
@@ -50,9 +49,18 @@ class _AppViewState extends State<AppView> {
           );
         }
       },
-      child: BlocProvider(
-        create: (_) => DeviceCubit((AuthState as Authenticated).user.id),
-        child: const HomeView(),
+      child: BlocBuilder<AuthCubit, AuthState>(
+        builder: (context, authState) {
+          if (authState is Authenticated) {
+            return BlocProvider<DeviceCubit>(
+              create: (_) => DeviceCubit(authState.user.id),
+              child: const HomeView(),
+            );
+          } else {
+            // Show a loading screen or placeholder while waiting for authentication
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
       ),
     );
   }
