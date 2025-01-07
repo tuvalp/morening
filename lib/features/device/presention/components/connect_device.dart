@@ -36,37 +36,55 @@ class ConnectDevice extends StatelessWidget {
   }
 }
 
-class ConnectDeviceSheet extends StatelessWidget {
+class ConnectDeviceSheet extends StatefulWidget {
   const ConnectDeviceSheet({super.key});
 
   @override
+  State<ConnectDeviceSheet> createState() => _ConnectDeviceSheetState();
+}
+
+class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
+  String selectedSsid = "";
+
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider<ConnectDeviceCubit>(
-      create: (_) => ConnectDeviceCubit(
-        ApiService(),
+    return Container(
+      padding: const EdgeInsets.all(24),
+      height: 400,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(32),
+          topRight: Radius.circular(32),
+        ),
       ),
-      child: BlocBuilder<ConnectDeviceCubit, ConnectDeviceState>(
-        builder: (context, state) {
-          if (state is ConnectDeviceInitial) {
-            context.read<ConnectDeviceCubit>().connectToDeviceWiFi();
-            return _buildConnectingUI("Connecting to Morening Device...");
-          } else if (state is ConnectDeviceLoading) {
-            return _buildConnectingUI("Connecting to Morening Device...");
-          } else if (state is ConnectDeviceConnected) {
-            return _buildConnectingUI("Connected. Scanning for networks...");
-          } else if (state is ConnectDeviceFetchingNetworks) {
-            return _buildConnectingUI("Scanning for networks...");
-          } else if (state is ConnectDeviceNetworksFetched) {
-            return _buildNetworkSelectionUI(context, state.ssidList);
-          } else if (state is ConnectDevicePairing) {
-            return _buildConnectingUI("Connecting to network...");
-          } else if (state is ConnectDeviceSuccess) {
-            return _buildConnectionSuccessUI(context);
-          } else if (state is ConnectDeviceError) {
-            return _buildErrorUI(context, state.message);
-          }
-          return Container();
-        },
+      child: BlocProvider<ConnectDeviceCubit>(
+        create: (_) => ConnectDeviceCubit(
+          ApiService(),
+        ),
+        child: BlocBuilder<ConnectDeviceCubit, ConnectDeviceState>(
+          builder: (context, state) {
+            if (state is ConnectDeviceInitial) {
+              context.read<ConnectDeviceCubit>().connectToDeviceWiFi();
+              return _buildConnectingUI("Connecting to Morening Device...");
+            } else if (state is ConnectDeviceLoading) {
+              return _buildConnectingUI("Connecting to Morening Device...");
+            } else if (state is ConnectDeviceConnected) {
+              return _buildConnectingUI("Connected. Scanning for networks...");
+            } else if (state is ConnectDeviceFetchingNetworks) {
+              return _buildConnectingUI("Scanning for networks...");
+            } else if (state is ConnectDeviceNetworksFetched) {
+              return _buildNetworkSelectionUI(context, state.ssidList);
+            } else if (state is ConnectDevicePairing) {
+              return _buildConnectingUI("Connecting to network...");
+            } else if (state is ConnectDeviceSuccess) {
+              return _buildConnectionSuccessUI(context);
+            } else if (state is ConnectDeviceError) {
+              return _buildErrorUI(context, state.message);
+            }
+            return Container();
+          },
+        ),
       ),
     );
   }
@@ -88,44 +106,61 @@ class ConnectDeviceSheet extends StatelessWidget {
   }
 
   Widget _buildNetworkSelectionUI(BuildContext context, List<String> ssidList) {
-    String selectedSsid = "";
     final passwordController = TextEditingController();
 
-    return Column(
-      children: [
-        const Text(
-          "Connect your device to your home network",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: ssidList.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                leading: const Icon(Icons.wifi),
-                title: Text(ssidList[index]),
-                onTap: () => selectedSsid = ssidList[index],
-              );
-            },
-          ),
-        ),
-        AuthTextfield(
-          controller: passwordController,
-          obscureText: true,
-          labelText: 'Password',
-        ),
-        const SizedBox(height: 16),
-        AuthButton(
-          onPressed: () {
-            final auth = context.read<AuthCubit>().state as Authenticated;
-            final userID = auth.user.id;
-            context.read<ConnectDeviceCubit>().sendNetworkCredentials(
-                selectedSsid, passwordController.text, userID);
-          },
-          text: "Connect",
-        ),
-      ],
-    );
+    return selectedSsid == ""
+        ? Column(children: [
+            const Text(
+              "Connect your device to your home network",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: ssidList.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                      leading: const Icon(Icons.wifi),
+                      title: Text(ssidList[index]),
+                      onTap: () => setState(() {
+                            selectedSsid = ssidList[index];
+                          }));
+                },
+              ),
+            )
+          ])
+        : Center(
+            child: Column(
+              children: [
+                Text(
+                  selectedSsid,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 42),
+                AuthTextfield(
+                  controller: passwordController,
+                  obscureText: true,
+                  labelText: 'Password',
+                ),
+                const SizedBox(height: 16),
+                AuthButton(
+                  onPressed: () {
+                    final auth =
+                        context.read<AuthCubit>().state as Authenticated;
+                    final userID = auth.user.id;
+                    context.read<ConnectDeviceCubit>().sendNetworkCredentials(
+                        selectedSsid, passwordController.text, userID);
+                  },
+                  text: "Connect",
+                ),
+                SizedBox(height: 8),
+                TextButton(
+                    onPressed: () => setState(() {
+                          selectedSsid = "";
+                        }),
+                    child: Text("Back"))
+              ],
+            ),
+          );
   }
 
   Widget _buildConnectionSuccessUI(BuildContext context) {
