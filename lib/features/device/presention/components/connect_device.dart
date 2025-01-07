@@ -48,42 +48,49 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      height: 400,
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(32),
-          topRight: Radius.circular(32),
-        ),
-      ),
-      child: BlocProvider<ConnectDeviceCubit>(
-        create: (_) => ConnectDeviceCubit(
-          ApiService(),
-        ),
-        child: BlocBuilder<ConnectDeviceCubit, ConnectDeviceState>(
-          builder: (context, state) {
-            if (state is ConnectDeviceInitial) {
-              context.read<ConnectDeviceCubit>().connectToDeviceWiFi();
-              return _buildConnectingUI("Connecting to Morening Device...");
-            } else if (state is ConnectDeviceLoading) {
-              return _buildConnectingUI("Connecting to Morening Device...");
-            } else if (state is ConnectDeviceConnected) {
-              return _buildConnectingUI("Connected. Scanning for networks...");
-            } else if (state is ConnectDeviceFetchingNetworks) {
-              return _buildConnectingUI("Scanning for networks...");
-            } else if (state is ConnectDeviceNetworksFetched) {
-              return _buildNetworkSelectionUI(context, state.ssidList);
-            } else if (state is ConnectDevicePairing) {
-              return _buildConnectingUI("Connecting to network...");
-            } else if (state is ConnectDeviceSuccess) {
-              return _buildConnectionSuccessUI(context);
-            } else if (state is ConnectDeviceError) {
-              return _buildErrorUI(context, state.message);
-            }
-            return Container();
-          },
+    return SingleChildScrollView(
+      child: Padding(
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          height: 400,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(32),
+              topRight: Radius.circular(32),
+            ),
+          ),
+          child: BlocProvider<ConnectDeviceCubit>(
+            create: (_) => ConnectDeviceCubit(
+              ApiService(),
+            ),
+            child: BlocBuilder<ConnectDeviceCubit, ConnectDeviceState>(
+              builder: (context, state) {
+                if (state is ConnectDeviceInitial) {
+                  context.read<ConnectDeviceCubit>().connectToDeviceWiFi();
+                  return _buildConnectingUI("Connecting to Morening Device...");
+                } else if (state is ConnectDeviceLoading) {
+                  return _buildConnectingUI("Connecting to Morening Device...");
+                } else if (state is ConnectDeviceConnected) {
+                  return _buildConnectingUI(
+                      "Connected. Scanning for networks...");
+                } else if (state is ConnectDeviceFetchingNetworks) {
+                  return _buildConnectingUI("Scanning for networks...");
+                } else if (state is ConnectDeviceNetworksFetched) {
+                  return _buildNetworkSelectionUI(context, state.ssidList);
+                } else if (state is ConnectDevicePairing) {
+                  return _buildConnectingUI("Connecting to network...");
+                } else if (state is ConnectDeviceSuccess) {
+                  return _buildConnectionSuccessUI(context);
+                } else if (state is ConnectDeviceError) {
+                  return _buildErrorUI(context, state.message);
+                }
+                return Container();
+              },
+            ),
+          ),
         ),
       ),
     );
