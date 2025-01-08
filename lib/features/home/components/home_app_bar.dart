@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../auth/presention/auth_state.dart';
+import '../../device/presention/device_cubit.dart';
 import '/features/auth/domain/models/app_user.dart';
 
 import '../../../services/navigation_service.dart';
@@ -38,14 +39,42 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         },
       ),
       actions: [
-        IconButton(
-          icon: user != null && user.deviceId != null
-              ? const Icon(Icons.wifi)
-              : const Icon(Icons.devices),
-          onPressed: () {
-            NavigationService.navigateTo(DevicePage());
-          },
-        )
+        if (user != null)
+          BlocBuilder<DeviceCubit, DeviceState>(
+            builder: (context, deviceState) {
+              IconData icon;
+              if (deviceState is DeviceStatus &&
+                  deviceState.status == "Connected") {
+                icon = Icons.wifi;
+              } else if (deviceState is DeviceStatus &&
+                  deviceState.status != "Connected") {
+                icon = Icons.wifi_off;
+              } else {
+                icon = Icons.devices;
+              }
+
+              return IconButton(
+                icon: Icon(icon),
+                onPressed: () {
+                  NavigationService.navigateTo(
+                    MultiBlocProvider(
+                      providers: [
+                        BlocProvider<DeviceCubit>(
+                          create: (_) => DeviceCubit(user!),
+                        ),
+                      ],
+                      child: const DevicePage(),
+                    ),
+                  );
+                },
+              );
+            },
+          )
+        else
+          IconButton(
+            icon: const Icon(Icons.devices),
+            onPressed: () {},
+          ),
       ],
     );
   }

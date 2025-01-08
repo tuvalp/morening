@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:morening_2/features/device/data/device_api_repo.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 import '../../../../services/api_service.dart';
 
@@ -7,9 +8,7 @@ part 'connect_device_state.dart';
 class ConnectDeviceCubit extends Cubit<ConnectDeviceState> {
   final ApiService _apiService;
 
-  ConnectDeviceCubit(
-    this._apiService,
-  ) : super(ConnectDeviceInitial());
+  ConnectDeviceCubit(this._apiService) : super(ConnectDeviceInitial());
 
   Future<void> connectToDeviceWiFi() async {
     emit(ConnectDeviceLoading());
@@ -74,7 +73,9 @@ class ConnectDeviceCubit extends Cubit<ConnectDeviceState> {
         await WiFiForIoTPlugin.disconnect();
         await WiFiForIoTPlugin.forceWifiUsage(false);
 
-        await updateDeviceId(response.data['device_id'], userID);
+        if (await WiFiForIoTPlugin.isConnected()) {
+          await DeviceApiRepo().pairDevice(response.data['device_id'], userID);
+        }
 
         emit(ConnectDeviceSuccess());
       } else {
@@ -83,19 +84,6 @@ class ConnectDeviceCubit extends Cubit<ConnectDeviceState> {
       }
     } catch (e) {
       emit(ConnectDeviceError(e.toString()));
-    }
-  }
-
-  Future<bool> updateDeviceId(String deviceId, String userID) async {
-    try {
-      await _apiService.post(
-        "users/pair_user_with_device",
-        {"user_id": userID, "device_id": deviceId},
-      );
-      return true;
-    } catch (e) {
-      print(e);
-      return false;
     }
   }
 }

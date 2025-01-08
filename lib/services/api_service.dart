@@ -35,9 +35,18 @@ class ApiService {
   // POST request
   Future<Response> post(String endpoint, Map<String, dynamic> data) async {
     try {
-      final response =
-          await dio.post(endpoint, data: data, queryParameters: data);
+      final response = await dio.post(endpoint, queryParameters: data);
       _logRequest("POST", "${ApiConfig.baseUrl}$endpoint", data, response);
+      return response;
+    } catch (e) {
+      throw Exception("POST request failed: $e");
+    }
+  }
+
+  Future<Response> delete(String endpoint, Map<String, dynamic> data) async {
+    try {
+      final response = await dio.delete(endpoint, queryParameters: data);
+      _logRequest("DELETE", "${ApiConfig.baseUrl}$endpoint", data, response);
       return response;
     } catch (e) {
       throw Exception("POST request failed: $e");

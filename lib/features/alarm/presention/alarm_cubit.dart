@@ -67,8 +67,7 @@ class AlarmCubit extends Cubit<AlarmState> {
       await alarmRepo.updateAlarm(alarm);
       await alarmNativeRepo.updateAlarm(adjustedAlarm);
 
-      await alarmApiRepo.removeAlarm(alarm, userID);
-      await alarmApiRepo.addAlarm(alarm, userID);
+      await alarmApiRepo.updateAlarm(alarm, userID);
 
       loadAlarms();
     } catch (error) {

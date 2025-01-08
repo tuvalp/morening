@@ -1,37 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:morening_2/services/api_service.dart';
 import '../../../auth/presention/auth_cubit.dart';
 import '../../../auth/presention/auth_state.dart';
 import '../../../auth/presention/components/auth_button.dart';
 import '../../../auth/presention/components/auth_textfield.dart';
 import '/features/device/presention/connect_device_cubit.dart';
-import '/services/api_service.dart';
 
 class ConnectDevice extends StatelessWidget {
   const ConnectDevice({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: () {
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          builder: (context) => const ConnectDeviceSheet(),
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+    return Builder(
+      builder: (context) {
+        return TextButton(
+          onPressed: () {
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              builder: (context) => const ConnectDeviceSheet(),
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+              ),
+            );
+          },
+          child: Text(
+            'Connect Device',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.primary,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         );
       },
-      child: Text(
-        'Connect Device',
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.primary,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
     );
   }
 }
@@ -49,51 +53,49 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Padding(
-        padding:
-            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-        child: Container(
-          padding: const EdgeInsets.all(24),
-          height: 400,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(32),
-              topRight: Radius.circular(32),
-            ),
-          ),
-          child: BlocProvider<ConnectDeviceCubit>(
-            create: (_) => ConnectDeviceCubit(
-              ApiService(),
-            ),
-            child: BlocBuilder<ConnectDeviceCubit, ConnectDeviceState>(
-              builder: (context, state) {
-                if (state is ConnectDeviceInitial) {
-                  context.read<ConnectDeviceCubit>().connectToDeviceWiFi();
-                  return _buildConnectingUI("Connecting to Morening Device...");
-                } else if (state is ConnectDeviceLoading) {
-                  return _buildConnectingUI("Connecting to Morening Device...");
-                } else if (state is ConnectDeviceConnected) {
-                  return _buildConnectingUI(
-                      "Connected. Scanning for networks...");
-                } else if (state is ConnectDeviceFetchingNetworks) {
-                  return _buildConnectingUI("Scanning for networks...");
-                } else if (state is ConnectDeviceNetworksFetched) {
-                  return _buildNetworkSelectionUI(context, state.ssidList);
-                } else if (state is ConnectDevicePairing) {
-                  return _buildConnectingUI("Connecting to network...");
-                } else if (state is ConnectDeviceSuccess) {
-                  return _buildConnectionSuccessUI(context);
-                } else if (state is ConnectDeviceError) {
-                  return _buildErrorUI(context, state.message);
-                }
-                return Container();
-              },
-            ),
-          ),
-        ),
-      ),
-    );
+        child: Padding(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              height: 400,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(32),
+                  topRight: Radius.circular(32),
+                ),
+              ),
+              child: BlocProvider<ConnectDeviceCubit>(
+                create: (_) => ConnectDeviceCubit(ApiService()),
+                child: BlocBuilder<ConnectDeviceCubit, ConnectDeviceState>(
+                  builder: (context, state) {
+                    if (state is ConnectDeviceInitial) {
+                      context.read<ConnectDeviceCubit>().connectToDeviceWiFi();
+                      return _buildConnectingUI(
+                          "Connecting to Morening Device...");
+                    } else if (state is ConnectDeviceLoading) {
+                      return _buildConnectingUI(
+                          "Connecting to Morening Device...");
+                    } else if (state is ConnectDeviceConnected) {
+                      return _buildConnectingUI(
+                          "Connected. Scanning for networks...");
+                    } else if (state is ConnectDeviceFetchingNetworks) {
+                      return _buildConnectingUI("Scanning for networks...");
+                    } else if (state is ConnectDeviceNetworksFetched) {
+                      return _buildNetworkSelectionUI(context, state.ssidList);
+                    } else if (state is ConnectDevicePairing) {
+                      return _buildConnectingUI("Connecting to network...");
+                    } else if (state is ConnectDeviceSuccess) {
+                      return _buildConnectionSuccessUI(context);
+                    } else if (state is ConnectDeviceError) {
+                      return _buildErrorUI(context, state.message);
+                    }
+                    return Container();
+                  },
+                ),
+              ),
+            )));
   }
 
   Widget _buildConnectingUI(String message) {

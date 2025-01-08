@@ -1,25 +1,71 @@
+import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../services/api_service.dart';
+import 'package:morening_2/features/auth/domain/models/app_user.dart';
+import '../data/device_api_repo.dart';
 
 class DeviceCubit extends Cubit<DeviceState> {
-  final String userID;
-  DeviceCubit(this.userID) : super(DeviceState());
+  final AppUser user;
+  Timer? _timer;
 
-  Future<bool> updateDeviceId(String deviceId) async {
-    emit(DeviceState());
-    final apiService = ApiService();
+  DeviceCubit(this.user) : super(DeviceStatusLoading()) {
+    _startPeriodicCheck();
+  }
+
+  // Start periodic device status checks
+  void _startPeriodicCheck() {
+    checkDeviceStatus(); // Run an immediate check
+    _timer =
+        Timer.periodic(const Duration(minutes: 1), (_) => checkDeviceStatus());
+  }
+
+  Future<void> checkDeviceStatus() async {
+    emit(DeviceStatusLoading());
     try {
-      await apiService.post(
-        "users/pair_user_with_device",
-        {"user_id": userID, "device_id": deviceId},
-      );
-      return true;
+      if (user.deviceId == null || user.deviceId!.isEmpty) {
+        print("No paired device");
+        emit(DeviceNotPair());
+        return;
+      }
+
+      final status = await DeviceApiRepo().checkDeviceStatus(user.id);
+
+      emit(DeviceStatus(status));
     } catch (e) {
-      print(e);
-      return false;
+      print("Error: $e");
+      emit(DeviceStatusError("Error checking device status"));
     }
+  }
+
+  Future<void> unpairDevice() async {
+    try {
+      await DeviceApiRepo().unpairDevice(user.id);
+      emit(DeviceNotPair());
+    } catch (e) {
+      print("Error: $e");
+      emit(DeviceStatusError("Error unpairing device"));
+    }
+  }
+
+  @override
+  Future<void> close() {
+    _timer?.cancel(); // Cancel the timer when the Cubit is closed
+    return super.close();
   }
 }
 
-class DeviceState {}
+// States for the DeviceCubit
+abstract class DeviceState {}
+
+class DeviceStatusLoading extends DeviceState {}
+
+class DeviceNotPair extends DeviceState {}
+
+class DeviceStatus extends DeviceState {
+  final String status;
+  DeviceStatus(this.status);
+}
+
+class DeviceStatusError extends DeviceState {
+  final String message;
+  DeviceStatusError(this.message);
+}

@@ -20,19 +20,7 @@ class AppUser {
       id: json['user_id'] ?? "",
       email: json['email'] ?? "",
       name: json['name'] ?? "",
-      deviceId: json['paired_device_id'], // Nullable
-      wakeUpProfile: (json['wake_up_profile'] is List)
-          ? (json['wake_up_profile'] as List<dynamic>).isNotEmpty
-              ? (json['wake_up_profile'] as List<dynamic>)
-                  .map((e) => Answer.fromJson(e as Map<String, dynamic>))
-                  .toList()
-              : (json['wake_up_profile'] is Map<String, dynamic>)
-                  ? [
-                      Answer.fromJson(
-                          json['wake_up_profile'] as Map<String, dynamic>)
-                    ]
-                  : null
-          : null,
+      deviceId: json['paired_device_id'] ?? "", // Nullable
     );
   }
 

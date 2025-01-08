@@ -53,7 +53,8 @@ class _AppViewState extends State<AppView> {
         builder: (context, authState) {
           if (authState is Authenticated) {
             return BlocProvider<DeviceCubit>(
-              create: (_) => DeviceCubit(authState.user.id),
+              create: (_) => DeviceCubit(authState.user),
+              lazy: false,
               child: const HomeView(),
             );
           } else {
