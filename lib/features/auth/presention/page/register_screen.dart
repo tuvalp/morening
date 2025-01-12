@@ -68,18 +68,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 76.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _buildHeader(),
-            SingleChildScrollView(
-              child: _buildInputFields(),
-            ),
-            _buildLoginLink(context),
-          ],
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 76.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildHeader(),
+              SingleChildScrollView(
+                child: _buildInputFields(),
+              ),
+              SingleChildScrollView(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                child: _buildLoginLink(context),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -137,6 +145,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   /// Builds the input fields for registration.
   Widget _buildInputFields() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         AuthTextfield(
           controller: nameController,
@@ -153,6 +162,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
           obscureText: true,
           labelText: 'Password',
         ),
+        SizedBox(height: 4),
+        Text(
+          'At least 8 characters long, contain at least one uppercase letter and one special character',
+          style: TextStyle(
+            fontSize: 10,
+            color: Theme.of(context).colorScheme.onTertiary,
+          ),
+        ),
+        SizedBox(height: 12),
         AuthTextfield(
           controller: confirmPasswordController,
           obscureText: true,

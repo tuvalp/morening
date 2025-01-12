@@ -34,7 +34,7 @@ class AlarmTile extends StatelessWidget {
                 extentRatio: 0.20,
                 children: [
                   SizedBox(
-                    width: 75,
+                    width: 70,
                     height: double.infinity,
                     child: Container(
                         decoration: BoxDecoration(

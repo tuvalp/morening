@@ -31,11 +31,15 @@ class AuthCubit extends Cubit<AuthState> {
         return false;
       }
 
-      // if (user.wakeUpProfile == null) {
-      //   print("user.wakeUpProfile is empty");
-      //   emit(WakeupUnset(user));
-      //   return true;
-      // }
+      final isWakeUpProfileSet = await _apiRepo.getWakeupProfile(userID);
+
+      if (isWakeUpProfileSet == null) {
+        emit(WakeupUnset(user));
+        return true;
+      } else if (isWakeUpProfileSet.statusCode == 500) {
+        emit(AuthError(isWakeUpProfileSet.data['message']));
+        return false;
+      }
 
       emit(Authenticated(user));
       return true;
@@ -95,6 +99,10 @@ class AuthCubit extends Cubit<AuthState> {
       print(e.toString());
       return false;
     }
+  }
+
+  Future<void> resendConfirmationCode(String email) async {
+    await _authRepo.resendConfirmationCode(email);
   }
 
   Future<bool> setWakeupProfile(String userId, String wakeUpProfile) async {

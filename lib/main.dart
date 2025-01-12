@@ -2,6 +2,7 @@ import 'package:alarm/alarm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:morening_2/features/device/presention/device_cubit.dart';
 import '/features/alarm/presention/page/alarm_ring.dart';
 import '/services/alarm_service.dart';
 import '/utils/snackbar_extension.dart';
@@ -62,20 +63,23 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    final authCubit = AuthCubit(AuthCognitoRepo(), AuthApiRepo());
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuthCubit>(
-          create: (_) =>
-              AuthCubit(AuthCognitoRepo(), AuthApiRepo())..getCurrentUser(),
+          create: (_) => authCubit..getCurrentUser(),
         ),
         BlocProvider<AlarmCubit>(
           create: (context) =>
               AlarmCubit(AlarmStoreRepo(), AlarmNativeRepo(), AlarmApiRepo()),
           lazy: false,
         ),
+        BlocProvider<DeviceCubit>(
+          create: (_) => DeviceCubit(authCubit),
+        ),
         BlocProvider<ProfileCubit>(
           create: (_) => ProfileCubit(SettingsRepoImpl()),
-          lazy: false,
         ),
       ],
       child: BlocBuilder<AuthCubit, AuthState>(
@@ -92,13 +96,14 @@ class _MyAppState extends State<MyApp> {
             child: BlocBuilder<ProfileCubit, Settings>(
               builder: (context, settings) {
                 return MaterialApp(
-                    navigatorKey: NavigationService.navigatorKey,
-                    debugShowCheckedModeBanner: false,
-                    title: 'MoreNing',
-                    theme: AppTheme.getTheme(context),
-                    home: authState is Unauthenticated
-                        ? const LoginScreen()
-                        : const AppView());
+                  navigatorKey: NavigationService.navigatorKey,
+                  debugShowCheckedModeBanner: false,
+                  title: 'MoreNing',
+                  theme: AppTheme.getTheme(context),
+                  home: authState is Unauthenticated
+                      ? const LoginScreen()
+                      : const AppView(),
+                );
               },
             ),
           );

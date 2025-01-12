@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:morening_2/features/device/presention/device_cubit.dart';
 
 import '/services/navigation_service.dart';
 import '/utils/snackbar_extension.dart';
@@ -41,7 +40,6 @@ class _AppViewState extends State<AppView> {
         if (state is Unauthenticated) {
           NavigationService.navigateTo(const LoginScreen(), replace: true);
         }
-
         if (state is WakeupUnset) {
           NavigationService.navigateTo(
             SetUpQuestionaire(userID: state.user.id),
@@ -52,14 +50,9 @@ class _AppViewState extends State<AppView> {
       child: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, authState) {
           if (authState is Authenticated) {
-            return BlocProvider<DeviceCubit>(
-              create: (_) => DeviceCubit(authState.user),
-              lazy: false,
-              child: const HomeView(),
-            );
+            return const HomeView();
           } else {
-            // Show a loading screen or placeholder while waiting for authentication
-            return const Center(child: CircularProgressIndicator());
+            return const LoginScreen();
           }
         },
       ),

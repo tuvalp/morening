@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:morening_2/features/device/presention/device_cubit.dart';
 import 'package:morening_2/services/api_service.dart';
 import '../../../auth/presention/auth_cubit.dart';
 import '../../../auth/presention/auth_state.dart';
@@ -67,7 +68,8 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
                 ),
               ),
               child: BlocProvider<ConnectDeviceCubit>(
-                create: (_) => ConnectDeviceCubit(ApiService()),
+                create: (_) => ConnectDeviceCubit(
+                    ApiService(), context.read<DeviceCubit>()),
                 child: BlocBuilder<ConnectDeviceCubit, ConnectDeviceState>(
                   builder: (context, state) {
                     if (state is ConnectDeviceInitial) {
@@ -155,9 +157,9 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
                   onPressed: () {
                     final auth =
                         context.read<AuthCubit>().state as Authenticated;
-                    final userID = auth.user.id;
+                    final user = auth.user;
                     context.read<ConnectDeviceCubit>().sendNetworkCredentials(
-                        selectedSsid, passwordController.text, userID);
+                        selectedSsid, passwordController.text, user);
                   },
                   text: "Connect",
                 ),

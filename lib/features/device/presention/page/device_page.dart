@@ -5,6 +5,7 @@ import 'package:morening_2/features/device/presention/device_cubit.dart';
 
 import '../../../auth/presention/auth_cubit.dart';
 import '../components/connect_device.dart';
+import '../device_state.dart';
 
 class DevicePage extends StatelessWidget {
   const DevicePage({super.key});
@@ -36,7 +37,7 @@ class DevicePage extends StatelessWidget {
           );
         }
 
-        if (state is DeviceStatus) {
+        if (state is DeviceConnected || state is DeviceDisconnected) {
           final deviceId =
               (context.read<AuthCubit>().state as Authenticated).user.deviceId;
           return Column(
@@ -54,6 +55,7 @@ class DevicePage extends StatelessWidget {
                     Icon(
                       Icons.devices,
                       size: 42,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                     const SizedBox(width: 16),
                     Column(
@@ -79,7 +81,8 @@ class DevicePage extends StatelessWidget {
                     ),
                     Spacer(),
                     Icon(
-                      state.status == "connected" ? Icons.wifi : Icons.wifi_off,
+                      state is DeviceConnected ? Icons.wifi : Icons.wifi_off,
+                      color: Theme.of(context).colorScheme.onSurface,
                       size: 26,
                     )
                   ],

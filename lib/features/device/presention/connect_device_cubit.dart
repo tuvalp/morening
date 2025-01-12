@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
-import 'package:morening_2/features/device/data/device_api_repo.dart';
+import 'package:morening_2/features/auth/domain/models/app_user.dart';
+import 'package:morening_2/features/device/presention/device_cubit.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 import '../../../../services/api_service.dart';
 
@@ -7,8 +8,10 @@ part 'connect_device_state.dart';
 
 class ConnectDeviceCubit extends Cubit<ConnectDeviceState> {
   final ApiService _apiService;
+  final DeviceCubit _deviceCubit;
 
-  ConnectDeviceCubit(this._apiService) : super(ConnectDeviceInitial());
+  ConnectDeviceCubit(this._apiService, this._deviceCubit)
+      : super(ConnectDeviceInitial());
 
   Future<void> connectToDeviceWiFi() async {
     emit(ConnectDeviceLoading());
@@ -48,7 +51,7 @@ class ConnectDeviceCubit extends Cubit<ConnectDeviceState> {
   }
 
   Future<void> sendNetworkCredentials(
-      String ssid, String password, String userID) async {
+      String ssid, String password, AppUser user) async {
     if (ssid.isEmpty || password.isEmpty) {
       emit(ConnectDeviceError('Please enter both SSID and password.'));
       return;
@@ -71,11 +74,9 @@ class ConnectDeviceCubit extends Cubit<ConnectDeviceState> {
 
       if (response.statusCode == 202) {
         await WiFiForIoTPlugin.disconnect();
-        await WiFiForIoTPlugin.forceWifiUsage(false);
+        //await WiFiForIoTPlugin.forceWifiUsage(false);
 
-        if (await WiFiForIoTPlugin.isConnected()) {
-          await DeviceApiRepo().pairDevice(response.data['device_id'], userID);
-        }
+        await _deviceCubit.pairDevice(response.data['device_id'], user.id);
 
         emit(ConnectDeviceSuccess());
       } else {

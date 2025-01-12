@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:morening_2/features/home/pages/home_view.dart';
@@ -28,14 +30,33 @@ class ConfirmScreen extends StatefulWidget {
 
 class _ConfirmScreenState extends State<ConfirmScreen> {
   final TextEditingController confirmController = TextEditingController();
+  int _remainingTime = 0; // Time in seconds
+  Timer? _timer;
 
   @override
   void dispose() {
     confirmController.dispose();
+    _timer?.cancel();
     super.dispose();
   }
 
-  /// Handles the confirmation logic.
+  /// Starts the countdown timer for resending the code.
+  void _startResendTimer() {
+    setState(() {
+      _remainingTime = 60; // 60 seconds countdown
+    });
+
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        if (_remainingTime > 0) {
+          _remainingTime--;
+        } else {
+          _timer?.cancel();
+        }
+      });
+    });
+  }
+
   void _confirm() {
     final confirmationCode = confirmController.text.trim();
 
@@ -55,12 +76,18 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
           widget.name,
         )
         .then((success) {
+      Navigator.of(context).pop();
       if (success == true) {
-        Navigator.of(context).pop();
         NavigationService.navigateTo(const HomeView(), replace: true);
       }
-      Navigator.of(context).pop();
     });
+  }
+
+  void _resendConfirmationCode() {
+    if (_remainingTime == 0) {
+      context.read<AuthCubit>().resendConfirmationCode(widget.email);
+      _startResendTimer();
+    }
   }
 
   @override
@@ -78,33 +105,6 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
               onPressed: _confirm,
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  void showLoadingDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => Dialog.fullscreen(
-        backgroundColor: Colors.black.withOpacity(0.3),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Morning',
-                style: TextStyle(
-                  fontSize: 38,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-              const SizedBox(height: 16),
-              const CircularProgressIndicator(),
-            ],
-          ),
         ),
       ),
     );
@@ -150,7 +150,49 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
           labelText: 'Confirmation Code',
           obscureText: false,
         ),
+        const SizedBox(height: 32),
+        TextButton(
+          onPressed: _remainingTime == 0 ? _resendConfirmationCode : null,
+          child: Text(
+            _remainingTime == 0
+                ? "Resend Code"
+                : "Code resent, send again in $_remainingTime seconds",
+            style: TextStyle(
+              fontSize: 16,
+              color: _remainingTime == 0
+                  ? Theme.of(context).colorScheme.primary
+                  : Colors.grey,
+            ),
+          ),
+        ),
       ],
+    );
+  }
+
+  void showLoadingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Dialog.fullscreen(
+        backgroundColor: Colors.black.withOpacity(0.3),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Morning',
+                style: TextStyle(
+                  fontSize: 38,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              const SizedBox(height: 16),
+              const CircularProgressIndicator(),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

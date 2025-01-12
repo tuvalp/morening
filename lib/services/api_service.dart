@@ -9,14 +9,14 @@ class ApiService {
   ApiService()
       : dio = Dio(BaseOptions(
           baseUrl: ApiConfig.baseUrl,
-          connectTimeout: Duration(seconds: 10),
-          receiveTimeout: Duration(seconds: 10),
+          connectTimeout: Duration(seconds: 30),
+          receiveTimeout: Duration(seconds: 30),
           headers: ApiConfig.defaultHeaders,
         )),
         deviceDio = Dio(BaseOptions(
           baseUrl: ApiConfig.deviceUrl,
-          connectTimeout: Duration(seconds: 10),
-          receiveTimeout: Duration(seconds: 10),
+          connectTimeout: Duration(seconds: 60),
+          receiveTimeout: Duration(seconds: 60),
           headers: ApiConfig.defaultHeaders,
           followRedirects: false,
         ));
