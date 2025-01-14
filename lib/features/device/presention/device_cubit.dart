@@ -52,6 +52,7 @@ class DeviceCubit extends Cubit<DeviceState> {
 
     try {
       await DeviceApiRepo().pairDevice(deviceId, userID);
+      await authCubit.getCurrentUser();
       emit(DeviceConnected());
     } catch (e) {
       print("Error: $e");

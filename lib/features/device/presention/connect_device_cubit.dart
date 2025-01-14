@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:morening_2/features/auth/domain/models/app_user.dart';
 import 'package:morening_2/features/device/presention/device_cubit.dart';
@@ -74,7 +76,10 @@ class ConnectDeviceCubit extends Cubit<ConnectDeviceState> {
 
       if (response.statusCode == 202) {
         await WiFiForIoTPlugin.disconnect();
-        //await WiFiForIoTPlugin.forceWifiUsage(false);
+
+        if (Platform.isAndroid) {
+          await WiFiForIoTPlugin.forceWifiUsage(false);
+        }
 
         await _deviceCubit.pairDevice(response.data['device_id'], user.id);
 
