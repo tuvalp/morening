@@ -1,6 +1,5 @@
 import 'package:alarm/alarm.dart' show AlarmSettings;
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:morening_2/features/alarm/data/repository/alarm_api_repo.dart';
 import '../../alarm/domain/models/alarm.dart';
 import '../data/repository/alarm_native_repo.dart';
@@ -33,7 +32,8 @@ class AlarmCubit extends Cubit<AlarmState> {
   }
 
   Future<void> addAlarm(Alarm alarm, String? userID) async {
-    String timeZone = await FlutterNativeTimezone.getLocalTimezone();
+    //String timeZone = await FlutterNativeTimezone.getLocalTimezone();
+    String timeZone = "Asia/Jerusalem";
     print(timeZone);
 
     try {
