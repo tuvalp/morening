@@ -9,6 +9,7 @@ import '../components/auth_button.dart';
 import '../components/auth_textfield.dart';
 import '/../services/navigation_service.dart';
 import '/../utils/snackbar_extension.dart';
+import 'forgot_password.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -117,9 +118,10 @@ class _LoginScreenState extends State<LoginScreen> {
         const SizedBox(height: 16),
         GestureDetector(
           onTap: () {
-            //NavigationService.navigateTo(const ForgotPasswordScreen(), replace: true);
+            NavigationService.navigateTo(const ForgotPasswordView(),
+                replace: true);
           },
-          child: const Text('Forgot Password?'),
+          child: const Text('Forgot Password?', style: TextStyle(fontSize: 16)),
         ),
       ],
     );

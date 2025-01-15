@@ -18,15 +18,14 @@ class AlarmApiRepo {
     return Future.value();
   }
 
-  Future<void> updateAlarm(Alarm alarm, String? userID) {
+  Future<void> updateAlarm(Alarm alarm, String? userID, String timeZone) {
     _apiService.post("alarm/update_alarm", {
       "user_id": userID,
       "alarm_uuid": alarm.id,
       "is_active": alarm.isActive,
       "alarm_time": DateFormat('yyyy-MM-dd HH:mm:ss').format(alarm.time),
       "alarm_type": "ai_defined_schedule",
-      "time_zone": "Asia/Jerusalem",
-      //"time_zone": DateTime.now().timeZoneName,
+      "time_zone": timeZone,
     });
     return Future.value();
   }
