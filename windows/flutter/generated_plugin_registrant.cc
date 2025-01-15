@@ -9,6 +9,7 @@
 #include <amplify_db_common/amplify_db_common_plugin.h>
 #include <audioplayers_windows/audioplayers_windows_plugin.h>
 #include <permission_handler_windows/permission_handler_windows_plugin.h>
+#include <url_launcher_windows/url_launcher_windows.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
   AmplifyDbCommonPluginRegisterWithRegistrar(
@@ -17,4 +18,6 @@ void RegisterPlugins(flutter::PluginRegistry* registry) {
       registry->GetRegistrarForPlugin("AudioplayersWindowsPlugin"));
   PermissionHandlerWindowsPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("PermissionHandlerWindowsPlugin"));
+  UrlLauncherWindowsRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("UrlLauncherWindows"));
 }

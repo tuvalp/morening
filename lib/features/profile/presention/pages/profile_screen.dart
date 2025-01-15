@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:morening_2/features/profile/domain/models/settings.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../auth/presention/auth_cubit.dart';
 import '../../../auth/presention/auth_state.dart';
 import '../porfile_cubit.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
+
+  Future<void> openWhatsApp() async {
+    final url = 'https://wa.me/+972543359697';
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +95,16 @@ class ProfileScreen extends StatelessWidget {
                 context: context,
                 title: "Notifications",
                 child: Text("Enabled"),
+              ),
+              _buildRow(
+                context: context,
+                child: TextButton(
+                  onPressed: openWhatsApp,
+                  child: Text(
+                    "Contect us",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
               ),
               _buildRow(
                 context: context,
