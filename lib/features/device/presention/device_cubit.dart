@@ -33,13 +33,13 @@ class DeviceCubit extends Cubit<DeviceState> {
         } else {
           emit(DeviceDisconnected());
         }
-
-        _timer = Timer.periodic(
-            const Duration(seconds: 20), (_) => checkDeviceStatus());
       } catch (e) {
         print("Error: $e");
         emit(DeviceStatusError("Error checking device status"));
       }
+
+      _timer = Timer.periodic(
+          const Duration(seconds: 20), (_) => checkDeviceStatus());
     }
   }
 

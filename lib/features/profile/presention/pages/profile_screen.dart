@@ -9,7 +9,7 @@ import '../porfile_cubit.dart';
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
-  Future<void> openWhatsApp() async {
+  void openWhatsApp() async {
     final url = 'https://wa.me/+972543359697';
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
