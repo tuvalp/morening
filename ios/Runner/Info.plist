@@ -60,5 +60,10 @@
 	<true/>
 	<key>com.apple.developer.networking.wifi-info</key>
 	<true/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+	<string>whatsapp</string>
+	<string>https</string>
+	</array>
 </dict>
 </plist>
