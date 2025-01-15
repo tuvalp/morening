@@ -24,37 +24,37 @@ class QuestionButton extends StatelessWidget {
               ? Theme.of(context).colorScheme.primary
               : Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(100),
-          // border: Border.all(
-          //   color: isSelected
-          //       ? Theme.of(context).colorScheme.primary
-          //       : Theme.of(context).colorScheme.onTertiary,
-          //   width: 2,
-          // ),
         ),
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
-        child: Stack(children: [
-          Align(
-            alignment: Alignment.centerRight,
-            child: Icon(
-              isSelected ? Icons.circle : Icons.circle_outlined,
-              color: isSelected
-                  ? Theme.of(context).colorScheme.onPrimary
-                  : Theme.of(context).colorScheme.primary,
-            ),
-          ),
-          Center(
-            child: Text(
-              text,
-              style: TextStyle(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Icon(
+                isSelected ? Icons.circle : Icons.circle_outlined,
                 color: isSelected
                     ? Theme.of(context).colorScheme.onPrimary
                     : Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
               ),
             ),
-          ),
-        ]),
+            Container(
+              width: 220,
+              padding: EdgeInsets.all(4),
+              child: Text(
+                text,
+                style: TextStyle(
+                  color: isSelected
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+            SizedBox(width: 10),
+          ],
+        ),
       ),
     );
   }
