@@ -112,21 +112,11 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
 
   Widget _buildHeader() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Text(
-          'Welcome to',
-          style: TextStyle(
-            fontSize: 16,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-        ),
-        Text(
-          'Morning',
-          style: TextStyle(
-            fontSize: 38,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.primary,
-          ),
+        Image.asset(
+          'assets/logo/logo.png',
+          height: 140,
         ),
       ],
     );

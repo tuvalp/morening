@@ -46,4 +46,15 @@ class AuthApiRepo {
       throw Exception("Failed to set wakeup profile: $e");
     }
   }
+
+  Future<void> setDailyQuestions(String userId, String questions) async {
+    try {
+      await _apiService.post("users/set_daily_qustions", {
+        "user_id": userId,
+        "daily_qustions": questions,
+      });
+    } catch (e) {
+      throw Exception("Failed to set wakeup profile: $e");
+    }
+  }
 }

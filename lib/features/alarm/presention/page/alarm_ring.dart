@@ -1,11 +1,14 @@
-import 'package:alarm/alarm.dart';
 import 'package:flutter/material.dart';
+import 'package:alarm/alarm.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:morening_2/utils/format.dart';
-import '../../../../app.dart';
-import '../../../../services/navigation_service.dart';
+
 import '../alarm_cubit.dart';
+import '/utils/format.dart';
+import '../../../../services/navigation_service.dart';
+
+import '/features/home/pages/home_view.dart';
+import '/features/questionnaire/presention/pages/daily_questionaire.dart';
 import '../components/swipe_up.dart';
 
 class AlarmRingView extends StatelessWidget {
@@ -16,12 +19,12 @@ class AlarmRingView extends StatelessWidget {
   Widget build(BuildContext context) {
     Future<void> stopAlarm() async {
       context.read<AlarmCubit>().stopAlarm(alarm.id);
-      NavigationService.navigateTo(const AppView());
+      NavigationService.navigateTo(const DailyQuestionaire());
     }
 
     Future<void> snoozeAlarm() async {
       context.read<AlarmCubit>().snoozeAlarm(alarm.id);
-      NavigationService.navigateTo(const AppView());
+      NavigationService.navigateTo(const HomeView());
     }
 
     return Scaffold(

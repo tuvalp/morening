@@ -1,4 +1,4 @@
-import 'package:morening_2/features/questionnaire/domain/question_type.dart';
+import '/features/questionnaire/domain/question_type.dart';
 
 import 'domain/models/option.dart';
 import 'domain/models/question.dart';

@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:morening_2/features/profile/domain/models/settings.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+import '../porfile_cubit.dart';
 import '../../../auth/presention/auth_cubit.dart';
 import '../../../auth/presention/auth_state.dart';
-import '../porfile_cubit.dart';
 
-class ProfileScreen extends StatelessWidget {
+import '/services/navigation_service.dart';
+import '/features/profile/domain/models/settings.dart';
+import '/features/profile/presention/pages/qa_screen.dart';
+
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  late bool notifictionnEnable;
   void openWhatsApp() async {
     final url = 'https://wa.me/+972543359697';
     if (await canLaunchUrl(Uri.parse(url))) {
@@ -16,6 +27,20 @@ class ProfileScreen extends StatelessWidget {
     } else {
       throw 'Could not launch $url';
     }
+  }
+
+  Future<bool> checkNotificationPermission() async {
+    return await Permission.notification.isGranted;
+  }
+
+  @override
+  initState() {
+    super.initState();
+    checkNotificationPermission().then((value) {
+      setState(() {
+        notifictionnEnable = value;
+      });
+    });
   }
 
   @override
@@ -94,7 +119,22 @@ class ProfileScreen extends StatelessWidget {
               _buildRow(
                 context: context,
                 title: "Notifications",
-                child: Text("Enabled"),
+                child: TextButton(
+                  onPressed: () async {
+                    Permission.notification.request();
+                  },
+                  child: Text(notifictionnEnable ? "Disabled" : "Enabled"),
+                ),
+              ),
+              _buildRow(
+                context: context,
+                child: TextButton(
+                  onPressed: () => NavigationService.navigateTo(QaScreen()),
+                  child: Text(
+                    "Q&A",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
               ),
               _buildRow(
                 context: context,

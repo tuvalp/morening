@@ -18,10 +18,16 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     return BlocBuilder<DeviceCubit, DeviceState>(
       builder: (context, state) {
         return AppBar(
-          title: const Text(
-            'Morening',
-            style: TextStyle(fontWeight: FontWeight.w600),
+          title: Image.asset(
+            "assets/logo/logo.png",
+            height: 80,
+            scale: 1,
           ),
+
+          //  const Text(
+          //   'Morening',
+          //   style: TextStyle(fontWeight: FontWeight.w600),
+          // ),
           centerTitle: true,
           foregroundColor: Theme.of(context).colorScheme.primary,
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,

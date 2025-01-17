@@ -73,7 +73,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 76.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 68.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -122,21 +122,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Widget _buildHeader() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Text(
-          'Welcome to',
-          style: TextStyle(
-            fontSize: 16,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-        ),
-        Text(
-          'Morning',
-          style: TextStyle(
-            fontSize: 38,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.primary,
-          ),
+        Image.asset(
+          'assets/logo/logo.png',
+          height: 140,
         ),
       ],
     );

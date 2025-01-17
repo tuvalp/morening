@@ -12,7 +12,7 @@ extension SnackBarExtension on BuildContext {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Morning',
+                'WakeyAi',
                 style: TextStyle(
                   fontSize: 38,
                   fontWeight: FontWeight.bold,

@@ -117,6 +117,17 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
+  Future<bool> setDailyQuestions(String userId, String questions) async {
+    try {
+      await _apiRepo.setDailyQuestions(userId, questions);
+      return true;
+    } catch (e) {
+      print(e);
+      emit(AuthError(e.toString()));
+      return false;
+    }
+  }
+
   Future<bool> sendRestPassword(String email) async {
     try {
       await _authRepo.forgotPassword(email);
