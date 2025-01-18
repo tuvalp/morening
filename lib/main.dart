@@ -100,32 +100,14 @@ class _MyAppState extends State<MyApp> {
                   debugShowCheckedModeBanner: false,
                   title: 'WakeyAI',
                   theme: AppTheme.getTheme(context),
-                  home: authState is AuthLoading
-                      ? const SplashScreen()
-                      : authState is Unauthenticated
-                          ? const LoginScreen()
-                          : const AppView(),
+                  home: authState is Unauthenticated
+                      ? const LoginScreen()
+                      : const AppView(),
                 );
               },
             ),
           );
         },
-      ),
-    );
-  }
-}
-
-class SplashScreen extends StatelessWidget {
-  const SplashScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Image(
-          image: AssetImage("assets/logo/logo.png"),
-          height: 150,
-        ),
       ),
     );
   }
