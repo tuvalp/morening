@@ -28,9 +28,9 @@ class _DailyQuestionaireState extends State<DailyQuestionaire> {
   List<Answer> answers = [];
   Answer? currentAnswer;
 
-  void _setAnswer(String question, String answer, int points) {
+  void _setAnswer(String question, String answer) {
     setState(() {
-      currentAnswer = Answer(question, answer, points);
+      currentAnswer = Answer(question, answer);
     });
   }
 
@@ -38,7 +38,7 @@ class _DailyQuestionaireState extends State<DailyQuestionaire> {
       Question question, String optionLabel, bool isSelected) {
     setState(() {
       if (currentAnswer == null) {
-        currentAnswer = Answer(question.question, "", 0);
+        currentAnswer = Answer(question.question, "");
       }
 
       // Use a set to store selected options
@@ -53,7 +53,7 @@ class _DailyQuestionaireState extends State<DailyQuestionaire> {
       }
 
       // Update current answer with the updated selected options
-      currentAnswer = Answer(question.question, selectedOptions.join(', '), 0);
+      currentAnswer = Answer(question.question, selectedOptions.join(', '));
     });
   }
 
@@ -157,8 +157,7 @@ class _DailyQuestionaireState extends State<DailyQuestionaire> {
           ...question.options.map((option) => QuestionButton(
                 text: option.label,
                 isSelected: option.label == currentAnswer?.answer,
-                onPressed: () =>
-                    _setAnswer(question.question, option.label, option.points),
+                onPressed: () => _setAnswer(question.question, option.label),
               )),
         if (question.type == QuestionType.multiSelect)
           ...question.options.map((option) => QuestionButton(
@@ -203,7 +202,7 @@ class _DailyQuestionaireState extends State<DailyQuestionaire> {
               ),
               hintText: 'Type your answer...',
             ),
-            onChanged: (value) => _setAnswer(question.question, value, 0),
+            onChanged: (value) => _setAnswer(question.question, value),
           ),
       ],
     );
