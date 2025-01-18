@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '/utils/splash_extension.dart';
 
 import '../../../../services/navigation_service.dart';
 import '/utils/snackbar_extension.dart';
@@ -34,7 +35,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
 
   void sendCode() async {
     if (emailController.text.isNotEmpty) {
-      showLoadingDialog();
+      context.showSplashDialog(context);
       isCodeSant = await context
           .read<AuthCubit>()
           .sendRestPassword(emailController.text);
@@ -62,7 +63,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
   void resetPassword() async {
     if (passwordController.text == confirmPasswordController.text) {
       password = passwordController.text;
-      showLoadingDialog();
+      context.showSplashDialog(context);
 
       final isSacsses = await context
           .read<AuthCubit>()
@@ -250,33 +251,6 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  void showLoadingDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => Dialog.fullscreen(
-        backgroundColor: Colors.black.withOpacity(0.3),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Morning',
-                style: TextStyle(
-                  fontSize: 38,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-              const SizedBox(height: 16),
-              const CircularProgressIndicator(),
-            ],
-          ),
-        ),
       ),
     );
   }

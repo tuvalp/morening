@@ -107,7 +107,7 @@ class _SetUpQuestionaireState extends State<SetUpQuestionaire> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _buildHeader(context),
+            _buildHeader(),
             _buildQuestion(questions[currentQuestionIndex]),
             _buildFooter(),
           ],
@@ -116,23 +116,13 @@ class _SetUpQuestionaireState extends State<SetUpQuestionaire> {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Text(
-          'Welcome to',
-          style: TextStyle(
-            fontSize: 16,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-        ),
-        Text(
-          'Morning',
-          style: TextStyle(
-            fontSize: 38,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.primary,
-          ),
+        Image.asset(
+          'assets/logo/logo.png',
+          height: 70,
         ),
       ],
     );

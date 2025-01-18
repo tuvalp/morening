@@ -106,7 +106,7 @@ class _DailyQuestionaireState extends State<DailyQuestionaire> {
         backgroundColor: Colors.transparent,
         title: Image.asset(
           "assets/logo/logo.png",
-          height: 80,
+          height: 40,
           scale: 1,
         ),
         leading: TextButton(

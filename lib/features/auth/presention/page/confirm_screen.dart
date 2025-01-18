@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wakeyAi/utils/splash_extension.dart';
 import '/features/home/pages/home_view.dart';
 
 import '../../../../services/navigation_service.dart';
@@ -64,7 +65,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
       context.showErrorSnackBar("Please enter your confirmation code");
       return;
     }
-    showLoadingDialog();
+    context.showSplashDialog(context);
 
     context
         .read<AuthCubit>()
@@ -156,33 +157,6 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
           ),
         ),
       ],
-    );
-  }
-
-  void showLoadingDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => Dialog.fullscreen(
-        backgroundColor: Colors.black.withOpacity(0.3),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Morning',
-                style: TextStyle(
-                  fontSize: 38,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-              const SizedBox(height: 16),
-              const CircularProgressIndicator(),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

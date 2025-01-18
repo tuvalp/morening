@@ -9,7 +9,6 @@ class Answer {
     return {
       'question': question,
       'answer': answer,
-      'points': points,
     };
   }
 }

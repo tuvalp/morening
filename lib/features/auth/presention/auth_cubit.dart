@@ -8,10 +8,10 @@ class AuthCubit extends Cubit<AuthState> {
   final AuthApiRepo _apiRepo;
 
   AuthCubit(this._authRepo, this._apiRepo) : super(AuthInitial()) {
-    getCurrentUser();
+    isAuthenticated();
   }
 
-  Future<bool> getCurrentUser() async {
+  Future<bool> isAuthenticated() async {
     emit(AuthLoading());
     try {
       final userID = await _authRepo.getUser();
@@ -26,7 +26,7 @@ class AuthCubit extends Cubit<AuthState> {
       if (user.email.isEmpty) {
         print("user.email is empty");
         await _authRepo.logout();
-        emit(Unauthenticated());
+        emit(AuthError("No internet connection, place try agian later"));
 
         return false;
       }
@@ -52,12 +52,20 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
+  Future<void> getCurrentUser() async {
+    final userID = await _authRepo.getUser();
+    if (userID != null) {
+      final user = await _apiRepo.getUser(userID);
+      emit(Authenticated(user));
+    }
+  }
+
   /// Logs the user in using email and password.
   Future<bool> login(String email, String password) async {
     emit(AuthLoading());
     try {
       await _authRepo.login(email, password);
-      await getCurrentUser().then((value) {
+      await isAuthenticated().then((value) {
         if (value == false) {
           emit(Unauthenticated());
           return false;
@@ -109,7 +117,7 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthLoading());
     try {
       await _apiRepo.setWakeupProfile(userId, wakeUpProfile);
-      await getCurrentUser();
+      await isAuthenticated();
       return true;
     } catch (e) {
       emit(AuthError(e.toString()));
