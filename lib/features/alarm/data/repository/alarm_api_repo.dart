@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
-import 'package:morening_2/features/alarm/domain/models/alarm.dart';
-import 'package:morening_2/services/api_service.dart';
+import '/features/alarm/domain/models/alarm.dart';
+import '/services/api_service.dart';
 
 class AlarmApiRepo {
   final ApiService _apiService = ApiService();

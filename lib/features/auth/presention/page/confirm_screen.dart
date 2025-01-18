@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:morening_2/features/home/pages/home_view.dart';
+import '/features/home/pages/home_view.dart';
 
 import '../../../../services/navigation_service.dart';
 import '/utils/snackbar_extension.dart';
@@ -116,7 +116,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
       children: [
         Image.asset(
           'assets/logo/logo.png',
-          height: 140,
+          height: 70,
         ),
       ],
     );

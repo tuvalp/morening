@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:morening_2/features/device/presention/device_cubit.dart';
-import 'package:morening_2/services/api_service.dart';
+import '/features/device/presention/device_cubit.dart';
+import '/services/api_service.dart';
 import '../../../auth/presention/auth_cubit.dart';
 import '../../../auth/presention/auth_state.dart';
 import '../../../auth/presention/components/auth_button.dart';
@@ -75,10 +75,10 @@ class _ConnectDeviceSheetState extends State<ConnectDeviceSheet> {
                     if (state is ConnectDeviceInitial) {
                       context.read<ConnectDeviceCubit>().connectToDeviceWiFi();
                       return _buildConnectingUI(
-                          "Connecting to Morening Device...");
+                          "Connecting to WakeyAI Device...");
                     } else if (state is ConnectDeviceLoading) {
                       return _buildConnectingUI(
-                          "Connecting to Morening Device...");
+                          "Connecting to WakeyAI Device...");
                     } else if (state is ConnectDeviceConnected) {
                       return _buildConnectingUI(
                           "Connected. Scanning for networks...");

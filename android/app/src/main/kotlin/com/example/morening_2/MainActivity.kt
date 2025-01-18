@@ -1,4 +1,4 @@
-package com.example.morening_2
+package com.wakey.ai
 
 import io.flutter.embedding.android.FlutterActivity
 

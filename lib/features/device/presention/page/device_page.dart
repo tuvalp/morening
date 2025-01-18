@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:morening_2/features/auth/presention/auth_state.dart';
-import 'package:morening_2/features/device/presention/device_cubit.dart';
+import '/features/auth/presention/auth_state.dart';
+import '/features/device/presention/device_cubit.dart';
 
 import '../../../auth/presention/auth_cubit.dart';
 import '../components/connect_device.dart';
@@ -63,7 +63,7 @@ class DevicePage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Morening Deivce",
+                          "WakeyAI Deivce",
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
                             fontSize: 18,

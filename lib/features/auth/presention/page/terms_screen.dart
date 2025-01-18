@@ -87,7 +87,7 @@ class _TermsScreenState extends State<TermsScreen> {
       children: [
         Image.asset(
           'assets/logo/logo.png',
-          height: 140,
+          height: 70,
         ),
       ],
     );

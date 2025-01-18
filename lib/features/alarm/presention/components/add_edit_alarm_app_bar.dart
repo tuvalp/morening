@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:morening_2/services/navigation_service.dart';
+import '/services/navigation_service.dart';
 
 class AddEditAlarmAppBar extends StatelessWidget
     implements PreferredSizeWidget {

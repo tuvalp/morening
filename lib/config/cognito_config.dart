@@ -1,6 +1,6 @@
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:morening_2/config/amplifyconfiguration.dart';
+import '/config/amplifyconfiguration.dart';
 
 class CognitoConfig {
   Future<void> configureAmplify() async {

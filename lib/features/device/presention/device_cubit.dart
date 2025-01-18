@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:morening_2/features/auth/presention/auth_cubit.dart';
-import 'package:morening_2/features/auth/presention/auth_state.dart';
+import '/features/auth/presention/auth_cubit.dart';
+import '/features/auth/presention/auth_state.dart';
 import '../data/device_api_repo.dart';
 import 'device_state.dart';
 

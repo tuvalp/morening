@@ -20,7 +20,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         return AppBar(
           title: Image.asset(
             "assets/logo/logo.png",
-            height: 80,
+            height: 40,
             scale: 1,
           ),
 
@@ -34,6 +34,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           elevation: 0,
           leading: IconButton(
             icon: const Icon(Icons.account_circle),
+            color: Theme.of(context).colorScheme.onSurface,
             onPressed: () {
               NavigationService.navigateTo(const ProfileScreen());
             },
@@ -49,6 +50,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                   DeviceStatusLoading() => Icons.hourglass_empty,
                   _ => Icons.help_outline,
                 },
+                color: Theme.of(context).colorScheme.onSurface,
               ),
               onPressed: () {
                 NavigationService.navigateTo(

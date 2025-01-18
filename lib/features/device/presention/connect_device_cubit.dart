@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
-import 'package:morening_2/features/auth/domain/models/app_user.dart';
-import 'package:morening_2/features/device/presention/device_cubit.dart';
+import '/features/auth/domain/models/app_user.dart';
+import '/features/device/presention/device_cubit.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 import '../../../../services/api_service.dart';
 

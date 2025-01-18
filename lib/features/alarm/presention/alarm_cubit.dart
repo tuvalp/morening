@@ -1,6 +1,6 @@
 import 'package:alarm/alarm.dart' show AlarmSettings;
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:morening_2/features/alarm/data/repository/alarm_api_repo.dart';
+import '/features/alarm/data/repository/alarm_api_repo.dart';
 import '../../alarm/domain/models/alarm.dart';
 import '../data/repository/alarm_native_repo.dart';
 import '../domain/repository/alarm_repo.dart';

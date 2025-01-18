@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../porfile_cubit.dart';
 import '../../../auth/presention/auth_cubit.dart';
@@ -27,20 +26,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } else {
       throw 'Could not launch $url';
     }
-  }
-
-  Future<bool> checkNotificationPermission() async {
-    return await Permission.notification.isGranted;
-  }
-
-  @override
-  initState() {
-    super.initState();
-    checkNotificationPermission().then((value) {
-      setState(() {
-        notifictionnEnable = value;
-      });
-    });
   }
 
   @override
@@ -115,16 +100,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 context: context,
                 title: "Language",
                 child: Text("English"),
-              ),
-              _buildRow(
-                context: context,
-                title: "Notifications",
-                child: TextButton(
-                  onPressed: () async {
-                    Permission.notification.request();
-                  },
-                  child: Text(notifictionnEnable ? "Disabled" : "Enabled"),
-                ),
               ),
               _buildRow(
                 context: context,

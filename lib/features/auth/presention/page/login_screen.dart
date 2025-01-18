@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:morening_2/utils/splash_extension.dart';
+import '/utils/splash_extension.dart';
 
 import '../../../home/pages/home_view.dart';
 import '../auth_cubit.dart';
@@ -81,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
       children: [
         Image.asset(
           'assets/logo/logo.png',
-          height: 140,
+          height: 70,
         ),
       ],
     );

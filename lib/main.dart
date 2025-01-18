@@ -2,7 +2,7 @@ import 'package:alarm/alarm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:morening_2/features/device/presention/device_cubit.dart';
+import '/features/device/presention/device_cubit.dart';
 import '/features/alarm/presention/page/alarm_ring.dart';
 import '/services/alarm_service.dart';
 import '/utils/snackbar_extension.dart';
@@ -98,7 +98,7 @@ class _MyAppState extends State<MyApp> {
                 return MaterialApp(
                   navigatorKey: NavigationService.navigatorKey,
                   debugShowCheckedModeBanner: false,
-                  title: 'MoreNing',
+                  title: 'WakeyAI',
                   theme: AppTheme.getTheme(context),
                   home: authState is Unauthenticated
                       ? const LoginScreen()
