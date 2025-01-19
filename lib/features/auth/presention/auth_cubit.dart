@@ -113,7 +113,8 @@ class AuthCubit extends Cubit<AuthState> {
     await _authRepo.resendConfirmationCode(email);
   }
 
-  Future<bool> setWakeupProfile(String userId, String wakeUpProfile) async {
+  Future<bool> setWakeupProfile(
+      String userId, List<Map<String, dynamic>> wakeUpProfile) async {
     emit(AuthLoading());
     try {
       await _apiRepo.setWakeupProfile(userId, wakeUpProfile);
@@ -125,7 +126,8 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<bool> setDailyQuestions(String userId, String questions) async {
+  Future<bool> setDailyQuestions(
+      String userId, List<Map<String, dynamic>> questions) async {
     try {
       await _apiRepo.setDailyQuestions(userId, questions);
       return true;

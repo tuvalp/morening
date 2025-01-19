@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wakeyAi/features/device/presention/device_cubit.dart';
 
 import '/services/navigation_service.dart';
 import '/utils/snackbar_extension.dart';
@@ -46,15 +47,33 @@ class _AppViewState extends State<AppView> {
             replace: true,
           );
         }
+
+        if (state is Authenticated) {
+          context.read<DeviceCubit>().initialize();
+        }
       },
       child: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, authState) {
+          if (authState is AuthLoading) {
+            return _buildSplashScreen();
+          }
           if (authState is Authenticated) {
             return const HomeView();
           } else {
             return const LoginScreen();
           }
         },
+      ),
+    );
+  }
+
+  Widget _buildSplashScreen() {
+    return const Scaffold(
+      body: Center(
+        child: Image(
+          image: AssetImage('assets/logo/logo.png'),
+          height: 100,
+        ),
       ),
     );
   }

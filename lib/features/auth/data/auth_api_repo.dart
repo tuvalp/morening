@@ -36,23 +36,33 @@ class AuthApiRepo {
     }
   }
 
-  Future<void> setWakeupProfile(String userId, String profile) async {
+  Future<void> setWakeupProfile(
+      String userId, List<Map<String, dynamic>> profile) async {
     try {
-      await _apiService.post("users/add_wake_up_profile", {
-        "user_id": userId,
-        "wake_up_profile": profile,
-      });
+      await _apiService.postWithBody(
+        "users/add_wake_up_profile",
+        {"user_id": userId},
+        {
+          "user_id": userId,
+          "wake_up_profile": profile, // Pass the list directly, not as a string
+        },
+      );
     } catch (e) {
       throw Exception("Failed to set wakeup profile: $e");
     }
   }
 
-  Future<void> setDailyQuestions(String userId, String questions) async {
+  Future<void> setDailyQuestions(
+      String userId, List<Map<String, dynamic>> questions) async {
     try {
-      await _apiService.post("users/set_daily_qustions", {
-        "user_id": userId,
-        "daily_qustions": questions,
-      });
+      await _apiService.postWithBody(
+        "users/set_daily_qustions",
+        {"user_id": userId},
+        {
+          "user_id": userId,
+          "daily_qustions": questions,
+        },
+      );
     } catch (e) {
       throw Exception("Failed to set wakeup profile: $e");
     }

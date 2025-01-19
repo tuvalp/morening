@@ -28,6 +28,7 @@ class ApiService {
       _logRequest("GET", "${ApiConfig.baseUrl}$endpoint", null, response);
       return _handleResponse(response);
     } catch (e) {
+      print("GET request failed: $e");
       throw Exception("GET request failed: $e");
     }
   }
@@ -39,6 +40,20 @@ class ApiService {
       _logRequest("POST", "${ApiConfig.baseUrl}$endpoint", data, response);
       return response;
     } catch (e) {
+      print("POST request failed: $e");
+      throw Exception("POST request failed: $e");
+    }
+  }
+
+  Future<Response> postWithBody(String endpoint,
+      Map<String, dynamic> queryParameters, Map<String, dynamic> data) async {
+    try {
+      final response = await dio.post(endpoint,
+          queryParameters: queryParameters, data: data);
+      _logRequest("POST", "${ApiConfig.baseUrl}$endpoint", data, response);
+      return response;
+    } catch (e) {
+      print("POST request failed: $e");
       throw Exception("POST request failed: $e");
     }
   }
@@ -49,6 +64,7 @@ class ApiService {
       _logRequest("DELETE", "${ApiConfig.baseUrl}$endpoint", data, response);
       return response;
     } catch (e) {
+      print("POST request failed: $e");
       throw Exception("POST request failed: $e");
     }
   }
@@ -61,6 +77,7 @@ class ApiService {
           "GET (Device)", "${ApiConfig.deviceUrl}$endpoint", null, response);
       return _handleResponse(response);
     } catch (e) {
+      print("Device GET request failed: $e");
       throw Exception("Device GET request failed: $e");
     }
   }
@@ -74,6 +91,7 @@ class ApiService {
           "POST (Device)", "${ApiConfig.deviceUrl}$endpoint", data, response);
       return _handleResponse(response);
     } catch (e) {
+      print("Device POST request failed: $e");
       throw Exception("Device POST request failed: $e");
     }
   }

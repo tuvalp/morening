@@ -10,10 +10,10 @@ class DeviceCubit extends Cubit<DeviceState> {
   Timer? _timer;
 
   DeviceCubit(this.authCubit) : super(DeviceStatusLoading()) {
-    _initialize();
+    initialize();
   }
 
-  Future<void> _initialize() async {
+  Future<void> initialize() async {
     await _checkAndStartPeriodicStatusCheck();
   }
 
@@ -35,10 +35,6 @@ class DeviceCubit extends Cubit<DeviceState> {
   Future<void> _checkDeviceStatus() async {
     if (authCubit.state is! Authenticated) return;
 
-    if ((authCubit.state as Authenticated).user.deviceId == null) {
-      await authCubit.getCurrentUser();
-    }
-
     final user = (authCubit.state as Authenticated).user;
     if (user.deviceId == null || user.deviceId!.isEmpty) {
       emit(DeviceNotPair());
@@ -54,19 +50,19 @@ class DeviceCubit extends Cubit<DeviceState> {
   }
 
   Future<void> pairDevice(String deviceId, String userID) async {
-    if (!await _isUserAuthenticated()) return;
+    if (authCubit.state is! Authenticated) return;
 
     try {
       await DeviceApiRepo().pairDevice(deviceId, userID);
       await authCubit.getCurrentUser();
-      emit(DeviceConnected());
+      await _checkAndStartPeriodicStatusCheck();
     } catch (e) {
       emit(DeviceStatusError("Error pairing device: $e"));
     }
   }
 
   Future<void> unpairDevice() async {
-    if (!await _isUserAuthenticated()) return;
+    if (authCubit.state is! Authenticated) return;
 
     final user = (authCubit.state as Authenticated).user;
     try {
@@ -75,17 +71,6 @@ class DeviceCubit extends Cubit<DeviceState> {
     } catch (e) {
       emit(DeviceStatusError("Error unpairing device: $e"));
     }
-  }
-
-  Future<bool> _isUserAuthenticated() async {
-    await authCubit.getCurrentUser();
-
-    if (authCubit.state is! Authenticated) {
-      emit(DeviceStatusError("User not authenticated"));
-      _stopPeriodicStatusCheck();
-      return false;
-    }
-    return true;
   }
 
   void _stopPeriodicStatusCheck() {

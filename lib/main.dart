@@ -12,7 +12,6 @@ import 'features/alarm/data/repository/alarm_api_repo.dart';
 import 'features/alarm/presention/alarm_state.dart';
 
 import 'features/auth/presention/auth_state.dart';
-import 'features/auth/presention/page/login_screen.dart';
 import 'features/profile/data/settings_repo.dart';
 import 'features/profile/domain/models/settings.dart';
 import 'features/profile/presention/porfile_cubit.dart';
@@ -100,9 +99,10 @@ class _MyAppState extends State<MyApp> {
                   debugShowCheckedModeBanner: false,
                   title: 'WakeyAI',
                   theme: AppTheme.getTheme(context),
-                  home: authState is Unauthenticated
-                      ? const LoginScreen()
-                      : const AppView(),
+                  home: const AppView(),
+                  // authState is Unauthenticated
+                  //     ? const LoginScreen()
+                  //     : const AppView(),
                 );
               },
             ),

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '/features/auth/presention/auth_state.dart';
@@ -75,16 +73,24 @@ class _DailyQuestionaireState extends State<DailyQuestionaire> {
   void _handleDone() {
     final authCubit = context.read<AuthCubit>();
     final userID = (authCubit.state as Authenticated).user.id;
-    final answersJson = jsonEncode(answers.map((e) => e.toJson()).toList());
+
+    // Construct JSON payload
+    final answersJson = answers.map((e) => e.toJson()).toList();
+
     context.showSplashDialog(context);
 
-    authCubit.setDailyQuestions(userID, answersJson).then((success) {
+    authCubit
+        .setDailyQuestions(userID, answersJson) // Pass the list directly
+        .then((success) {
+      Navigator.of(context).pop();
       if (success) {
-        Navigator.of(context).pop();
         NavigationService.navigateTo(HomeView(), replace: true);
-      } else {
-        Navigator.of(context).pop();
       }
+    }).catchError((error) {
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to save wake-up profile: $error")),
+      );
     });
   }
 

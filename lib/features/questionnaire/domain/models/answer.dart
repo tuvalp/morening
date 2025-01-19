@@ -6,8 +6,9 @@ class Answer {
 
   Map<String, dynamic> toJson() {
     return {
-      'question': question,
-      'answer': answer,
+      "question": "$question",
+      "answer": "$answer",
+      "options": [],
     };
   }
 }
