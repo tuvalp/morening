@@ -28,6 +28,7 @@ List<Question> questions = [
       Option("Light"),
       Option("Sound"),
       Option("Smell"),
+      Option("None"),
     ],
   ),
 ];

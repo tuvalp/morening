@@ -60,7 +60,7 @@ class AuthApiRepo {
         {"user_id": userId},
         {
           "user_id": userId,
-          "daily_qustions": questions,
+          "daily_questions": questions,
         },
       );
     } catch (e) {
