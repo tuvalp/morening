@@ -34,7 +34,6 @@ class AlarmCubit extends Cubit<AlarmState> {
   Future<void> addAlarm(Alarm alarm, String? userID) async {
     //String timeZone = await FlutterNativeTimezone.getLocalTimezone();
     String timeZone = "Asia/Jerusalem";
-    print(timeZone);
 
     try {
       emit(AlarmLoading());
@@ -43,7 +42,7 @@ class AlarmCubit extends Cubit<AlarmState> {
 
       await alarmRepo.addAlarm(alarm);
       await alarmNativeRepo.addAlarm(adjustedAlarm);
-      await alarmApiRepo.addAlarm(alarm, userID, timeZone);
+      await alarmApiRepo.addAlarm(adjustedAlarm, userID, timeZone);
 
       loadAlarms();
     } catch (error) {
@@ -71,7 +70,7 @@ class AlarmCubit extends Cubit<AlarmState> {
       await alarmRepo.updateAlarm(alarm);
       await alarmNativeRepo.updateAlarm(adjustedAlarm);
 
-      await alarmApiRepo.updateAlarm(alarm, userID, "Asia/Jerusalem");
+      await alarmApiRepo.updateAlarm(adjustedAlarm, userID, "Asia/Jerusalem");
 
       loadAlarms();
     } catch (error) {

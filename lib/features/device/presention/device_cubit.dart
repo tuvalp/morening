@@ -20,6 +20,8 @@ class DeviceCubit extends Cubit<DeviceState> {
   Future<void> _checkAndStartPeriodicStatusCheck() async {
     if (_timer != null) return; // Prevent multiple timers
 
+    await _checkDeviceStatus();
+
     if (authCubit.state is! Authenticated) return;
 
     // Start periodic device status checks
@@ -29,7 +31,6 @@ class DeviceCubit extends Cubit<DeviceState> {
     );
 
     // Perform an initial check
-    await _checkDeviceStatus();
   }
 
   Future<void> _checkDeviceStatus() async {
