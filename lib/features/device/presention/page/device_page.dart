@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wakeyAi/features/device/presention/components/test_device.dart';
+import 'package:wakeyAi/services/navigation_service.dart';
 import '/features/auth/presention/auth_state.dart';
 import '/features/device/presention/device_cubit.dart';
 
@@ -97,7 +99,9 @@ class DevicePage extends StatelessWidget {
                 ),
                 child: Center(
                   child: TextButton(
-                    onPressed: () => {},
+                    onPressed: () => NavigationService.navigateTo(TestDevice(
+                      deviceId: deviceId!,
+                    )),
                     child: Text(
                       "Test Device",
                       style: TextStyle(

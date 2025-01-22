@@ -42,4 +42,18 @@ class DeviceApiRepo {
       return "Unknown status";
     }
   }
+
+  Future<void> testDevice(
+      String deviceId, String type, double volume, double duration) async {
+    try {
+      await _apiService.post("device/generate_trigger", {
+        "device_id": deviceId,
+        "trigger_type": type,
+        "duration_sec": duration,
+        "volume": volume
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 }

@@ -69,9 +69,19 @@ class DeviceCubit extends Cubit<DeviceState> {
     final user = (authCubit.state as Authenticated).user;
     try {
       await DeviceApiRepo().unpairDevice(user.id);
+      await authCubit.getCurrentUser();
       emit(DeviceNotPair());
     } catch (e) {
       emit(DeviceStatusError("Error unpairing device: $e"));
+    }
+  }
+
+  Future<void> testDevice(
+      String deviceId, String type, double volume, double duration) async {
+    try {
+      await DeviceApiRepo().testDevice(deviceId, type, volume, duration);
+    } catch (e) {
+      emit(DeviceStatusError(e.toString()));
     }
   }
 

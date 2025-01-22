@@ -79,9 +79,14 @@ class ConnectDeviceCubit extends Cubit<ConnectDeviceState> {
 
         if (Platform.isAndroid) {
           await WiFiForIoTPlugin.forceWifiUsage(false);
-        }
+          await _deviceCubit.pairDevice(response.data['device_id'], user.id);
+        } else {
+          await Future.delayed(
+            Duration(seconds: 2),
+          ); // Add delay between retries
 
-        await _deviceCubit.pairDevice(response.data['device_id'], user.id);
+          await _deviceCubit.pairDevice(response.data['device_id'], user.id);
+        }
 
         emit(ConnectDeviceSuccess());
       } else {
