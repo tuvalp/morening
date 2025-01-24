@@ -18,7 +18,7 @@ class DeviceApiRepo {
   Future<bool> unpairDevice(String userID) async {
     try {
       await _apiService.post(
-        "users/unpair_device",
+        "device/unpair_device",
         {
           "user_id": userID,
         },

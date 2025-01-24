@@ -29,10 +29,10 @@ class ConnectDeviceCubit extends Cubit<ConnectDeviceState> {
         emit(ConnectDeviceConnected());
         await fetchNetworkList();
       } else {
-        emit(ConnectDeviceError("Failed to connect to device."));
+        emit(ConnectDeviceError("Failed to connect to device Wi-Fi."));
       }
     } catch (e) {
-      emit(ConnectDeviceError("Error: $e"));
+      emit(ConnectDeviceError("Error while connecting to Wi-Fi: $e"));
     }
   }
 
@@ -48,7 +48,7 @@ class ConnectDeviceCubit extends Cubit<ConnectDeviceState> {
             "Failed to fetch networks: HTTP ${response.statusCode}"));
       }
     } catch (e) {
-      emit(ConnectDeviceError("Error fetching networks: $e"));
+      emit(ConnectDeviceError("Error fetching network list: $e"));
     }
   }
 
@@ -75,17 +75,35 @@ class ConnectDeviceCubit extends Cubit<ConnectDeviceState> {
       );
 
       if (response.statusCode == 202) {
-        await WiFiForIoTPlugin.disconnect();
+        // Attempt to disconnect from the current Wi-Fi
+        try {
+          await WiFiForIoTPlugin.disconnect();
+        } catch (e) {
+          print("Failed to disconnect Wi-Fi: $e");
+        }
 
         if (Platform.isAndroid) {
+          // Handle Android-specific Wi-Fi usage
           await WiFiForIoTPlugin.forceWifiUsage(false);
           await _deviceCubit.pairDevice(response.data['device_id'], user.id);
         } else {
-          await Future.delayed(
-            Duration(seconds: 2),
-          ); // Add delay between retries
+          // Retry mechanism for non-Android platforms
+          const maxRetries = 5;
+          int retryCount = 0;
+          bool paired = false;
 
-          await _deviceCubit.pairDevice(response.data['device_id'], user.id);
+          while (retryCount < maxRetries && !paired) {
+            await Future.delayed(const Duration(seconds: 2));
+            paired = await _deviceCubit.pairDevice(
+                response.data['device_id'], user.id);
+            retryCount++;
+          }
+
+          if (!paired) {
+            emit(ConnectDeviceError(
+                "Failed to pair device after $maxRetries attempts."));
+            return;
+          }
         }
 
         emit(ConnectDeviceSuccess());
@@ -94,7 +112,14 @@ class ConnectDeviceCubit extends Cubit<ConnectDeviceState> {
             "Failed to connect: HTTP ${response.statusCode}"));
       }
     } catch (e) {
-      emit(ConnectDeviceError(e.toString()));
+      emit(ConnectDeviceError("Error during pairing: $e"));
+    } finally {
+      // Ensure Wi-Fi usage is reset
+      try {
+        await WiFiForIoTPlugin.forceWifiUsage(false);
+      } catch (e) {
+        print("Error resetting Wi-Fi usage: $e");
+      }
     }
   }
 }

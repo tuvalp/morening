@@ -50,16 +50,18 @@ class DeviceCubit extends Cubit<DeviceState> {
     }
   }
 
-  Future<void> pairDevice(String deviceId, String userID) async {
-    if (authCubit.state is! Authenticated) return;
+  Future<bool> pairDevice(String deviceId, String userID) async {
+    if (authCubit.state is! Authenticated) return false;
 
     try {
       await DeviceApiRepo().pairDevice(deviceId, userID);
       await authCubit.getCurrentUser();
       await _checkDeviceStatus();
       await _checkAndStartPeriodicStatusCheck();
+      return true;
     } catch (e) {
       emit(DeviceStatusError("Error pairing device: $e"));
+      return false;
     }
   }
 
