@@ -26,6 +26,7 @@ dependencies:
   wifi_scan: ^0.4.1+1
   flutter_slidable: ^3.1.2
   url_launcher: ^6.3.1
+  flutter_timezone: ^4.1.0
 
 dev_dependencies:
   flutter_test:
