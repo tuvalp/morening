@@ -22,13 +22,19 @@ class ApiService {
         ));
 
   // GET request
-  Future<Response> get(String endpoint, Map<String, dynamic> data) async {
+  Future<Response> get(String endpoint, Map<String, dynamic>? data) async {
+    late dynamic response;
     try {
-      final response = await dio.get(endpoint, queryParameters: data);
+      if (data == null) {
+        response = await dio.get(endpoint);
+      } else {
+        response = await dio.get(endpoint, queryParameters: data);
+      }
       _logRequest("GET", "${ApiConfig.baseUrl}$endpoint", null, response);
       return _handleResponse(response);
     } catch (e) {
       print("GET request failed: $e");
+      _logRequest("GET", "${ApiConfig.baseUrl}$endpoint", null, response);
       throw Exception("GET request failed: $e");
     }
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../services/api_service.dart';
 import '../../domain/question_type.dart';
 import '/features/home/pages/home_view.dart';
 import '/services/navigation_service.dart';
@@ -8,7 +9,6 @@ import '/utils/splash_extension.dart';
 import '../../../auth/presention/auth_cubit.dart';
 import '../../domain/models/answer.dart';
 import '/features/auth/presention/components/auth_button.dart';
-import '../../set_up_qustion.dart';
 
 import '../../domain/models/question.dart';
 import '../components/question_button.dart';
@@ -25,6 +25,37 @@ class _SetUpQuestionaireState extends State<SetUpQuestionaire> {
   int currentQuestionIndex = 0;
   List<Answer> answers = [];
   Answer? currentAnswer;
+  bool isLoading = true;
+  List<Question> questions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchQuestionary();
+  }
+
+  Future<void> fetchQuestionary() async {
+    try {
+      final response = await ApiService().get(
+        "transcript_matching/get_first_questionary",
+        null,
+      );
+
+      print("Response data: ${response.data}");
+
+      if (response.data is Map && response.data['questions'] is List) {
+        questions = (response.data['questions'] as List)
+            .map((item) => Question.fromJson(item))
+            .toList();
+
+        setState(() => isLoading = false);
+      } else {
+        print("Unexpected data format: ${response.data}");
+      }
+    } catch (e) {
+      print("Error fetching questionary: $e");
+    }
+  }
 
   void _setAnswer(String question, String answer) {
     setState(() {
@@ -107,18 +138,20 @@ class _SetUpQuestionaireState extends State<SetUpQuestionaire> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding:
-            const EdgeInsets.only(left: 16.0, right: 16, top: 76, bottom: 32.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _buildHeader(),
-            _buildQuestion(questions[currentQuestionIndex]),
-            _buildFooter(),
-          ],
-        ),
-      ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.only(
+                  left: 16.0, right: 16, top: 76, bottom: 32.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildHeader(),
+                  _buildQuestion(questions[currentQuestionIndex]),
+                  _buildFooter(),
+                ],
+              ),
+            ),
     );
   }
 
@@ -157,21 +190,21 @@ class _SetUpQuestionaireState extends State<SetUpQuestionaire> {
         const SizedBox(height: 16),
         if (question.type == QuestionType.singleSelect)
           ...question.options.map((option) => QuestionButton(
-                text: option.label,
-                isSelected: option.label == currentAnswer?.answer,
-                onPressed: () => _setAnswer(question.question, option.label),
+                text: option.text,
+                isSelected: option.text == currentAnswer?.answer,
+                onPressed: () => _setAnswer(question.question, option.text),
               )),
         if (question.type == QuestionType.multiSelect)
           ...question.options.map((option) => QuestionButton(
-                text: option.label,
+                text: option.text,
                 isSelected:
-                    currentAnswer?.answer.split(', ').contains(option.label) ??
+                    currentAnswer?.answer.split(', ').contains(option.text) ??
                         false,
                 onPressed: () {
                   _setMultiSelectAnswer(
                     question,
-                    option.label,
-                    currentAnswer?.answer.split(', ').contains(option.label) ??
+                    option.text,
+                    currentAnswer?.answer.split(', ').contains(option.text) ??
                         false,
                   );
                 },

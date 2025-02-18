@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wakeyAi/services/api_service.dart';
 import '/features/auth/presention/auth_state.dart';
 
 import '../../domain/question_type.dart';
@@ -9,7 +10,6 @@ import '/utils/splash_extension.dart';
 import '../../../auth/presention/auth_cubit.dart';
 import '../../domain/models/answer.dart';
 import '/features/auth/presention/components/auth_button.dart';
-import '../../daily_question.dart';
 
 import '../../domain/models/question.dart';
 import '../components/question_button.dart';
@@ -25,6 +25,37 @@ class _DailyQuestionaireState extends State<DailyQuestionaire> {
   int currentQuestionIndex = 0;
   List<Answer> answers = [];
   Answer? currentAnswer;
+  bool isLoading = true;
+  List<Question> questions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchQuestionary();
+  }
+
+  Future<void> fetchQuestionary() async {
+    try {
+      final response = await ApiService().get(
+        "transcript_matching/get_daily_questions",
+        null,
+      );
+
+      print("Response data: ${response.data}");
+
+      if (response.data is Map && response.data['questions'] is List) {
+        questions = (response.data['questions'] as List)
+            .map((item) => Question.fromJson(item))
+            .toList();
+
+        setState(() => isLoading = false);
+      } else {
+        print("Unexpected data format: ${response.data}");
+      }
+    } catch (e) {
+      print("Error fetching questionary: $e");
+    }
+  }
 
   void _setAnswer(String question, String answer) {
     setState(() {
@@ -161,21 +192,21 @@ class _DailyQuestionaireState extends State<DailyQuestionaire> {
         const SizedBox(height: 16),
         if (question.type == QuestionType.singleSelect)
           ...question.options.map((option) => QuestionButton(
-                text: option.label,
-                isSelected: option.label == currentAnswer?.answer,
-                onPressed: () => _setAnswer(question.question, option.label),
+                text: option.text,
+                isSelected: option.text == currentAnswer?.answer,
+                onPressed: () => _setAnswer(question.question, option.text),
               )),
         if (question.type == QuestionType.multiSelect)
           ...question.options.map((option) => QuestionButton(
-                text: option.label,
+                text: option.text,
                 isSelected:
-                    currentAnswer?.answer.split(', ').contains(option.label) ??
+                    currentAnswer?.answer.split(', ').contains(option.text) ??
                         false,
                 onPressed: () {
                   _setMultiSelectAnswer(
                     question,
-                    option.label,
-                    currentAnswer?.answer.split(', ').contains(option.label) ??
+                    option.text,
+                    currentAnswer?.answer.split(', ').contains(option.text) ??
                         false,
                   );
                 },

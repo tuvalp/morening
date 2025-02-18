@@ -1,5 +1,11 @@
 class Option {
-  final String label;
+  final String text;
 
-  Option(this.label);
+  Option(this.text);
+
+  factory Option.fromJson(Map<String, dynamic> json) {
+    return Option(
+      json['text'] ?? '', // Default to empty string if 'text' is null
+    );
+  }
 }
