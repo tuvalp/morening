@@ -12,8 +12,6 @@ class AlarmApiRepo {
       "alarm_time": DateFormat('yyyy-MM-dd HH:mm:ss').format(alarm.time),
       "alarm_type": "ai_defined_schedule",
       "time_zone": timeZone,
-
-      //"time_zone": DateTime.now().timeZoneName,
     });
     return Future.value();
   }
@@ -22,8 +20,8 @@ class AlarmApiRepo {
     _apiService.post("alarm/update_alarm", {
       "user_id": userID,
       "alarm_uuid": alarm.id,
-      "is_active": alarm.isActive,
       "alarm_time": DateFormat('yyyy-MM-dd HH:mm:ss').format(alarm.time),
+      "is_active": alarm.isActive,
       "alarm_type": "ai_defined_schedule",
       "time_zone": timeZone,
     });
