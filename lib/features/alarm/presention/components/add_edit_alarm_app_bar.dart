@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/services/navigation_service.dart';
 
 class AddEditAlarmAppBar extends StatelessWidget
     implements PreferredSizeWidget {
@@ -16,46 +17,31 @@ class AddEditAlarmAppBar extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: AppBar(
-        backgroundColor: Colors.transparent,
-        shadowColor: Colors.transparent,
-        title: Text(
-          title,
-          style: const TextStyle(
-            fontSize: 26,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        centerTitle: true,
-        leadingWidth: 60,
-        leading: TextButton(
-          child: Text(
-            "Back",
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
-              fontWeight: FontWeight.w400,
-              fontSize: 16,
-            ),
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        actions: [
-          TextButton(
-            onPressed: onSave,
-            child: Text(
-              "Done",
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.w400,
-                fontSize: 16,
-              ),
-            ),
-          ),
-        ],
+    return AppBar(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      title: Text(
+        title,
       ),
+      centerTitle: true,
+      leadingWidth: 60,
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back_ios),
+        onPressed: () {
+          NavigationService.pop();
+        },
+      ),
+      actions: [
+        TextButton(
+          onPressed: onSave,
+          child: Text(
+            "Done",
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 18,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

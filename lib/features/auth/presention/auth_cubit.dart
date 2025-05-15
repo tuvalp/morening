@@ -8,78 +8,156 @@ class AuthCubit extends Cubit<AuthState> {
   final AuthApiRepo _apiRepo;
 
   AuthCubit(this._authRepo, this._apiRepo) : super(AuthInitial()) {
-    getCurrentUser();
+    isAuthenticated();
   }
 
-  /// Fetches the current user and updates the state accordingly.
-  Future<void> getCurrentUser() async {
+  Future<bool> isAuthenticated() async {
     emit(AuthLoading());
     try {
       final userID = await _authRepo.getUser();
       if (userID == null) {
+        print("userID is null");
         emit(Unauthenticated());
-        return;
+        return false;
       }
 
       final user = await _apiRepo.getUser(userID);
 
       if (user.email.isEmpty) {
+        print("user.email is empty");
         await _authRepo.logout();
-        emit(Unauthenticated());
-        return;
+        emit(AuthError("No internet connection, place try agian later"));
+
+        return false;
+      }
+
+      final isWakeUpProfileSet = await _apiRepo.getWakeupProfile(userID);
+
+      if (isWakeUpProfileSet == null) {
+        emit(WakeupUnset(user));
+        return true;
+      } else if (isWakeUpProfileSet.statusCode == 500) {
+        emit(AuthError(isWakeUpProfileSet.data['message']));
+        return false;
       }
 
       emit(Authenticated(user));
+      return true;
     } catch (e) {
-      emit(AuthError("Failed to fetch user: ${e.toString()}"));
+      print("Error getting user: $e");
+      emit(Unauthenticated());
+      _authRepo.logout();
+
+      return false;
+    }
+  }
+
+  Future<void> getCurrentUser() async {
+    final userID = await _authRepo.getUser();
+    if (userID != null) {
+      final user = await _apiRepo.getUser(userID);
+      emit(Authenticated(user));
     }
   }
 
   /// Logs the user in using email and password.
-  Future<void> login(String email, String password) async {
+  Future<bool> login(String email, String password) async {
     emit(AuthLoading());
     try {
       await _authRepo.login(email, password);
-      await getCurrentUser();
+      await isAuthenticated().then((value) {
+        if (value == false) {
+          emit(Unauthenticated());
+          return false;
+        }
+      });
+
+      return true;
     } catch (e) {
       emit(AuthError("Login failed: ${e.toString()}"));
+      return false;
     }
   }
 
   /// Registers a new user with the given details.
-  Future<void> register(String email, String password, String name) async {
+  Future<String?> register(String email, String password, String name) async {
     emit(AuthLoading());
     try {
       final userId = await _authRepo.register(email, password, name);
-      emit(AuthOnRegister(userId!));
+
+      emit(RegisterOnConfirm(userId!, email, password, name, null));
+      return userId;
     } catch (e) {
-      emit(AuthError("Registration failed: ${e.toString()}"));
+      emit(AuthError(e.toString()));
+      return null;
     }
   }
 
-  /// Confirms the user's account with a confirmation code.
-  Future<void> confirmUser(String confirmationCode, String email) async {
+  Future<bool> confirmUser(String confirmationCode, String userId, String email,
+      String password, String name) async {
     emit(AuthLoading());
     try {
       await _authRepo.confirmUser(confirmationCode, email);
-      emit(AuthOnConfirm());
+      await _apiRepo.register(userId, email, name);
+      await login(email, password);
+
+      return true;
     } catch (e) {
-      emit(AuthError("Confirmation failed: ${e.toString()}"));
+      emit(AuthError(e.toString()));
+      print(e.toString());
+      return false;
     }
   }
 
-  Future<void> registerUser(String id, String email, String name,
-      String password, String answers) async {
+  Future<void> resendConfirmationCode(String email) async {
+    await _authRepo.resendConfirmationCode(email);
+  }
+
+  Future<bool> setWakeupProfile(
+      String userId, List<Map<String, dynamic>> wakeUpProfile) async {
     emit(AuthLoading());
     try {
-      await _apiRepo.register(id, email, name, answers);
-      await _authRepo.login(email, password);
+      await _apiRepo.setWakeupProfile(userId, wakeUpProfile);
+      await isAuthenticated();
+      return true;
     } catch (e) {
-      emit(AuthError("Registration failed: ${e.toString()}"));
+      emit(AuthError(e.toString()));
+      return false;
     }
   }
 
-  /// Logs out the current user.
+  Future<bool> setDailyQuestions(
+      String userId, List<Map<String, dynamic>> questions) async {
+    try {
+      await _apiRepo.setDailyQuestions(userId, questions);
+      return true;
+    } catch (e) {
+      print(e);
+      emit(AuthError(e.toString()));
+      return false;
+    }
+  }
+
+  Future<bool> sendRestPassword(String email) async {
+    try {
+      await _authRepo.forgotPassword(email);
+      return true;
+    } catch (e) {
+      emit(AuthError(e.toString()));
+      return false;
+    }
+  }
+
+  Future<bool> resetPassword(String email, String code, String password) async {
+    try {
+      await _authRepo.updatePassword(email, code, password);
+      return true;
+    } catch (e) {
+      emit(AuthError(e.toString()));
+      return false;
+    }
+  }
+
   Future<void> logout() async {
     emit(AuthLoading());
     try {

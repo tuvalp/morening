@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Flutter iPhone 15 Simulator",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "deviceId": "1A955525-2B17-497D-AC2B-4AF956372AAA"
+        }
+    ]
+}

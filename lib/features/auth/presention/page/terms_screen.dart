@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import '/services/navigation_service.dart';
+import '../../../../services/navigation_service.dart';
 import '../components/auth_button.dart';
 import 'confirm_screen.dart';
 
@@ -53,8 +53,8 @@ class _TermsScreenState extends State<TermsScreen> {
       ConfirmScreen(
         id: widget.id,
         email: widget.email,
-        name: widget.name,
         password: widget.password,
+        name: widget.name,
       ),
       replace: true,
     );
@@ -63,46 +63,31 @@ class _TermsScreenState extends State<TermsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 62),
-              _buildHeader(context),
-              const SizedBox(height: 62),
-              _buildTermsContent(),
-              const SizedBox(height: 32),
-              AuthButton(
-                text: 'Continue',
-                onPressed: isAgree ? _navigateToConfirmScreen : null,
-                disabled: !isAgree,
-              ),
-              const SizedBox(height: 62),
-            ],
-          ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 76.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildHeader(),
+            _buildTermsContent(),
+            AuthButton(
+              text: 'Continue',
+              onPressed: isAgree ? _navigateToConfirmScreen : null,
+              disabled: !isAgree,
+            ),
+          ],
         ),
       ),
     );
   }
 
-  /// Builds the header section with the app name and welcome text.
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Text(
-          'MoreNing',
-          style: TextStyle(
-            fontSize: 54,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
-        const Text(
-          'Welcome to MoreNing',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+        Image.asset(
+          'assets/logo/logo.png',
+          height: 70,
         ),
       ],
     );

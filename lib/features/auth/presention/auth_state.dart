@@ -14,15 +14,48 @@ class Authenticated extends AuthState {
 
 class Unauthenticated extends AuthState {}
 
-class AuthOnRegister extends AuthState {
-  final String userId;
+class Unconfirmed extends AuthState {}
 
-  AuthOnRegister(this.userId);
+class RegisterOnConfirm extends AuthState {
+  final String? userId;
+  final String? email;
+  final String? password;
+  final String? name;
+  final String? error;
+
+  RegisterOnConfirm(
+      this.userId, this.email, this.password, this.name, this.error);
 }
 
-class AuthOnConfirm extends AuthState {}
+class RegisterOnTerms extends AuthState {
+  final String? userId;
+  final String? email;
+  final String? password;
+  final String? name;
+  final String? error;
 
-class AuthRegisterSuccess extends AuthState {}
+  RegisterOnTerms(
+      this.userId, this.email, this.password, this.name, this.error);
+}
+
+class RegisterOnQuestion extends AuthState {
+  final String? userId;
+  final String? email;
+  final String? password;
+  final String? name;
+  final String? error;
+
+  RegisterOnQuestion(
+      this.userId, this.email, this.password, this.name, this.error);
+}
+
+class AuthOnRegisterSuccess extends AuthState {}
+
+class WakeupUnset extends AuthState {
+  final AppUser user;
+
+  WakeupUnset(this.user);
+}
 
 class AuthError extends AuthState {
   final String error;

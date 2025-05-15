@@ -48,7 +48,6 @@ class _RingtoneSheetState extends State<RingtoneSheet> {
             'Select Ringtone',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          Divider(color: Theme.of(context).colorScheme.onSecondary),
           const SizedBox(height: 20),
           for (String ringtone in RingtoneArray.ringtones)
             ListTile(
@@ -101,7 +100,7 @@ class RingtonePicker extends StatelessWidget {
             selectedRingtone: selectedRingtone,
             onRingtoneChanged: onRingtoneChanged,
           ),
-          backgroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
           ),

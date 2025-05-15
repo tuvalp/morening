@@ -54,14 +54,21 @@ class TimePickerState extends State<TimePicker> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(24),
+          bottomRight: Radius.circular(24),
+        ),
+      ),
       height: 235,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           // Hour Picker
           SizedBox(
-            width: 100,
+            width: 110,
             child: CupertinoPicker(
               selectionOverlay: Container(),
               looping: true,
@@ -77,12 +84,12 @@ class TimePickerState extends State<TimePicker> {
                         ? TextStyle(
                             fontSize: 82,
                             color: Theme.of(context).colorScheme.primary,
-                            fontWeight: FontWeight.w400,
+                            fontWeight: FontWeight.w700,
                           )
                         : TextStyle(
                             fontSize: 24,
                             color: Theme.of(context).colorScheme.onSurface,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w500,
                           ),
                   ),
                 );
@@ -96,13 +103,13 @@ class TimePickerState extends State<TimePicker> {
               style: TextStyle(
                 fontSize: 82,
                 color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.w400,
+                fontWeight: FontWeight.w700,
               ),
             ),
           ),
           // Minute Picker
           SizedBox(
-            width: 100,
+            width: 110,
             child: CupertinoPicker(
               scrollController:
                   FixedExtentScrollController(initialItem: selectedMinute),
@@ -118,12 +125,12 @@ class TimePickerState extends State<TimePicker> {
                         ? TextStyle(
                             fontSize: 82,
                             color: Theme.of(context).colorScheme.primary,
-                            fontWeight: FontWeight.w400,
+                            fontWeight: FontWeight.w700,
                           )
                         : TextStyle(
                             fontSize: 24,
                             color: Theme.of(context).colorScheme.onSurface,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w500,
                           ),
                   ),
                 );

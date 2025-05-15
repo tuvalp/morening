@@ -1,12 +1,15 @@
-import 'package:alarm/alarm.dart';
 import 'package:flutter/material.dart';
+import 'package:alarm/alarm.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:morening_2/utils/format.dart';
-import 'package:slide_to_act/slide_to_act.dart';
-import '../../../../app.dart';
-import '../../../../services/navigation_service.dart';
+
 import '../alarm_cubit.dart';
+import '/utils/format.dart';
+import '../../../../services/navigation_service.dart';
+
+import '/features/home/pages/home_view.dart';
+import '/features/questionnaire/presention/pages/daily_questionaire.dart';
+import '../components/swipe_up.dart';
 
 class AlarmRingView extends StatelessWidget {
   final AlarmSettings alarm;
@@ -16,12 +19,12 @@ class AlarmRingView extends StatelessWidget {
   Widget build(BuildContext context) {
     Future<void> stopAlarm() async {
       context.read<AlarmCubit>().stopAlarm(alarm.id);
-      NavigationService.navigateTo(const AppView());
+      NavigationService.navigateTo(const DailyQuestionaire());
     }
 
     Future<void> snoozeAlarm() async {
       context.read<AlarmCubit>().snoozeAlarm(alarm.id);
-      NavigationService.navigateTo(const AppView());
+      NavigationService.navigateTo(const HomeView());
     }
 
     return Scaffold(
@@ -35,7 +38,7 @@ class AlarmRingView extends StatelessWidget {
                 Text(DateFormat('EEEE, dd MMM, yyyy').format(DateTime.now()),
                     style: TextStyle(
                       fontSize: 14,
-                      color: Theme.of(context).colorScheme.tertiary,
+                      color: Theme.of(context).colorScheme.onSecondary,
                     )),
                 Text(
                   Format.formatAlarmTime(alarm.dateTime),
@@ -51,7 +54,7 @@ class AlarmRingView extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w400,
-                    color: Theme.of(context).colorScheme.secondary,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ],
@@ -61,7 +64,7 @@ class AlarmRingView extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(52),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: Theme.of(context).colorScheme.surface,
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
@@ -78,7 +81,7 @@ class AlarmRingView extends StatelessWidget {
                 child: Text(
                   "Snooze",
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
                     fontSize: 24,
                   ),
@@ -87,19 +90,7 @@ class AlarmRingView extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
-              child: SlideAction(
-                sliderRotate: false,
-                elevation: 0,
-                outerColor: Theme.of(context).colorScheme.onSurfaceVariant,
-                innerColor: Theme.of(context).colorScheme.primary,
-                textStyle: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-                text: "Stop",
-                onSubmit: stopAlarm,
-              ),
+              child: SwipeUp(onSwipeUp: stopAlarm),
             ),
           ],
         ),

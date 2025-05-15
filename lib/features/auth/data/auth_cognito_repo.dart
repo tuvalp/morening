@@ -15,6 +15,22 @@ class AuthCognitoRepo implements AuthRepo {
     }
   }
 
+  Future<bool> isUserConfirmed() async {
+    try {
+      final result = await Amplify.Auth.fetchUserAttributes();
+      final emailVerified = result.firstWhere(
+          (attr) => attr.userAttributeKey == AuthUserAttributeKey.emailVerified,
+          orElse: () => AuthUserAttribute(
+              userAttributeKey: AuthUserAttributeKey.emailVerified,
+              value: 'false'));
+
+      return emailVerified.value == 'true';
+    } on AuthException catch (e) {
+      print('Error fetching user attributes: ${e.message}');
+      return false;
+    }
+  }
+
   @override
   Future<void> login(String email, String password) async {
     try {
@@ -72,6 +88,54 @@ class AuthCognitoRepo implements AuthRepo {
       print('User confirmed successfully');
     } catch (e) {
       print('Error during confirmation: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> forgotPassword(String email) async {
+    try {
+      // Send a forgot password request to the user
+      await Amplify.Auth.resetPassword(username: email);
+      print('Password reset email sent successfully');
+    } catch (e) {
+      print('Error during password reset: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> updatePassword(
+      String email, String confirmationCode, String newPassword) async {
+    try {
+      // Update the user's password
+      await Amplify.Auth.confirmResetPassword(
+        username: email,
+        confirmationCode: confirmationCode,
+        newPassword: newPassword,
+      );
+      print('Password updated successfully');
+    } catch (e) {
+      print('Error during password update: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> resendConfirmationCode(String email) async {
+    try {
+      // Resend the confirmation code to the user
+      await Amplify.Auth.resendSignUpCode(username: email);
+      print('Confirmation code resent successfully');
+    } catch (e) {
+      print('Error during confirmation code resend: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> deleteUser() async {
+    try {
+      await Amplify.Auth.deleteUser();
+    } catch (e) {
+      print('Error during deletion: $e');
       rethrow;
     }
   }

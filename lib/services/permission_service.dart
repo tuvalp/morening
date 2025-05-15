@@ -20,6 +20,15 @@ class PermissionService {
         'Notification permission ${res.isGranted ? '' : 'not '}granted',
       );
     }
+
+    final wifiStat = await Permission.nearbyWifiDevices.status;
+    if (wifiStat.isDenied) {
+      alarmPrint('Requesting wifi permission...');
+      final res = await Permission.nearbyWifiDevices.request();
+      alarmPrint(
+        'Wifi permission ${res.isGranted ? '' : 'not '}granted',
+      );
+    }
   }
 
   static Future<void> checkAndroidExternalStoragePermission() async {

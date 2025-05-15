@@ -1,14 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '/features/auth/presention/auth_state.dart';
 
+import '../../../../services/navigation_service.dart';
+import '../../../auth/presention/auth_cubit.dart';
 import '../../presention/alarm_cubit.dart';
 import '../../../../utils/ringtone_array.dart';
 import '../components/add_edit_alarm_app_bar.dart';
-import '../components/plans_picker.dart';
 import '../components/time_picker.dart';
 import '../../../alarm/domain/models/alarm.dart';
-import '../components/delete_alarm_button.dart';
 import '../components/repeat_day_picker.dart';
 import '../components/ringtone_picker.dart';
 
@@ -22,18 +23,19 @@ class AddEditAlarmView extends StatefulWidget {
 }
 
 class AddEditAlarmViewState extends State<AddEditAlarmView> {
+  late AlarmCubit alarmRepo;
+  late Authenticated authCubit;
   late DateTime _selectedTime;
   late TextEditingController _labelController;
   late List<int> _selectedDays;
   late bool _physicalDevice = false;
   late String _ringtone = "";
   late String _planId = "";
+  late String _userID;
 
   @override
   void initState() {
     super.initState();
-    // final planCubit = context.read<PlanCubit>();
-    // planCubit.loadPlan();
 
     _selectedTime =
         widget.alarm?.time ?? DateTime.now().add(const Duration(minutes: 1));
@@ -42,14 +44,11 @@ class AddEditAlarmViewState extends State<AddEditAlarmView> {
     _ringtone = widget.alarm?.ringtone ?? RingtoneArray.ringtones.first;
 
     _planId = widget.alarm?.planId ?? "";
-    // if (_planId.isEmpty) {
-    //   if (planCubit.state is PlanLoaded) {
-    //     final plans = (planCubit.state as PlanLoaded).plans;
-    //     if (plans.isNotEmpty) {
-    //       _planId = plans.first.label;
-    //     }
-    //   }
-    // }
+
+    alarmRepo = context.read<AlarmCubit>();
+    authCubit = context.read<AuthCubit>().state as Authenticated;
+
+    _userID = authCubit.user.id;
   }
 
   void _onTimeChanged(DateTime time) {
@@ -82,15 +81,7 @@ class AddEditAlarmViewState extends State<AddEditAlarmView> {
     });
   }
 
-  void _onPlanChanged(String planId) {
-    setState(() {
-      _planId = planId;
-    });
-  }
-
   void _saveAlarm() {
-    final alarmRepo = context.read<AlarmCubit>();
-
     final Alarm alarm = Alarm(
       id: widget.alarm?.id ?? DateTime.now().millisecondsSinceEpoch % 100000,
       label: _labelController.text,
@@ -105,17 +96,15 @@ class AddEditAlarmViewState extends State<AddEditAlarmView> {
     );
 
     if (widget.alarm == null) {
-      alarmRepo.addAlarm(alarm);
+      alarmRepo.addAlarm(alarm, _userID);
     } else {
-      alarmRepo.updateAlarm(alarm);
+      alarmRepo.updateAlarm(alarm, _userID);
     }
-    Navigator.of(context).pop(alarm);
+    NavigationService.pop();
   }
 
   void _deleteAlarm() {
-    final alarmRepo = context.read<AlarmCubit>();
-
-    alarmRepo.removeAlarm(widget.alarm!);
+    alarmRepo.removeAlarm(widget.alarm!, _userID);
     Navigator.of(context).pop();
   }
 
@@ -126,11 +115,10 @@ class AddEditAlarmViewState extends State<AddEditAlarmView> {
         title: widget.alarm == null ? 'Add Alarm' : 'Edit Alarm',
         onSave: _saveAlarm,
       ),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            ListView(
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 18),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView(
               children: [
                 Center(
                   child: TimePicker(
@@ -139,115 +127,99 @@ class AddEditAlarmViewState extends State<AddEditAlarmView> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Divider(color: Theme.of(context).colorScheme.onSecondary),
-                const SizedBox(height: 10),
-                RepeatDayPicker(
-                  selectedDays: _selectedDays,
-                  onDaysChanged: _onDaysChanged,
+                _buildRow(
+                  context: context,
+                  child: RepeatDayPicker(
+                    selectedDays: _selectedDays,
+                    onDaysChanged: _onDaysChanged,
+                  ),
+                ),
+                _buildRow(
+                  context: context,
+                  title: "Label",
+                  child: Flexible(
+                    child: TextField(
+                      controller: _labelController,
+                      textAlign: TextAlign.end,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Enter Label",
+                        hintStyle: TextStyle(
+                          fontSize: 14,
+                          color: Theme.of(context).colorScheme.onSecondary,
+                        ),
+                      ),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      cursorColor: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ),
+                _buildRow(
+                  context: context,
+                  title: "Ringtone",
+                  child: RingtonePicker(
+                    selectedRingtone: _ringtone,
+                    onRingtoneChanged: _onRingtoneChanged,
+                  ),
+                ),
+                _buildRow(
+                  context: context,
+                  title: "Physical device",
+                  child: CupertinoSwitch(
+                    activeColor: Theme.of(context).colorScheme.primary,
+                    value: _physicalDevice,
+                    onChanged: (value) {
+                      _onPhysicalDeviceChanged(value);
+                    },
+                  ),
                 ),
                 const SizedBox(height: 10),
-                Divider(color: Theme.of(context).colorScheme.onSecondary),
-                const SizedBox(height: 1),
-                Row(
-                  children: [
-                    Text(
-                      "Label",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                    ),
-                    const Spacer(),
-                    Flexible(
-                      child: TextField(
-                        controller: _labelController,
-                        textAlign: TextAlign.end,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: "Enter Label",
-                          hintStyle: TextStyle(
-                            fontSize: 14,
-                            color: Theme.of(context).colorScheme.onSecondary,
+                widget.alarm == null
+                    ? const SizedBox.shrink()
+                    : _buildRow(
+                        context: context,
+                        child: TextButton(
+                          onPressed: _deleteAlarm,
+                          child: Text(
+                            "Delete Alarm",
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.error,
+                              fontSize: 14,
+                            ),
                           ),
                         ),
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        cursorColor: Theme.of(context).colorScheme.primary,
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 1),
-                Divider(color: Theme.of(context).colorScheme.onSecondary),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Text(
-                      "Wakeup Plan",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                    ),
-                    const Spacer(),
-                    PlansPicker(planId: _planId, onPlanChanged: _onPlanChanged)
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Divider(color: Theme.of(context).colorScheme.onSecondary),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Text(
-                      "Ringtone",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                    ),
-                    const Spacer(),
-                    RingtonePicker(
-                      selectedRingtone: _ringtone,
-                      onRingtoneChanged: _onRingtoneChanged,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Divider(color: Theme.of(context).colorScheme.onSecondary),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Text(
-                      "Physical device",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                    ),
-                    const Spacer(),
-                    CupertinoSwitch(
-                      activeColor: Theme.of(context).colorScheme.primary,
-                      value: _physicalDevice,
-                      onChanged: (value) {
-                        _onPhysicalDeviceChanged(value);
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Divider(color: Theme.of(context).colorScheme.onSecondary),
               ],
             ),
-            widget.alarm == null
-                ? const SizedBox.shrink()
-                : DeleteAlarmButton(
-                    onDelete: () => _deleteAlarm(),
-                  ),
-          ],
-        ),
+          ),
+        ],
       ),
+    );
+  }
+
+  Widget _buildRow(
+      {required BuildContext context, String? title, required Widget child}) {
+    return Container(
+      height: 80,
+      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: title != null
+          ? Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(title),
+                const Spacer(),
+                child,
+              ],
+            )
+          : Center(child: child),
     );
   }
 }

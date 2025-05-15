@@ -1,17 +1,18 @@
 import 'package:alarm/alarm.dart' show AlarmSettings;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '/features/alarm/data/repository/alarm_api_repo.dart';
 import '../../alarm/domain/models/alarm.dart';
 import '../data/repository/alarm_native_repo.dart';
-import '../../main/presention/main_cubit.dart';
 import '../domain/repository/alarm_repo.dart';
 import 'alarm_state.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 
 class AlarmCubit extends Cubit<AlarmState> {
   final AlarmRepo alarmRepo;
   final AlarmNativeRepo alarmNativeRepo;
-  final MainCubit mainCubit;
+  final AlarmApiRepo alarmApiRepo;
 
-  AlarmCubit(this.alarmRepo, this.alarmNativeRepo, this.mainCubit)
+  AlarmCubit(this.alarmRepo, this.alarmNativeRepo, this.alarmApiRepo)
       : super(const AlarmInitial()) {
     loadAlarms();
   }
@@ -31,7 +32,9 @@ class AlarmCubit extends Cubit<AlarmState> {
     }
   }
 
-  Future<void> addAlarm(Alarm alarm) async {
+  Future<void> addAlarm(Alarm alarm, String? userID) async {
+    final String timeZone = await FlutterTimezone.getLocalTimezone();
+
     try {
       emit(AlarmLoading());
       final now = DateTime.now();
@@ -39,6 +42,7 @@ class AlarmCubit extends Cubit<AlarmState> {
 
       await alarmRepo.addAlarm(alarm);
       await alarmNativeRepo.addAlarm(adjustedAlarm);
+      await alarmApiRepo.addAlarm(adjustedAlarm, userID, timeZone);
 
       loadAlarms();
     } catch (error) {
@@ -46,22 +50,25 @@ class AlarmCubit extends Cubit<AlarmState> {
     }
   }
 
-  Future<void> removeAlarm(Alarm alarm) async {
+  Future<void> removeAlarm(Alarm alarm, String? userID) async {
     try {
       emit(AlarmLoading());
       await alarmRepo.removeAlarm(alarm);
       await alarmNativeRepo.removeAlarm(alarm.id);
+      await alarmApiRepo.removeAlarm(alarm, userID);
       loadAlarms();
     } catch (error) {
       emit(AlarmError('Failed to remove alarm: $error'));
     }
   }
 
-  Future<void> updateAlarm(Alarm alarm) async {
+  Future<void> updateAlarm(Alarm alarm, String? userID) async {
     try {
       final now = DateTime.now();
       final adjustedAlarm = await _getAdjustedAlarm(alarm, now);
+      final String timeZone = await FlutterTimezone.getLocalTimezone();
 
+      await alarmApiRepo.updateAlarm(adjustedAlarm, userID, timeZone);
       await alarmRepo.updateAlarm(alarm);
       await alarmNativeRepo.updateAlarm(adjustedAlarm);
 
@@ -71,10 +78,10 @@ class AlarmCubit extends Cubit<AlarmState> {
     }
   }
 
-  Future<void> toggleAlarmActive(Alarm alarm) async {
+  Future<void> toggleAlarmActive(Alarm alarm, String? userID) async {
     try {
       final updatedAlarm = alarm.toggleActive();
-      await updateAlarm(updatedAlarm);
+      await updateAlarm(updatedAlarm, userID);
     } catch (error) {
       emit(AlarmError('Failed to toggle alarm: $error'));
     }
@@ -110,7 +117,6 @@ class AlarmCubit extends Cubit<AlarmState> {
           .copyWith(second: 0, microsecond: 0);
       final updatedAlarm = alarm.copyWith(isActive: true, time: newtime);
       await alarmNativeRepo.addAlarm(updatedAlarm);
-      mainCubit.mainHome();
       loadAlarms();
     } catch (error) {
       emit(AlarmError('Failed to stop alarm: $error'));

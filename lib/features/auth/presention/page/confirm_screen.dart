@@ -1,12 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:morening_2/features/auth/presention/page/wake_up_qustion.dart';
+import 'package:wakeyAi/utils/splash_extension.dart';
+import '/features/home/pages/home_view.dart';
 
-import '/services/navigation_service.dart';
+import '../../../../services/navigation_service.dart';
 import '/utils/snackbar_extension.dart';
 import '/features/auth/presention/components/auth_textfield.dart';
 import '../auth_cubit.dart';
-import '../auth_state.dart';
 import '../components/auth_button.dart';
 
 class ConfirmScreen extends StatefulWidget {
@@ -29,14 +31,33 @@ class ConfirmScreen extends StatefulWidget {
 
 class _ConfirmScreenState extends State<ConfirmScreen> {
   final TextEditingController confirmController = TextEditingController();
+  int _remainingTime = 0; // Time in seconds
+  Timer? _timer;
 
   @override
   void dispose() {
     confirmController.dispose();
+    _timer?.cancel();
     super.dispose();
   }
 
-  /// Handles the confirmation logic.
+  /// Starts the countdown timer for resending the code.
+  void _startResendTimer() {
+    setState(() {
+      _remainingTime = 60; // 60 seconds countdown
+    });
+
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        if (_remainingTime > 0) {
+          _remainingTime--;
+        } else {
+          _timer?.cancel();
+        }
+      });
+    });
+  }
+
   void _confirm() {
     final confirmationCode = confirmController.text.trim();
 
@@ -44,77 +65,59 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
       context.showErrorSnackBar("Please enter your confirmation code");
       return;
     }
+    context.showSplashDialog(context);
 
-    context.read<AuthCubit>().confirmUser(confirmationCode, widget.email);
+    context
+        .read<AuthCubit>()
+        .confirmUser(
+          confirmationCode,
+          widget.id,
+          widget.email,
+          widget.password,
+          widget.name,
+        )
+        .then((success) {
+      Navigator.of(context).pop();
+      if (success == true) {
+        NavigationService.navigateTo(const HomeView(), replace: true);
+      }
+    });
+  }
+
+  void _resendConfirmationCode() {
+    if (_remainingTime == 0) {
+      context.read<AuthCubit>().resendConfirmationCode(widget.email);
+      _startResendTimer();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthCubit, AuthState>(
-      listener: (context, state) {
-        if (state is AuthOnConfirm) {
-          NavigationService.navigateTo(
-            WakeUpQuestionScreen(
-              id: widget.id,
-              email: widget.email,
-              name: widget.name,
-              password: widget.password,
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 76.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildHeader(),
+            _buildConfirmationInput(),
+            AuthButton(
+              text: 'Continue',
+              onPressed: _confirm,
             ),
-            replace: true,
-          );
-        } else if (state is AuthLoading) {
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => const Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        }
-      },
-      child: Scaffold(
-        body: SafeArea(
-          child: GestureDetector(
-            onTap: () => FocusScope.of(context).unfocus(),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(height: 62),
-                _buildHeader(context),
-                const SizedBox(height: 62),
-                _buildConfirmationInput(),
-                const SizedBox(height: 32),
-                AuthButton(
-                  text: 'Continue',
-                  onPressed: _confirm,
-                ),
-                const SizedBox(height: 62),
-              ],
-            ),
-          ),
+          ],
         ),
       ),
     );
   }
 
-  /// Builds the header with the app name and welcome message.
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Text(
-          'MoreNing',
-          style: TextStyle(
-            fontSize: 54,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
-        const Text(
-          'Welcome to MoreNing',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+        Image.asset(
+          'assets/logo/logo.png',
+          height: 70,
         ),
       ],
     );
@@ -137,6 +140,21 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
           controller: confirmController,
           labelText: 'Confirmation Code',
           obscureText: false,
+        ),
+        const SizedBox(height: 32),
+        TextButton(
+          onPressed: _remainingTime == 0 ? _resendConfirmationCode : null,
+          child: Text(
+            _remainingTime == 0
+                ? "Resend Code"
+                : "Code resent, send again in $_remainingTime seconds",
+            style: TextStyle(
+              fontSize: 16,
+              color: _remainingTime == 0
+                  ? Theme.of(context).colorScheme.primary
+                  : Colors.grey,
+            ),
+          ),
         ),
       ],
     );
