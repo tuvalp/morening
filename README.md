@@ -18,17 +18,17 @@
 
 ## 📷 Screenshots
 
-![](screenshots/1.jpeg)
-![](screenshots/2.jpeg)
-![](screenshots/3.jpeg)
-![](screenshots/4.jpeg)
-![](screenshots/5.jpeg)
-![](screenshots/6.jpeg)
-![](screenshots/7.jpeg)
-![](screenshots/8.jpeg)
-![](screenshots/9.jpeg)
-![](screenshots/10.jpeg)
-![](screenshots/11.jpeg)
+<img src="/screenshots/1.jpeg" width="180" height="320">
+<img src="/screenshots/2.jpeg" width="180" height="320">
+<img src="/screenshots/3.jpeg" width="180" height="320">
+<img src="/screenshots/4.jpeg" width="180" height="320">
+<img src="/screenshots/5.jpeg" width="180" height="320">
+<img src="/screenshots/6.jpeg" width="180" height="320">
+<img src="/screenshots/7.jpeg" width="180" height="320">
+<img src="/screenshots/8.jpeg" width="180" height="320">
+<img src="/screenshots/9.jpeg" width="180" height="320">
+<img src="/screenshots/10.jpeg" width="180" height="320">
+<img src="/screenshots/11.jpeg" width="180" height="320">
 
 ---
 
